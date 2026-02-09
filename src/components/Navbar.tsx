@@ -1,5 +1,5 @@
 import { Button } from "./ui/button"
-import { ScanFace, Menu, UserCircle, LogOut, Moon, Sun } from "lucide-react"
+import { Menu, UserCircle, LogOut, Moon, Sun } from "lucide-react"
 import { useState } from "react"
 import { AuthModal } from "./AuthModal"
 import { useAuthStore } from "@/store/useAuthStore"
@@ -25,9 +25,7 @@ export function Navbar({ currentView, onNavigate }: NavbarProps) {
             <nav className="fixed top-0 w-full z-50 bg-white/5 backdrop-blur-lg border-b border-white/10">
                 <div className="container mx-auto px-4 h-16 flex items-center justify-between">
                     <div className="flex items-center gap-2 cursor-pointer" onClick={(e) => handleNav("dashboard", e)}>
-                        <div className="bg-primary/20 p-2 rounded-lg">
-                            <ScanFace className="w-6 h-6 text-primary" />
-                        </div>
+                        <img src="/logo.png" alt="Calc3D Logo" className="w-10 h-10 object-contain" />
                         <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-400">
                             Calc3D
                         </span>

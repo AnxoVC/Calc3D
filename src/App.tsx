@@ -6,12 +6,21 @@ import { Dashboard } from "@/components/Dashboard"
 import { Calculator } from "@/components/Calculator"
 import { BudgetList } from "@/components/BudgetList"
 import { useAuthStore } from "@/store/useAuthStore"
-import { useState } from "react"
+import { useDataStore } from "@/store/useDataStore"
+import { useState, useEffect } from "react"
 
 function App() {
   const { user, isGuest } = useAuthStore()
+  const { loadFromFirestore } = useDataStore()
   const isAuthenticated = user || isGuest
   const [currentView, setCurrentView] = useState<"dashboard" | "calculator" | "budgets">("dashboard")
+
+  // Sync data when user logs in
+  useEffect(() => {
+    if (user?.id) {
+      loadFromFirestore(user.id)
+    }
+  }, [user, loadFromFirestore])
 
   const renderContent = () => {
     switch (currentView) {

@@ -18,7 +18,11 @@ export function BudgetList() {
                         .details { margin-top: 20px; }
                         .item { display: flex; justify-content: space-between; margin-bottom: 10px; border-bottom: 1px dashed #eee; padding-bottom: 5px; }
                         .total { margin-top: 30px; font-size: 1.5em; font-weight: bold; text-align: right; }
-                        .footer { margin-top: 50px; font-size: 0.8em; color: #777; text-align: center; }
+                        
+                        @media print {
+                            @page { margin: 0; size: auto; }
+                            body { margin: 2cm; }
+                        }
                     </style>
                 </head>
                 <body>
@@ -50,10 +54,6 @@ export function BudgetList() {
 
                     <div class="total">
                         Precio Final: ${budget.salePrice.toFixed(2)} €
-                    </div>
-
-                    <div class="footer">
-                        Generado con Calc3D
                     </div>
                     <script>window.print();</script>
                 </body>
