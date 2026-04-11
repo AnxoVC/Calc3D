@@ -9,6 +9,7 @@ Calc3D es una calculadora de costes de impresion 3D y un panel de gestion profes
 - Registro Automatico: Guarda tus presupuestos y el historial de impresiones directamente en la nube de forma automatica.
 - Exportacion a PDF: Genera presupuestos limpios y profesionales en formato PDF vectorial para enviar directamente a los clientes.
 - Gestion de Flota: Cataloga tus impresoras 3D y haz un seguimiento del inventario de tus bobinas de filamento en tiempo real.
+- Tema Claro/Oscuro Integrado: Interfaz de usuario adaptativa que puedes cambiar con un solo clic según tus preferencias visuales.
 - Base de Datos de Especificaciones Tecnicas: La plataforma viene pre-cargada con una elaborada base de datos de mas de 50 impresoras 3D y filamentos contemporaneos (Bambu Lab, Prusa, Creality, Elegoo, etc.).
 - Integracion con Webhooks (Make.com): Ruta API segura integrada para expandir automaticamente tu base de datos de impresoras mediante bots RSS o automatizaciones de terceros.
 
