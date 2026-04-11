@@ -6,9 +6,18 @@ export default function FeedbackPage() {
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [form, setForm] = useState({ type: 'suggestion', subject: '', message: '' })
+  const [honeyPot, setHoneyPot] = useState('') // Bot trap
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
+    
+    // If honeyPot is filled, it's a bot
+    if (honeyPot) {
+      console.log('Bot detected')
+      setSuccess(true) // Pretend success to fool the bot
+      return
+    }
+
     setLoading(true)
     const supabase = createClient()
     const { data: { user } } = await supabase.auth.getUser()
@@ -79,6 +88,18 @@ export default function FeedbackPage() {
                 onChange={e => setForm({...form, message: e.target.value})} 
                 required 
                 style={{ resize: 'vertical' }}
+              />
+            </div>
+
+            {/* HoneyPot Bot Trap */}
+            <div style={{ display: 'none' }} aria-hidden="true">
+              <input 
+                type="text" 
+                name="full_name_verification" 
+                value={honeyPot} 
+                onChange={e => setHoneyPot(e.target.value)} 
+                tabIndex={-1} 
+                autoComplete="off" 
               />
             </div>
 
