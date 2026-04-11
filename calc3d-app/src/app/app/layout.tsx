@@ -1,4 +1,5 @@
 'use client'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
@@ -18,6 +19,14 @@ const NAV_ITEMS = [
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const router = useRouter()
+  const [userEmail, setUserEmail] = useState<string | null>(null)
+
+  useEffect(() => {
+    const supabase = createClient()
+    supabase.auth.getUser().then(({ data }) => setUserEmail(data.user?.email || null))
+  }, [])
+
+  const isAdmin = userEmail === 'vigoanxo000@gmail.com'
 
   async function handleLogout() {
     const supabase = createClient()
@@ -55,6 +64,16 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               </Link>
             )
           })}
+          {isAdmin && (
+            <Link
+              href="/app/admin"
+              className={`sidebar-nav-item ${pathname.startsWith('/app/admin') ? 'active' : ''}`}
+              style={{ background: 'rgba(249,115,22,0.1)', border: '1px solid rgba(249,115,22,0.2)' }}
+            >
+              <span style={{ fontSize: '1.1rem' }}>🛡️</span>
+              Panel Admin
+            </Link>
+          )}
         </nav>
 
         <div className="sidebar-divider" />
