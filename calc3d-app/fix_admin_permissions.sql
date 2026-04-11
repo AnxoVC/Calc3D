@@ -110,3 +110,20 @@ CREATE POLICY "feedback_public_read" ON public.feedback FOR SELECT USING (is_pub
 INSERT INTO public.profiles (id, email)
 SELECT id, email FROM auth.users
 ON CONFLICT (id) DO NOTHING;
+-- Tablas de comunidad y actividad
+CREATE TABLE IF NOT EXISTS activity_logs (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+ALTER TABLE activity_logs ENABLE ROW LEVEL SECURITY;
+
+DO $$ BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Users can insert their own activity') THEN
+        CREATE POLICY "Users can insert their own activity" ON activity_logs FOR INSERT WITH CHECK (auth.uid() = user_id);
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname = 'Admins can read all activity') THEN
+        CREATE POLICY "Admins can read all activity" ON activity_logs FOR SELECT USING (auth.jwt() ->> 'email' = 'vigoanxo000@gmail.com');
+    END IF;
+END $$;

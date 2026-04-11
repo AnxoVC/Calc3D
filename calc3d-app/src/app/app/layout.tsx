@@ -26,7 +26,20 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const supabase = createClient()
-    supabase.auth.getUser().then(({ data }) => setUserEmail(data.user?.email || null))
+    supabase.auth.getUser().then(({ data }) => {
+      setUserEmail(data.user?.email || null)
+      
+      // Log activity once per hour
+      if (data.user) {
+        const lastLog = localStorage.getItem('last_activity_log')
+        const now = Date.now()
+        if (!lastLog || now - Number(lastLog) > 1000 * 60 * 60) {
+          supabase.from('activity_logs').insert({ user_id: data.user.id }).then(() => {
+            localStorage.setItem('last_activity_log', String(now))
+          })
+        }
+      }
+    })
   }, [])
 
   // Close menu on navigation
