@@ -23,10 +23,21 @@ interface Filament {
   created_at: string
 }
 
+interface Feedback {
+  id: string
+  user_id: string | null
+  type: string
+  subject: string
+  message: string
+  status: string
+  created_at: string
+}
+
 export default function AdminPage() {
-  const [stats, setStats] = useState({ printers: 0, filaments: 0, pendingP: 0, pendingF: 0 })
+  const [stats, setStats] = useState({ printers: 0, filaments: 0, users: 0, pendingP: 0, pendingF: 0, pendingFeedback: 0 })
   const [pendingPrinters, setPendingPrinters] = useState<Printer[]>([])
   const [pendingFilaments, setPendingFilaments] = useState<Filament[]>([])
+  const [feedbackItems, setFeedbackItems] = useState<Feedback[]>([])
   const [loading, setLoading] = useState(true)
   const [authorized, setAuthorized] = useState<boolean | null>(null)
   const router = useRouter()
@@ -49,29 +60,24 @@ export default function AdminPage() {
     // Total Counts
     const { count: pCount } = await supabase.from('printers').select('*', { count: 'exact', head: true })
     const { count: fCount } = await supabase.from('filaments').select('*', { count: 'exact', head: true })
+    const { count: uCount } = await supabase.from('profiles').select('*', { count: 'exact', head: true })
     
-    // Pending Printers
-    const { data: pPending } = await supabase
-      .from('printers')
-      .select('*')
-      .eq('verified', false)
-      .order('created_at', { ascending: false })
-
-    // Pending Filaments
-    const { data: fPending } = await supabase
-      .from('filaments')
-      .select('*')
-      .eq('verified', false)
-      .order('created_at', { ascending: false })
+    // Pending items
+    const { data: pPending } = await supabase.from('printers').select('*').eq('verified', false).order('created_at', { ascending: false })
+    const { data: fPending } = await supabase.from('filaments').select('*').eq('verified', false).order('created_at', { ascending: false })
+    const { data: feedback } = await supabase.from('feedback').select('*').eq('status', 'pending').order('created_at', { ascending: false })
 
     setStats({ 
       printers: pCount || 0, 
       filaments: fCount || 0, 
+      users: uCount || 0,
       pendingP: pPending?.length || 0,
-      pendingF: fPending?.length || 0
+      pendingF: fPending?.length || 0,
+      pendingFeedback: feedback?.length || 0
     })
     setPendingPrinters(pPending || [])
     setPendingFilaments(fPending || [])
+    setFeedbackItems(feedback || [])
     setLoading(false)
   }
 
@@ -84,11 +90,21 @@ export default function AdminPage() {
     loadData()
   }
 
-  async function handleDelete(type: 'printer' | 'filament', id: string) {
+  async function handleDelete(type: 'printer' | 'filament' | 'feedback', id: string) {
     if (!confirm('¿Seguro que quieres borrar esta entrada permanentemente?')) return
     const supabase = createClient()
-    const table = type === 'printer' ? 'printers' : 'filaments'
-    await supabase.from(table).delete().eq('id', id)
+    if (type === 'feedback') {
+      await supabase.from('feedback').delete().eq('id', id)
+    } else {
+      const table = type === 'printer' ? 'printers' : 'filaments'
+      await supabase.from(table).delete().eq('id', id)
+    }
+    loadData()
+  }
+
+  async function handleFeedbackStatus(id: string, status: string) {
+    const supabase = createClient()
+    await supabase.from('feedback').update({ status }).eq('id', id)
     loadData()
   }
 
@@ -100,11 +116,15 @@ export default function AdminPage() {
       <div className="section-header mb-8">
         <div>
           <h1 className="page-title">🛡️ Panel de Administración</h1>
-          <p className="page-subtitle">Gestión global de la base de datos</p>
+          <p className="page-subtitle">Gestión global de la base de datos y comunidad</p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-10">
+        <div className="card">
+          <div className="text-muted text-xs uppercase tracking-wider mb-1">Usuarios Totales</div>
+          <div className="text-3xl font-bold">{stats.users}</div>
+        </div>
         <div className="card">
           <div className="text-muted text-xs uppercase tracking-wider mb-1">Impresoras</div>
           <div className="text-3xl font-bold">{stats.printers}</div>
@@ -113,21 +133,53 @@ export default function AdminPage() {
           <div className="text-muted text-xs uppercase tracking-wider mb-1">Filamentos</div>
           <div className="text-3xl font-bold">{stats.filaments}</div>
         </div>
-        <div className="card" style={{ border: stats.pendingP > 0 ? '1px solid var(--accent-orange)' : '' }}>
-          <div className="text-muted text-xs uppercase tracking-wider mb-1">Impresoras Pend.</div>
-          <div className={`text-3xl font-bold ${stats.pendingP > 0 ? 'text-orange-500' : ''}`}>{stats.pendingP}</div>
-        </div>
-        <div className="card" style={{ border: stats.pendingF > 0 ? '1px solid var(--accent-orange)' : '' }}>
-          <div className="text-muted text-xs uppercase tracking-wider mb-1">Filamentos Pend.</div>
-          <div className={`text-3xl font-bold ${stats.pendingF > 0 ? 'text-orange-500' : ''}`}>{stats.pendingF}</div>
+        <div className="card" style={{ border: (stats.pendingP + stats.pendingF + stats.pendingFeedback) > 0 ? '1px solid var(--accent-orange)' : '' }}>
+          <div className="text-muted text-xs uppercase tracking-wider mb-1">Pendientes de Revisión</div>
+          <div className={`text-3xl font-bold ${ (stats.pendingP + stats.pendingF + stats.pendingFeedback) > 0 ? 'text-orange-500' : ''}`}>
+            {stats.pendingP + stats.pendingF + stats.pendingFeedback}
+          </div>
         </div>
       </div>
 
-      <div className="space-y-10">
+      <div className="space-y-12">
+        {/* FEEDBACK SECTION */}
+        <section>
+          <h2 className="text-xl font-bold mb-4 flex items-center gap-2">💡 Sugerencias y Reportes ({feedbackItems.length})</h2>
+          {feedbackItems.length === 0 ? (
+            <div className="card p-10 text-center text-muted">No hay sugerencias pendientes. ¡Todo al día! 🌟</div>
+          ) : (
+            <div className="grid grid-cols-1 gap-4">
+              {feedbackItems.map(item => (
+                <div key={item.id} className="card p-5">
+                  <div className="flex justify-between items-start mb-3">
+                    <div>
+                      <span className={`badge ${item.type === 'bug' ? 'badge-danger' : 'badge-primary'} mb-2`}>
+                        {item.type === 'bug' ? '🐛 Bug' : '💡 Sugerencia'}
+                      </span>
+                      <h3 className="text-lg font-bold">{item.subject}</h3>
+                    </div>
+                    <div className="text-xs text-muted">
+                      {new Date(item.created_at).toLocaleDateString()}
+                    </div>
+                  </div>
+                  <p className="text-sm border-l-2 border-white/10 pl-4 mb-4 py-1 italic text-muted">
+                    "{item.message}"
+                  </p>
+                  <div className="flex gap-2 justify-end">
+                    <button className="btn btn-primary btn-sm" onClick={() => handleFeedbackStatus(item.id, 'resolved')}>✅ Marcar como Resuelto</button>
+                    <button className="btn btn-ghost btn-sm" onClick={() => handleDelete('feedback', item.id)}>🗑️</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+
+        {/* PRINTERS SECTION */}
         <section>
           <h2 className="text-xl font-bold mb-4 flex items-center gap-2">🖨️ Impresoras Pendientes ({pendingPrinters.length})</h2>
           {pendingPrinters.length === 0 ? (
-            <div className="card p-10 text-center text-muted">No hay impresoras pendientes de verificar. ✨</div>
+            <div className="card p-10 text-center text-muted">No hay impresoras pendientes. ✨</div>
           ) : (
             <div className="card p-0 overflow-hidden">
               <table className="w-full text-left">
@@ -159,10 +211,11 @@ export default function AdminPage() {
           )}
         </section>
 
+        {/* FILAMENTS SECTION */}
         <section>
           <h2 className="text-xl font-bold mb-4 flex items-center gap-2">🧵 Filamentos Pendientes ({pendingFilaments.length})</h2>
           {pendingFilaments.length === 0 ? (
-            <div className="card p-10 text-center text-muted">No hay filamentos pendientes de verificar. ✨</div>
+            <div className="card p-10 text-center text-muted">No hay filamentos pendientes. ✨</div>
           ) : (
             <div className="card p-0 overflow-hidden">
               <table className="w-full text-left">
@@ -198,4 +251,5 @@ export default function AdminPage() {
     </div>
   )
 }
+
 

@@ -14,6 +14,7 @@ const NAV_ITEMS = [
   { href: '/app/estadisticas', label: 'Estadísticas', icon: '📊' },
   { href: '/app/consumibles', label: 'Consumibles', icon: '📦' },
   { href: '/app/ajustes', label: 'Ajustes', icon: '⚙️' },
+  { href: '/app/feedback', label: 'Sugerencias', icon: '💡' },
 ]
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {

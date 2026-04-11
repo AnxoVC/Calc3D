@@ -46,7 +46,10 @@ export default function LoginPage() {
             <input type="email" className="form-input" placeholder="tu@email.com" value={email} onChange={e => setEmail(e.target.value)} required />
           </div>
           <div className="form-group">
-            <label className="form-label">Contraseña</label>
+            <div className="flex justify-between items-center mb-1">
+              <label className="form-label mb-0">Contraseña</label>
+              <Link href="/forgot-password" style={{ color: 'var(--brand)', fontSize: '0.8rem', fontWeight: 500 }}>¿Olvidaste tu contraseña?</Link>
+            </div>
             <input type="password" className="form-input" placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)} required />
           </div>
           <button type="submit" className="btn btn-primary w-full" style={{ justifyContent: 'center', marginTop: '0.5rem' }} disabled={loading}>
