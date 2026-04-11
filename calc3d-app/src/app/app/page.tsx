@@ -74,7 +74,6 @@ export default function DiarioPage() {
 
       {!loading && prints.length === 0 && (
         <div className="empty-state">
-          <div className="empty-state-icon"></div>
           <h3 style={{ marginBottom: '0.5rem' }}>Sin impresiones aún</h3>
           <p style={{ fontSize: '0.875rem', marginBottom: '1.5rem' }}>Registra tu primera impresión para empezar a llevar el historial.</p>
           <button className="btn btn-primary" onClick={() => setShowModal(true)}>+ Añadir impresión</button>

@@ -24,7 +24,7 @@ export default function ThemeToggle() {
   return (
     <button 
       onClick={toggle}
-      className="btn btn-ghost btn-icon"
+      style={{ border: 'none', background: 'none', padding: '0.4rem', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
       title="Cambiar tema (Claro/Oscuro)"
     >
       {theme === 'dark' ? (

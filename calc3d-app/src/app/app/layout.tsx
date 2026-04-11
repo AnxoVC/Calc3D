@@ -5,22 +5,17 @@ import { usePathname, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import ThemeToggle from '@/components/ThemeToggle'
 
-const MinimalIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.8 }}>
-    <rect width="16" height="16" x="4" y="4" rx="3" />
-  </svg>
-)
 
 const NAV_ITEMS = [
-  { href: '/app', label: 'Diario', icon: <MinimalIcon /> },
-  { href: '/app/calculadora', label: 'Calculadora', icon: <MinimalIcon /> },
-  { href: '/app/presupuesto', label: 'Presupuesto', icon: <MinimalIcon /> },
-  { href: '/app/bobinas', label: 'Bobinas', icon: <MinimalIcon /> },
-  { href: '/app/impresoras', label: 'Impresoras', icon: <MinimalIcon /> },
-  { href: '/app/estadisticas', label: 'Estadísticas', icon: <MinimalIcon /> },
-  { href: '/app/consumibles', label: 'Consumibles', icon: <MinimalIcon /> },
-  { href: '/app/ajustes', label: 'Ajustes', icon: <MinimalIcon /> },
-  { href: '/app/feedback', label: 'Sugerencias', icon: <MinimalIcon /> },
+  { href: '/app', label: 'Diario' },
+  { href: '/app/calculadora', label: 'Calculadora' },
+  { href: '/app/presupuesto', label: 'Presupuesto' },
+  { href: '/app/bobinas', label: 'Bobinas' },
+  { href: '/app/impresoras', label: 'Impresoras' },
+  { href: '/app/estadisticas', label: 'Estadísticas' },
+  { href: '/app/consumibles', label: 'Consumibles' },
+  { href: '/app/ajustes', label: 'Ajustes' },
+  { href: '/app/feedback', label: 'Sugerencias' },
 ]
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
@@ -66,7 +61,6 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                 href={item.href}
                 className={`sidebar-nav-item ${isActive ? 'active' : ''}`}
               >
-                <span style={{ fontSize: '1.1rem' }}>{item.icon}</span>
                 {item.label}
               </Link>
             )
@@ -77,7 +71,6 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               className={`sidebar-nav-item ${pathname.startsWith('/app/admin') ? 'active' : ''}`}
               style={{ background: 'rgba(249,115,22,0.1)', border: '1px solid rgba(249,115,22,0.2)' }}
             >
-              <MinimalIcon />
               Panel Admin
             </Link>
           )}
@@ -86,8 +79,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         <div className="sidebar-divider" />
 
         <div className="sidebar-bottom flex flex-col gap-1">
-          <div className="sidebar-nav-item" style={{ width: '100%', justifyContent: 'space-between', cursor: 'default' }}>
-            <span className="flex items-center gap-2">Tema</span>
+          <div className="sidebar-nav-item" style={{ width: '100%', cursor: 'default', paddingLeft: '0.5rem' }}>
             <ThemeToggle />
           </div>
           <button onClick={handleLogout} className="sidebar-nav-item" style={{ width: '100%', textAlign: 'left' }}>
@@ -108,7 +100,6 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             const isActive = item.href === '/app' ? pathname === '/app' : pathname.startsWith(item.href)
             return (
               <Link key={item.href} href={item.href} className={`mobile-nav-item ${isActive ? 'active' : ''}`}>
-                <span style={{ fontSize: '1.25rem' }}>{item.icon}</span>
                 <span>{item.label}</span>
               </Link>
             )
