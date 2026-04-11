@@ -130,6 +130,11 @@ h4 { font-size: 1rem; font-weight: 600; }
   min-height: 100vh;
 }
 
+.main-content {
+  flex: 1;
+  overflow-y: auto;
+}
+
 @media (min-width: 768px) {
   .main-content {
     margin-left: var(--sidebar-w);
