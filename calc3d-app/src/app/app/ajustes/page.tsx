@@ -8,6 +8,12 @@ export default function AjustesPage() {
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
   const [userEmail, setUserEmail] = useState('')
+  
+  // Password change states
+  const [newPassword, setNewPassword] = useState('')
+  const [changingPassword, setChangingPassword] = useState(false)
+  const [passwordChanged, setPasswordChanged] = useState(false)
+  const [passwordError, setPasswordError] = useState('')
 
   useEffect(() => {
     const load = async () => {
@@ -37,6 +43,28 @@ export default function AjustesPage() {
     }
   }
 
+  async function handlePasswordChange() {
+    if (!newPassword || newPassword.length < 6) {
+      setPasswordError('La contraseña debe tener al menos 6 caracteres')
+      return
+    }
+    setChangingPassword(true)
+    setPasswordError('')
+    setPasswordChanged(false)
+    
+    const supabase = createClient()
+    const { error } = await supabase.auth.updateUser({ password: newPassword })
+    
+    setChangingPassword(false)
+    if (error) {
+      setPasswordError(error.message)
+    } else {
+      setPasswordChanged(true)
+      setNewPassword('')
+      setTimeout(() => setPasswordChanged(false), 3000)
+    }
+  }
+
   if (loading) return <div style={{ padding: '4rem', textAlign: 'center', color: 'var(--text-muted)' }}>Cargando...</div>
 
   return (
@@ -55,7 +83,7 @@ export default function AjustesPage() {
         </div>
       </div>
 
-      <form className="card" onSubmit={handleSave}>
+      <form className="card mb-10" onSubmit={handleSave}>
         <h3 style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>🧮 Valores por defecto</h3>
         <p className="text-sm text-muted mb-6">Estos valores se usarán automáticamente en la calculadora si no seleccionas una impresora o filamento específico.</p>
         <div className="form-grid mb-6">
@@ -76,6 +104,33 @@ export default function AjustesPage() {
           <button type="submit" className="btn btn-primary" disabled={saving}>{saving ? 'Guardando...' : 'Guardar ajustes'}</button>
         </div>
       </form>
+
+      <div className="card">
+        <h3 style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>🛡️ Seguridad</h3>
+        <p className="text-sm text-muted mb-6">Cambia tu contraseña de acceso a Calc3D.</p>
+        
+        {passwordError && <div className="alert alert-danger mb-4">{passwordError}</div>}
+        {passwordChanged && <div className="alert alert-success mb-4">✅ Contraseña actualizada correctamente</div>}
+
+        <div className="form-group mb-6">
+          <label className="form-label">Nueva Contraseña</label>
+          <input 
+            type="password" 
+            className="form-input" 
+            placeholder="Mínimo 6 caracteres" 
+            value={newPassword} 
+            onChange={e => setNewPassword(e.target.value)} 
+          />
+        </div>
+        <button 
+          className="btn btn-outline w-full" 
+          style={{ justifyContent: 'center' }} 
+          disabled={changingPassword || !newPassword}
+          onClick={handlePasswordChange}
+        >
+          {changingPassword ? 'Actualizando...' : 'Cambiar Contraseña'}
+        </button>
+      </div>
 
       <div style={{ marginTop: '3rem', textAlign: 'center', opacity: 0.5 }}>
         <p className="text-xs">Calc3D by AnxoVC - Versión 1.0.0</p>
