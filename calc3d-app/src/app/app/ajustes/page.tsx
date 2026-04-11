@@ -79,7 +79,6 @@ export default function AjustesPage() {
         <div className="form-group mb-4">
           <label className="form-label">Email de la cuenta</label>
           <input className="form-input" value={userEmail} disabled style={{ opacity: 0.7 }} />
-          <p className="text-xs text-muted mt-1">Conectado a conectores de Base de Datos Supabase</p>
         </div>
       </div>
 
