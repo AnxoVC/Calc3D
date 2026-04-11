@@ -1,43 +1,29 @@
-# Política de Seguridad de MyCalc3D
+# Guia de Seguridad MyCalc3D
 
-La seguridad de MyCalc3D y de los datos de nuestros usuarios es una prioridad absoluta. Este documento describe nuestro enfoque para mantener un entorno seguro y profesional.
+Esta guía contiene los pasos finales para asegurar tu aplicación contra ataques DDoS y mejorar la privacidad de tus usuarios.
 
-## Filosofía de Seguridad
+## 1. Configuracion de Cloudflare (Recomendado para Anti-DDoS)
+Para protegerte contra ataques de denegación de servicio (DDoS) masivos, conecta tu dominio a Cloudflare:
+1. Crea una cuenta gratuita en [Cloudflare](https://www.cloudflare.com/).
+2. Añade tu dominio y cambia los servidores de nombres (Nameservers).
+3. Asegúrate de que el "Proxy" (nube naranja) esté **activado**.
+4. En la pestaña **Security -> WAF**, Cloudflare bloqueará automáticamente la mayoría de los ataques de denegación de servicio antes de que lleguen a Vercel.
 
-MyCalc3D se basa en tres pilares fundamentales:
-1.  **Minimalismo**: Reducimos la superficie de ataque eliminando elementos innecesarios y distracciones visuales.
-2.  **Transparencia**: Al ser un proyecto de código abierto, cualquier persona puede auditar nuestro código.
-3.  **Privacidad**: No recopilamos datos que no sean estrictamente necesarios para el funcionamiento de la herramienta.
+## 2. Ajustes de Supabase (Límites de Tasa)
+Configura estos límites en el dashboard de Supabase para evitar el spam y la saturación:
+1. Ve a **Authentication -> Settings**.
+2. En **Rate Limits**, ajusta:
+   - **Confirmations per hour**: 5 (evita spam de emails).
+   - **Recovery emails per hour**: 3.
+3. Esto previene que alguien "inunde" tu servidor con peticiones de registro falsas.
 
-## Medidas Implementadas
+## 3. Seguridad contra Suplantación (Spoofing)
+- **Token Firmado**: MyCalc3D utiliza tokens JWT firmados dinámicamente. Es imposible que un atacante suplante tu identidad de administrador modificando el código del navegador, ya que el servidor de Supabase verifica la firma criptográfica en cada petición.
+- **RLS Crítico**: Las políticas de seguridad a nivel de fila aseguran que, aunque alguien conociera el enlace privado de otro usuario, el sistema le devolvería un error "404" o "Acceso Denegado" al intentar leer los datos.
 
-### 1. Control de Acceso (Dashboard de Administración)
-El acceso al panel de administración central de MyCalc3D está restringido exclusivamente a las siguientes identidades verificadas:
--   `vigoanxo000@gmail.com`
-
-Cualquier intento de acceso no autorizado es registrado automáticamente en nuestros sistemas de auditoría.
-
-### 2. Protección Anti-Bots (Honeypot)
-Todos los formularios públicos de MyCalc3D incluyen sistemas de detección de bots invisibles. Estas medidas protegen nuestra base de datos contra el spam y las inyecciones automatizadas sin interrumpir la experiencia de los usuarios humanos.
-
-### 3. Seguridad de Datos (Supabase RLS)
-Utilizamos políticas de seguridad a nivel de fila (Row Level Security) en Supabase para asegurar que:
--   Los usuarios solo puedan leer y escribir sus propios datos (bobinas, impresoras, presupuestos).
--   Los datos públicos sean de solo lectura para identidades no administrativas.
-
-## Notificación de Vulnerabilidades
-
-Si encuentras una vulnerabilidad en MyCalc3D, te agradecemos que nos lo comuniques de forma privada. Por favor, no publiques vulnerabilidades en issues públicos de GitHub.
-
-### Proceso de Reporte
-1.  Contacta directamente con el mantenedor del proyecto.
-2.  Proporciona una descripción detallada del problema y los pasos para reproducirlo.
-3.  Trabajaremos para solucionar el problema lo antes posible.
-
-## Entorno Profesional
-
-Para mantener un estándar de calidad corporativo:
--   No se permiten emojis ni lenguaje informal en la documentación técnica oficial.
--   La interfaz debe mantenerse limpia, profesional y basada en texto.
+## 4. Mejores Practicas
+- **Nunca** compartas el archivo `.env.local` con nadie.
+- **Nunca** expongas la `SUPABASE_SERVICE_ROLE_KEY` en el código del frontend.
+- Cambia tu contraseña de Supabase periódicamente y usa **Autenticación en Dos Pasos (2FA)**.
 
 Gracias por ayudar a mantener MyCalc3D seguro y profesional.
