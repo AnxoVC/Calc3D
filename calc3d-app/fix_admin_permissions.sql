@@ -23,6 +23,14 @@ CREATE TABLE IF NOT EXISTS public.feedback (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- 2.0.1 Ensure is_public column exists if table was already there
+DO $$ 
+BEGIN 
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='feedback' AND column_name='is_public') THEN
+    ALTER TABLE public.feedback ADD COLUMN is_public BOOLEAN DEFAULT false;
+  END IF;
+END $$;
+
 -- 2.1 Create ANNOUNCEMENTS table
 CREATE TABLE IF NOT EXISTS public.announcements (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
