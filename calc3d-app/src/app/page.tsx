@@ -101,7 +101,7 @@ export default function LandingPage() {
           </div>
           <div className="steps-grid">
             {[
-              { n: '1', title: 'Crea tu cuenta', desc: 'Regístrate gratis con tu email. Sin tarjeta de crédito, sin compromisos.' },
+              { n: '1', title: 'Crea tu cuenta', desc: 'Regístrate gratis con tu email.' },
               { n: '2', title: 'Selecciona tu equipo', desc: 'Elige tu impresora y filamento de nuestra base de datos. Los datos se autocompletan.' },
               { n: '3', title: 'Calcula y guarda', desc: 'Introduce el peso y el tiempo y obtén el coste exacto. Guárdalo en tu historial.' },
             ].map((s) => (
