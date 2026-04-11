@@ -188,43 +188,101 @@ export default function AdminPage() {
           {openSections.users && (
             <div className="card p-6 border-t-0 rounded-t-none animate-slide-down mb-2">
               <div className="flex flex-col lg:flex-row gap-8">
+                {/* HOURS CHART (SVG AREA) */}
                 <div style={{ flex: 1, maxWidth: '600px' }}>
                   <h4 className="text-xs font-bold uppercase text-muted mb-4">Conexiones por Hora (24h)</h4>
-                  <div className="flex items-end gap-[2px] h-32 w-full bg-white/5 p-3 rounded-lg border border-white/5">
-                    {activityData.hours.map((val, i) => {
-                      const max = Math.max(...activityData.hours, 1)
-                      const height = Math.max((val / max) * 100, 2) // Min 2% height
-                      return (
-                        <div key={i} className="flex-1 bg-brand/30 hover:bg-brand transition-all relative group" style={{ height: `${height}%`, borderRadius: '1px' }}>
+                  <div className="h-32 w-full bg-white/5 rounded-lg border border-white/5 relative overflow-hidden p-0">
+                    <svg className="w-full h-full" viewBox="0 0 240 100" preserveAspectRatio="none">
+                      <defs>
+                        <linearGradient id="gradHour" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="var(--brand)" stopOpacity="0.4" />
+                          <stop offset="100%" stopColor="var(--brand)" stopOpacity="0" />
+                        </linearGradient>
+                      </defs>
+                      {/* Area */}
+                      <path 
+                        d={`M 0 100 ${activityData.hours.map((val, i) => {
+                          const max = Math.max(...activityData.hours, 1)
+                          const h = 100 - (val / max) * 80
+                          return `L ${i * (240/23)} ${h}`
+                        }).join(' ')} L 240 100 Z`}
+                        fill="url(#gradHour)"
+                      />
+                      {/* Line */}
+                      <path 
+                        d={`M 0 ${100 - (activityData.hours[0] / Math.max(...activityData.hours, 1)) * 80} ${activityData.hours.map((val, i) => {
+                          const max = Math.max(...activityData.hours, 1)
+                          const h = 100 - (val / max) * 80
+                          return `L ${i * (240/23)} ${h}`
+                        }).join(' ')}`}
+                        fill="none"
+                        stroke="var(--brand)"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                    {/* Tooltip Overlay */}
+                    <div className="absolute inset-0 flex">
+                      {activityData.hours.map((val, i) => (
+                        <div key={i} className="flex-1 group relative h-full">
                           <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-surface border border-brand/50 text-brand text-[10px] px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity z-10 whitespace-nowrap pointer-events-none">
-                            {i}:00 - {val}
+                            {i}:00 — {val}
                           </div>
                         </div>
-                      )
-                    })}
+                      ))}
+                    </div>
                   </div>
                   <div className="flex justify-between text-[10px] text-muted mt-2 px-1">
                     <span>00:00</span><span>06:00</span><span>12:00</span><span>18:00</span><span>23:00</span>
                   </div>
                 </div>
+
+                {/* WEEKLY CHART (SVG AREA) */}
                 <div style={{ flex: 1, maxWidth: '400px' }}>
                   <h4 className="text-xs font-bold uppercase text-muted mb-4">Actividad Semanal</h4>
-                  <div className="flex items-end gap-3 h-32 w-full bg-white/5 p-3 rounded-lg border border-white/5">
-                    {['D','L','M','X','J','V','S'].map((day, i) => {
-                      const val = activityData.days[i]
-                      const max = Math.max(...activityData.days, 1)
-                      const height = Math.max((val / max) * 100, 2)
-                      return (
-                        <div key={i} className="flex-1 flex flex-col justify-end items-center gap-2 h-full">
-                           <div className="w-full bg-brand/30 hover:bg-brand transition-all group relative" style={{ height: `${height}%`, borderRadius: '4px' }}>
-                             <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-surface border border-brand/50 text-brand text-[10px] px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity z-10 whitespace-nowrap pointer-events-none">
-                               {val} visitas
-                             </div>
-                           </div>
-                           <span className="text-[10px] text-muted font-bold">{day}</span>
+                  <div className="h-32 w-full bg-white/5 rounded-lg border border-white/5 relative overflow-hidden">
+                    <svg className="w-full h-full" viewBox="0 0 70 100" preserveAspectRatio="none">
+                      <defs>
+                        <linearGradient id="gradWeek" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="var(--brand)" stopOpacity="0.4" />
+                          <stop offset="100%" stopColor="var(--brand)" stopOpacity="0" />
+                        </linearGradient>
+                      </defs>
+                      <path 
+                        d={`M 0 100 ${activityData.days.map((val, i) => {
+                          const max = Math.max(...activityData.days, 1)
+                          const h = 100 - (val / max) * 80
+                          return `L ${i * (70/6)} ${h}`
+                        }).join(' ')} L 70 100 Z`}
+                        fill="url(#gradWeek)"
+                      />
+                      <path 
+                        d={`M 0 ${100 - (activityData.days[0] / Math.max(...activityData.days, 1)) * 80} ${activityData.days.map((val, i) => {
+                          const max = Math.max(...activityData.days, 1)
+                          const h = 100 - (val / max) * 80
+                          return `L ${i * (70/6)} ${h}`
+                        }).join(' ')}`}
+                        fill="none"
+                        stroke="var(--brand)"
+                        strokeWidth="3"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                    {/* Tooltip Overlay */}
+                    <div className="absolute inset-0 flex px-2">
+                      {activityData.days.map((val, i) => (
+                        <div key={i} className="flex-1 group relative h-full">
+                          <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-surface border border-brand/50 text-brand text-[10px] px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity z-10 whitespace-nowrap pointer-events-none">
+                            {val}
+                          </div>
                         </div>
-                      )
-                    })}
+                      ))}
+                    </div>
+                  </div>
+                  <div className="flex justify-between text-[10px] text-muted mt-2 px-2 font-bold">
+                    <span>D</span><span>L</span><span>M</span><span>X</span><span>J</span><span>V</span><span>S</span>
                   </div>
                 </div>
               </div>
