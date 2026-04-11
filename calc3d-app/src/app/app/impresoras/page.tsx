@@ -28,17 +28,54 @@ export default function ImpresorasPage() {
 
   useEffect(() => { load() }, [])
 
+  const [manualType, setManualType] = useState('FDM')
+  const [wattageError, setWattageError] = useState('')
+  const [duplicates, setDuplicates] = useState<Printer[]>([])
+  const [contributeToDb, setContributeToDb] = useState(false)
+
+  function checkDuplicates(name: string) {
+    if (!name || name.length < 3) { setDuplicates([]); return }
+    const lower = name.toLowerCase()
+    const matches = dbPrinters.filter(p =>
+      `${p.brand} ${p.model}`.toLowerCase().includes(lower) ||
+      lower.includes(p.model.toLowerCase())
+    ).slice(0, 4)
+    setDuplicates(matches)
+  }
+
+  function validateWattage(val: string) {
+    const n = Number(val)
+    if (!val || isNaN(n)) { setWattageError('Introduce un número válido'); return false }
+    if (n < 50) { setWattageError('⚠️ Consumo muy bajo, ¿seguro? Mínimo típico: 50W'); return false }
+    if (n > 5000) { setWattageError('⚠️ Consumo muy alto, ¿seguro? Máximo típico: 5000W'); return false }
+    setWattageError(''); return true
+  }
+
   async function handleAdd(e: React.FormEvent) {
     e.preventDefault()
+    if (isManual && !validateWattage(manualWattage)) return
     setSaving(true)
     const supabase = createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
 
     if (isManual) {
+      let newPublicId: string | null = null
+      if (contributeToDb) {
+        const parts = manualName.trim().split(' ')
+        const brand = parts[0]
+        const model = parts.slice(1).join(' ') || manualName
+        const { data: inserted } = await supabase.from('printers').insert({
+          brand, model,
+          wattage_w: Number(manualWattage),
+          type: manualType,
+          verified: false,
+        }).select().single()
+        newPublicId = inserted?.id ?? null
+      }
       await supabase.from('user_printers').insert({
         user_id: user.id,
-        printer_id: null,
+        printer_id: newPublicId,
         nickname: manualName,
         custom_wattage_w: Number(manualWattage),
       })
@@ -52,7 +89,8 @@ export default function ImpresorasPage() {
       })
     }
     
-    setSaving(false); setShowModal(false); setSelectedId(''); setNickname(''); setManualName(''); load()
+    setSaving(false); setShowModal(false); setSelectedId(''); setNickname('')
+    setManualName(''); setDuplicates([]); setContributeToDb(false); load()
   }
 
   async function handleDelete(id: string) {
@@ -136,16 +174,59 @@ export default function ImpresorasPage() {
                 <>
                   <div className="form-group">
                     <label className="form-label">Nombre de tu impresora</label>
-                    <input className="form-input" placeholder="Ej: Artillery Genius Pro" value={manualName} onChange={e => setManualName(e.target.value)} required={isManual} />
+                    <input
+                      className="form-input"
+                      placeholder="Ej: Artillery Genius Pro"
+                      value={manualName}
+                      onChange={e => { setManualName(e.target.value); checkDuplicates(e.target.value) }}
+                      required={isManual}
+                    />
                   </div>
-                  <div className="form-group">
-                    <label className="form-label">Consumo estimado (W)</label>
-                    <div className="input-wrapper">
-                      <input type="number" className="form-input" placeholder="300" value={manualWattage} onChange={e => setManualWattage(e.target.value)} required={isManual} />
-                      <span className="input-prefix" style={{ paddingRight: '1rem', borderRight: 'none', borderLeft: '1px solid var(--border)' }}>W</span>
+
+                  {duplicates.length > 0 && (
+                    <div className="alert alert-warn" style={{ flexDirection: 'column', gap: '0.5rem' }}>
+                      <strong>⚠️ Posibles coincidencias en la BD. ¿No es una de estas?</strong>
+                      {duplicates.map(d => (
+                        <button key={d.id} type="button" className="btn btn-secondary btn-sm" style={{ justifyContent: 'flex-start' }}
+                          onClick={() => { setIsManual(false); setSelectedId(d.id); setDuplicates([]) }}>
+                          {d.brand} {d.model} ({d.wattage_w}W) [{d.type}]
+                        </button>
+                      ))}
                     </div>
-                    <p className="text-xs text-muted mt-1">Suele estar entre 200W y 350W para impresoras estándar.</p>
+                  )}
+
+                  <div className="form-grid">
+                    <div className="form-group">
+                      <label className="form-label">Consumo (W)</label>
+                      <input
+                        type="number" className="form-input" placeholder="300"
+                        value={manualWattage}
+                        onChange={e => { setManualWattage(e.target.value); validateWattage(e.target.value) }}
+                        required={isManual}
+                      />
+                      {wattageError && <p className="text-xs" style={{ color: 'var(--accent-red)', marginTop: '0.25rem' }}>{wattageError}</p>}
+                      {!wattageError && <p className="text-xs text-muted mt-1">Típico: 150W–500W</p>}
+                    </div>
+                    <div className="form-group">
+                      <label className="form-label">Tipo</label>
+                      <select className="form-select" value={manualType} onChange={e => setManualType(e.target.value)}>
+                        <option value="FDM">FDM</option>
+                        <option value="Resina">Resina (MSLA)</option>
+                        <option value="SLA">SLA</option>
+                        <option value="SLS">SLS</option>
+                      </select>
+                    </div>
                   </div>
+
+                  {duplicates.length === 0 && manualName.length > 3 && (
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer', padding: '0.75rem', background: 'rgba(249,115,22,0.06)', borderRadius: '8px', border: '1px solid rgba(249,115,22,0.15)' }}>
+                      <input type="checkbox" checked={contributeToDb} onChange={e => setContributeToDb(e.target.checked)} />
+                      <span style={{ fontSize: '0.875rem' }}>
+                        <strong>Añadir a la base de datos pública</strong>
+                        <span className="text-muted" style={{ display: 'block', fontSize: '0.75rem' }}>Se añadirá como "no verificada" hasta revisión</span>
+                      </span>
+                    </label>
+                  )}
                 </>
               )}
 
