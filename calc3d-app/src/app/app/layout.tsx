@@ -5,16 +5,22 @@ import { usePathname, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import ThemeToggle from '@/components/ThemeToggle'
 
+const MinimalIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.8 }}>
+    <rect width="16" height="16" x="4" y="4" rx="3" />
+  </svg>
+)
+
 const NAV_ITEMS = [
-  { href: '/app', label: 'Diario', icon: '📋' },
-  { href: '/app/calculadora', label: 'Calculadora', icon: '🧮' },
-  { href: '/app/presupuesto', label: 'Presupuesto', icon: '💰' },
-  { href: '/app/bobinas', label: 'Bobinas', icon: '🧵' },
-  { href: '/app/impresoras', label: 'Impresoras', icon: '🖨️' },
-  { href: '/app/estadisticas', label: 'Estadísticas', icon: '📊' },
-  { href: '/app/consumibles', label: 'Consumibles', icon: '📦' },
-  { href: '/app/ajustes', label: 'Ajustes', icon: '⚙️' },
-  { href: '/app/feedback', label: 'Sugerencias', icon: '💡' },
+  { href: '/app', label: 'Diario', icon: <MinimalIcon /> },
+  { href: '/app/calculadora', label: 'Calculadora', icon: <MinimalIcon /> },
+  { href: '/app/presupuesto', label: 'Presupuesto', icon: <MinimalIcon /> },
+  { href: '/app/bobinas', label: 'Bobinas', icon: <MinimalIcon /> },
+  { href: '/app/impresoras', label: 'Impresoras', icon: <MinimalIcon /> },
+  { href: '/app/estadisticas', label: 'Estadísticas', icon: <MinimalIcon /> },
+  { href: '/app/consumibles', label: 'Consumibles', icon: <MinimalIcon /> },
+  { href: '/app/ajustes', label: 'Ajustes', icon: <MinimalIcon /> },
+  { href: '/app/feedback', label: 'Sugerencias', icon: <MinimalIcon /> },
 ]
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
@@ -71,7 +77,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               className={`sidebar-nav-item ${pathname.startsWith('/app/admin') ? 'active' : ''}`}
               style={{ background: 'rgba(249,115,22,0.1)', border: '1px solid rgba(249,115,22,0.2)' }}
             >
-              <span style={{ fontSize: '1.1rem' }}>🛡️</span>
+              <MinimalIcon />
               Panel Admin
             </Link>
           )}

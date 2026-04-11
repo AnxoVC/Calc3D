@@ -255,13 +255,13 @@ export default function PresupuestoPage() {
   return (
     <div className="animate-fade-in">
       <div className="page-header">
-        <h1 className="page-title">💰 Presupuesto Rápido</h1>
+        <h1 className="page-title">Presupuesto Rápido</h1>
         <p className="page-subtitle">Calcula el precio de venta con mano de obra y margen</p>
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) minmax(0,380px)', gap: '1.5rem', alignItems: 'start' }}>
         <form onSubmit={handleCalc} className="flex flex-col gap-5">
           <div className="card">
-            <h3 style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>👤 Cliente / Pedido</h3>
+            <h3 style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>Cliente / Pedido</h3>
             <div className="form-group">
               <label className="form-label">Nombre del cliente / Proyecto</label>
               <input className="form-input" placeholder="Ej: Juan Pérez - Trofeo Torneo" value={form.clientName} onChange={e => setForm({...form, clientName: e.target.value})} />
@@ -269,7 +269,7 @@ export default function PresupuestoPage() {
           </div>
           <div className="card">
             <h3 style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <span className="flex items-center gap-2">🧵 Materiales</span>
+              <span className="flex items-center gap-2">Materiales</span>
             </h3>
             <div className="materials-list">
               {mats.map((m, idx) => (
@@ -303,7 +303,7 @@ export default function PresupuestoPage() {
           </div>
           <div className="card">
             <h3 style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <span className="flex items-center gap-2">⚡ Equipos y Tiempo</span>
+              <span className="flex items-center gap-2">Equipos y Tiempo</span>
             </h3>
             
             <div className="printers-list">
@@ -351,7 +351,7 @@ export default function PresupuestoPage() {
             </div>
           </div>
           <div className="card" style={{ background: 'linear-gradient(135deg, rgba(249,115,22,0.08), rgba(245,158,11,0.04))' }}>
-            <h3 style={{ marginBottom: '0.5rem' }}>👷 Mano de obra & Margen</h3>
+            <h3 style={{ marginBottom: '0.5rem' }}>Mano de obra & Margen</h3>
             <p className="text-sm text-muted" style={{ marginBottom: '1rem' }}>Estas opciones son 100% gratuitas en Calc3D</p>
             <div className="form-grid">
               <div className="form-group" style={{ gridColumn: '1/-1' }}>
@@ -404,22 +404,22 @@ export default function PresupuestoPage() {
               </div>
               <div className="result-total">{result.total.toFixed(2)}€</div>
               <div className="result-breakdown">
-                <div className="breakdown-item"><span className="breakdown-label">🧵 Material</span><span className="breakdown-value">{result.materialCost.toFixed(3)}€</span></div>
-                <div className="breakdown-item"><span className="breakdown-label">⚡ Electricidad</span><span className="breakdown-value">{result.electricityCost.toFixed(3)}€</span></div>
-                {result.amortizationCost > 0 && <div className="breakdown-item"><span className="breakdown-label">🔧 Amortización</span><span className="breakdown-value">{result.amortizationCost.toFixed(3)}€</span></div>}
-                {result.laborCost > 0 && <div className="breakdown-item"><span className="breakdown-label">👷 Mano de obra</span><span className="breakdown-value">{result.laborCost.toFixed(3)}€</span></div>}
-                <div className="breakdown-item"><span className="breakdown-label">📊 Subtotal</span><span className="breakdown-value">{result.subtotal.toFixed(3)}€</span></div>
-                {result.margin > 0 && <div className="breakdown-item"><span className="breakdown-label">💹 Margen ({form.marginPercent}%)</span><span className="breakdown-value">+{result.margin.toFixed(3)}€</span></div>}
+                <div className="breakdown-item"><span className="breakdown-label">Material</span><span className="breakdown-value">{result.materialCost.toFixed(3)}€</span></div>
+                <div className="breakdown-item"><span className="breakdown-label">Electricidad</span><span className="breakdown-value">{result.electricityCost.toFixed(3)}€</span></div>
+                {result.amortizationCost > 0 && <div className="breakdown-item"><span className="breakdown-label">Amortización</span><span className="breakdown-value">{result.amortizationCost.toFixed(3)}€</span></div>}
+                {result.laborCost > 0 && <div className="breakdown-item"><span className="breakdown-label">Mano de obra</span><span className="breakdown-value">{result.laborCost.toFixed(3)}€</span></div>}
+                <div className="breakdown-item"><span className="breakdown-label">Subtotal</span><span className="breakdown-value">{result.subtotal.toFixed(3)}€</span></div>
+                {result.margin > 0 && <div className="breakdown-item"><span className="breakdown-label">Margen ({form.marginPercent}%)</span><span className="breakdown-value">+{result.margin.toFixed(3)}€</span></div>}
                 <div className="breakdown-item breakdown-total"><span className="breakdown-label" style={{ fontWeight: 700 }}>PRECIO FINAL</span><span className="breakdown-value" style={{ color: 'var(--brand)', fontSize: '1.1rem' }}>{result.total.toFixed(2)}€</span></div>
               </div>
               <div style={{ marginTop: '1.5rem', display: 'flex', gap: '0.75rem' }} data-html2canvas-ignore="true">
-                <button className="btn btn-primary" style={{ flex: 1, justifyContent: 'center' }} onClick={handleDownloadPDF}>📄 Descargar PDF</button>
-                {saved && <div className="alert alert-success" style={{ flex: 1, padding: '0.5rem', textAlign: 'center', margin: 0 }}>✅ Guardado</div>}
+                <button className="btn btn-primary" style={{ flex: 1, justifyContent: 'center' }} onClick={handleDownloadPDF}>Descargar PDF</button>
+                {saved && <div className="alert alert-success" style={{ flex: 1, padding: '0.5rem', textAlign: 'center', margin: 0 }}>Guardado</div>}
               </div>
             </div>
           ) : (
             <div className="card" style={{ textAlign: 'center', padding: '3rem 1.5rem' }}>
-              <div style={{ fontSize: '3rem', marginBottom: '1rem', opacity: 0.4 }}>💰</div>
+              <div style={{ fontSize: '3rem', marginBottom: '1rem', opacity: 0.4 }}></div>
               <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>Rellena los datos y calcula para ver el precio de venta recomendado</p>
             </div>
           )}

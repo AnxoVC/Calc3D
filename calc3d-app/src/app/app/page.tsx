@@ -63,7 +63,7 @@ export default function DiarioPage() {
       <div className="page-header">
         <div className="section-header">
           <div>
-            <h1 className="page-title">📋 Diario</h1>
+            <h1 className="page-title">Diario</h1>
             <p className="page-subtitle">Historial de tus impresiones</p>
           </div>
           <button className="btn btn-primary" onClick={() => setShowModal(true)}>+ Nueva entrada</button>
@@ -74,7 +74,7 @@ export default function DiarioPage() {
 
       {!loading && prints.length === 0 && (
         <div className="empty-state">
-          <div className="empty-state-icon">📋</div>
+          <div className="empty-state-icon"></div>
           <h3 style={{ marginBottom: '0.5rem' }}>Sin impresiones aún</h3>
           <p style={{ fontSize: '0.875rem', marginBottom: '1.5rem' }}>Registra tu primera impresión para empezar a llevar el historial.</p>
           <button className="btn btn-primary" onClick={() => setShowModal(true)}>+ Añadir impresión</button>
@@ -92,14 +92,14 @@ export default function DiarioPage() {
                 </div>
                 {p.description && <p className="text-muted text-sm mb-2">{p.description}</p>}
                 <div className="flex gap-4" style={{ fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
-                  {p.weight_g && <span>⚖️ {p.weight_g}g</span>}
-                  {p.time_hours && <span>⏱️ {p.time_hours}h</span>}
-                  {p.cost_total && <span style={{ color: 'var(--brand)', fontWeight: 600 }}>💶 {p.cost_total.toFixed(2)}€</span>}
+                  {p.weight_g && <span>Peso: {p.weight_g}g</span>}
+                  {p.time_hours && <span>Tiempo: {p.time_hours}h</span>}
+                  {p.cost_total && <span style={{ color: 'var(--brand)', fontWeight: 600 }}>Coste: {p.cost_total.toFixed(2)}€</span>}
                   <span>{new Date(p.created_at).toLocaleDateString('es-ES')}</span>
                 </div>
               </div>
               <div style={{ textAlign: 'right' }}>
-                <div style={{ fontSize: '1.25rem' }}>{'⭐'.repeat(p.rating || 0)}</div>
+                <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Puntuación: {p.rating || 0}/5</div>
               </div>
             </div>
           ))}
@@ -147,11 +147,11 @@ export default function DiarioPage() {
               <div className="form-group">
                 <label className="form-label">Valoración</label>
                 <select className="form-select" value={form.rating} onChange={e => setForm({...form, rating: e.target.value})}>
-                  <option value="5">⭐⭐⭐⭐⭐ Perfecta</option>
-                  <option value="4">⭐⭐⭐⭐ Muy bien</option>
-                  <option value="3">⭐⭐⭐ Bien</option>
-                  <option value="2">⭐⭐ Regular</option>
-                  <option value="1">⭐ Mal</option>
+                  <option value="5">5 - Excelente</option>
+                  <option value="4">4 - Muy bien</option>
+                  <option value="3">3 - Bien</option>
+                  <option value="2">2 - Regular</option>
+                  <option value="1">1 - Mal</option>
                 </select>
               </div>
               <div className="flex gap-3" style={{ marginTop: '0.5rem' }}>

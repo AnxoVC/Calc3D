@@ -104,13 +104,13 @@ export default function ImpresorasPage() {
   return (
     <div className="animate-fade-in">
       <div className="section-header mb-6">
-        <div><h1 className="page-title">🖨️ Impresoras</h1><p className="page-subtitle">Tus equipos de impresión</p></div>
+        <div><h1 className="page-title">Impresoras</h1><p className="page-subtitle">Tus equipos de impresión</p></div>
         <button className="btn btn-primary" onClick={() => setShowModal(true)}>+ Añadir impresora</button>
       </div>
 
       {!loading && myPrinters.length === 0 && (
         <div className="empty-state">
-          <div className="empty-state-icon">🖨️</div>
+          <div className="empty-state-icon"></div>
           <h3 style={{ marginBottom: '0.5rem' }}>Sin impresoras añadidas</h3>
           <p style={{ marginBottom: '1.5rem' }}>Añade tus impresoras desde nuestra base de datos para tenerlas disponibles al calcular.</p>
           <button className="btn btn-primary" onClick={() => setShowModal(true)}>+ Añadir tu primera impresora</button>
@@ -123,14 +123,14 @@ export default function ImpresorasPage() {
           return (
             <div key={up.id} className="card">
               <div className="flex items-center gap-3 mb-3">
-                <div style={{ width: 48, height: 48, background: 'rgba(249,115,22,0.12)', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem' }}>🖨️</div>
+                <div style={{ width: 48, height: 48, background: 'rgba(249,115,22,0.12)', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem' }}></div>
                 <div>
                   <div style={{ fontWeight: 700 }}>{up.nickname || (p ? `${p.brand} ${p.model}` : 'Impresora personalizada')}</div>
                   {p && <div className="text-muted text-sm">{p.brand} {p.model}</div>}
                 </div>
               </div>
               <div className="flex gap-3 text-sm text-muted" style={{ marginBottom: '1rem' }}>
-                <span>⚡ {up.custom_wattage_w || p?.wattage_w || '—'}W</span>
+                <span>Consumo: {up.custom_wattage_w || p?.wattage_w || '—'}W</span>
                 <span className={`badge ${p?.type === 'FDM' ? 'badge-orange' : p?.type === 'SLA' ? 'badge-blue' : 'badge-purple'}`}>{p?.type || 'FDM'}</span>
               </div>
               <button className="btn btn-danger btn-sm w-full" style={{ justifyContent: 'center' }} onClick={() => handleDelete(up.id)}>Eliminar</button>
@@ -185,7 +185,7 @@ export default function ImpresorasPage() {
 
                   {duplicates.length > 0 && (
                     <div className="alert alert-warn" style={{ flexDirection: 'column', gap: '0.5rem' }}>
-                      <strong>⚠️ Posibles coincidencias en la BD. ¿No es una de estas?</strong>
+                      <strong>Posibles coincidencias en la BD. ¿No es una de estas?</strong>
                       {duplicates.map(d => (
                         <button key={d.id} type="button" className="btn btn-secondary btn-sm" style={{ justifyContent: 'flex-start' }}
                           onClick={() => { setIsManual(false); setSelectedId(d.id); setDuplicates([]) }}>

@@ -125,14 +125,14 @@ export default function BobinasPage() {
   return (
     <div className="animate-fade-in">
       <div className="section-header mb-6">
-        <div><h1 className="page-title">🧵 Bobinas</h1><p className="page-subtitle">Inventario de filamentos</p></div>
+        <div><h1 className="page-title">Bobinas</h1><p className="page-subtitle">Inventario de filamentos</p></div>
         <button className="btn btn-primary" onClick={() => { resetForm(); setShowModal(true) }}>+ Añadir bobina</button>
       </div>
 
       {loading && <div style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '4rem' }}>Cargando...</div>}
       {!loading && spools.length === 0 && (
         <div className="empty-state">
-          <div className="empty-state-icon">🧵</div>
+          <div className="empty-state-icon"></div>
           <h3 style={{ marginBottom: '0.5rem' }}>Sin bobinas</h3>
           <p style={{ marginBottom: '1.5rem' }}>Añade tus bobinas de filamento para hacer seguimiento del material restante.</p>
           <button className="btn btn-primary" onClick={() => { resetForm(); setShowModal(true) }}>+ Añadir primera bobina</button>
@@ -160,7 +160,7 @@ export default function BobinasPage() {
               </div>
               <div className="flex gap-2">
                 <button className="btn btn-ghost btn-sm" onClick={() => openEdit(s)} style={{ flex: 1, justifyContent: 'center' }}>Editar</button>
-                <button className="btn btn-danger btn-sm btn-icon" onClick={() => handleDelete(s.id)}>🗑️</button>
+                <button className="btn btn-danger btn-sm btn-icon" onClick={() => handleDelete(s.id)}>Eliminar</button>
               </div>
             </div>
           )
@@ -223,7 +223,7 @@ export default function BobinasPage() {
 
                     {duplicates.length > 0 && (
                       <div className="alert alert-warn" style={{ gridColumn: '1/-1', flexDirection: 'column', gap: '0.4rem', fontSize: '0.8rem' }}>
-                        <strong>⚠️ Ya existe en el catálogo:</strong>
+                        <strong>Ya existe en el catálogo:</strong>
                         {duplicates.map(d => (
                           <button key={d.id} type="button" className="btn btn-secondary btn-sm" style={{ justifyContent: 'flex-start' }}
                             onClick={() => { setIsManual(false); setSelectedDbId(d.id); setDuplicates([]); setForm({...form, brand: d.brand, material: d.material, color_name: d.color_name, color_hex: d.color_hex}) }}>

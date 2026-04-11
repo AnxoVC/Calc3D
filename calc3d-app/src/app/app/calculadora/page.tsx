@@ -80,7 +80,7 @@ export default function CalculadoraPage() {
   return (
     <div className="animate-fade-in">
       <div className="page-header">
-        <h1 className="page-title">🧮 Calculadora</h1>
+        <h1 className="page-title">Calculadora</h1>
         <p className="page-subtitle">Calcula el coste exacto de tu impresión</p>
       </div>
 
@@ -89,7 +89,7 @@ export default function CalculadoraPage() {
         <form onSubmit={handleCalculate} className="flex flex-col gap-5">
           {/* Impresora */}
           <div className="card">
-            <h3 style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>🖨️ Impresora</h3>
+            <h3 style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>Impresora</h3>
             <div className="form-group" style={{ marginBottom: '0.75rem' }}>
               <label className="form-label">Seleccionar impresora</label>
               <select className="form-select" onChange={e => handlePrinterChange(e.target.value)} defaultValue="">
@@ -105,7 +105,7 @@ export default function CalculadoraPage() {
 
           {/* Filamento */}
           <div className="card">
-            <h3 style={{ marginBottom: '1rem' }}>🧵 Filamento</h3>
+            <h3 style={{ marginBottom: '1rem' }}>Filamento</h3>
             <div className="form-grid" style={{ marginBottom: '0.75rem' }}>
               <div className="form-group">
                 <label className="form-label">Material</label>
@@ -139,7 +139,7 @@ export default function CalculadoraPage() {
 
           {/* Tiempo y electricidad */}
           <div className="card">
-            <h3 style={{ marginBottom: '1rem' }}>⚡ Tiempo & Electricidad</h3>
+            <h3 style={{ marginBottom: '1rem' }}>Tiempo & Electricidad</h3>
             <div className="form-grid">
               <div className="form-group">
                 <label className="form-label">Horas</label>
@@ -173,7 +173,7 @@ export default function CalculadoraPage() {
         <div style={{ position: 'sticky', top: '1rem' }}>
           {!result && (
             <div className="card" style={{ textAlign: 'center', padding: '3rem 1.5rem' }}>
-              <div style={{ fontSize: '3rem', marginBottom: '1rem', opacity: 0.4 }}>🧮</div>
+              <div style={{ fontSize: '3rem', marginBottom: '1rem', opacity: 0.4 }}></div>
               <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>Rellena los datos y pulsa calcular para ver el desglose de costes</p>
             </div>
           )}
@@ -183,16 +183,16 @@ export default function CalculadoraPage() {
               <div className="result-total">{result.total.toFixed(3)}€</div>
               <div className="result-breakdown">
                 <div className="breakdown-item">
-                  <span className="breakdown-label">🧵 Material</span>
+                  <span className="breakdown-label">Material</span>
                   <span className="breakdown-value">{result.materialCost.toFixed(3)}€</span>
                 </div>
                 <div className="breakdown-item">
-                  <span className="breakdown-label">⚡ Electricidad</span>
+                  <span className="breakdown-label">Electricidad</span>
                   <span className="breakdown-value">{result.electricityCost.toFixed(3)}€</span>
                 </div>
                 {result.amortizationCost > 0 && (
                   <div className="breakdown-item">
-                    <span className="breakdown-label">🔧 Amortización</span>
+                    <span className="breakdown-label">Amortización</span>
                     <span className="breakdown-value">{result.amortizationCost.toFixed(3)}€</span>
                   </div>
                 )}
@@ -203,10 +203,10 @@ export default function CalculadoraPage() {
               </div>
               <div style={{ marginTop: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                 {saved ? (
-                  <div className="alert alert-success">✅ ¡Cálculo guardado en tu historial!</div>
+                  <div className="alert alert-success">¡Cálculo guardado en tu historial!</div>
                 ) : (
                   <button className="btn btn-secondary w-full" style={{ justifyContent: 'center' }} onClick={handleSave} disabled={saving}>
-                    {saving ? 'Guardando...' : '💾 Guardar cálculo'}
+                    {saving ? 'Guardando...' : 'Guardar cálculo'}
                   </button>
                 )}
                 <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textAlign: 'center' }}>Para presupuestos con mano de obra y margen, usa <a href="/app/presupuesto" style={{ color: 'var(--brand)' }}>Presupuesto Rápido →</a></p>

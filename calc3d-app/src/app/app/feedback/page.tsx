@@ -38,14 +38,14 @@ export default function FeedbackPage() {
     <div className="animate-fade-in p-6 max-w-2xl mx-auto">
       <div className="section-header mb-8">
         <div>
-          <h1 className="page-title">💡 Sugerencias y Fallos</h1>
+          <h1 className="page-title">Sugerencias y Fallos</h1>
           <p className="page-subtitle">Ayúdanos a mejorar Calc3D reportando errores o proponiendo ideas.</p>
         </div>
       </div>
 
       {success ? (
         <div className="card p-12 text-center animate-slide-up">
-          <div style={{ fontSize: '4rem', marginBottom: '1.5rem' }}>🚀</div>
+          <div style={{ fontSize: '4rem', marginBottom: '1.5rem' }}></div>
           <h2 style={{ marginBottom: '1rem' }}>¡Gracias por tu mensaje!</h2>
           <p className="text-muted mb-8">Hemos recibido tu sugerencia. El equipo de administración la revisará pronto.</p>
           <button className="btn btn-primary" onClick={() => setSuccess(false)}>Enviar otro mensaje</button>

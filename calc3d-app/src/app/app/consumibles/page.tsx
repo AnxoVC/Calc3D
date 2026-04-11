@@ -46,24 +46,24 @@ export default function ConsumiblesPage() {
 
   function resetForm() { setForm({ name: '', category: 'other', price: '', stock_qty: '', unit: 'ud', notes: '' }); setEditId(null) }
 
-  const cats: Record<string, { label: string, icon: string, color: string }> = {
-    glue: { label: 'Adhesivos/Lacas', icon: '🧴', color: 'badge-blue' },
-    resin: { label: 'Resinas', icon: '🧪', color: 'badge-purple' },
-    parts: { label: 'Repuestos', icon: '⚙️', color: 'badge-orange' },
-    tools: { label: 'Herramientas', icon: '🔧', color: 'badge-green' },
-    other: { label: 'Otros', icon: '📦', color: '' }
+  const cats: Record<string, { label: string, color: string }> = {
+    glue: { label: 'Adhesivos/Lacas', color: 'badge-blue' },
+    resin: { label: 'Resinas', color: 'badge-purple' },
+    parts: { label: 'Repuestos', color: 'badge-orange' },
+    tools: { label: 'Herramientas', color: 'badge-green' },
+    other: { label: 'Otros', color: '' }
   }
 
   return (
     <div className="animate-fade-in">
       <div className="section-header mb-6">
-        <div><h1 className="page-title">📦 Consumibles</h1><p className="page-subtitle">Gestión de piezas y materiales</p></div>
+        <div><h1 className="page-title">Consumibles</h1><p className="page-subtitle">Gestión de piezas y materiales</p></div>
         <button className="btn btn-primary" onClick={() => { resetForm(); setShowModal(true) }}>+ Añadir consumible</button>
       </div>
 
       {!loading && items.length === 0 && (
         <div className="empty-state">
-          <div className="empty-state-icon">📦</div>
+          <div className="empty-state-icon"></div>
           <h3 style={{ marginBottom: '0.5rem' }}>Inventario vacío</h3>
           <p style={{ marginBottom: '1.5rem' }}>Añade tus consumibles (boquillas, lacas, resinas...) para llevar el control del stock.</p>
           <button className="btn btn-primary" onClick={() => setShowModal(true)}>+ Añadir primer consumible</button>
@@ -77,7 +77,7 @@ export default function ConsumiblesPage() {
             <div key={item.id} className="card">
               <div className="flex items-start justify-between mb-2">
                 <h4 style={{ fontSize: '1rem', fontWeight: 600 }}>{item.name}</h4>
-                <span className={`badge ${c.color}`}>{c.icon} {c.label}</span>
+                <span className={`badge ${c.color}`}>{c.label}</span>
               </div>
               <p className="text-muted text-sm mb-4" style={{ minHeight: '20px' }}>{item.notes}</p>
               <div className="flex justify-between items-center bg-input" style={{ background: 'var(--bg-input)', padding: '0.75rem', borderRadius: 'var(--radius-sm)', marginBottom: '1rem' }}>
@@ -86,7 +86,7 @@ export default function ConsumiblesPage() {
               </div>
               <div className="flex gap-2">
                 <button className="btn btn-ghost btn-sm" onClick={() => { setForm({ name: item.name, category: item.category, price: String(item.price || ''), stock_qty: String(item.stock_qty || ''), unit: item.unit, notes: item.notes || '' }); setEditId(item.id); setShowModal(true) }} style={{ flex: 1, justifyContent: 'center' }}>Editar</button>
-                <button className="btn btn-danger btn-sm btn-icon" onClick={() => handleDelete(item.id)}>🗑️</button>
+                <button className="btn btn-danger btn-sm btn-icon" onClick={() => handleDelete(item.id)}>Eliminar</button>
               </div>
             </div>
           )
@@ -109,7 +109,7 @@ export default function ConsumiblesPage() {
                 <div className="form-group">
                   <label className="form-label">Categoría</label>
                   <select className="form-select" value={form.category} onChange={e => setForm({...form, category: e.target.value})}>
-                    {Object.entries(cats).map(([k, v]) => <option key={k} value={k}>{v.icon} {v.label}</option>)}
+                    {Object.entries(cats).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
                   </select>
                 </div>
                 <div className="form-group">

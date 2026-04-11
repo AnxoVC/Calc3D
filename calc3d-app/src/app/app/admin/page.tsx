@@ -115,7 +115,7 @@ export default function AdminPage() {
     <div className="animate-fade-in p-6">
       <div className="section-header mb-8">
         <div>
-          <h1 className="page-title">🛡️ Panel de Administración</h1>
+          <h1 className="page-title">Panel de Administración</h1>
           <p className="page-subtitle">Gestión global de la base de datos y comunidad</p>
         </div>
       </div>
@@ -144,9 +144,9 @@ export default function AdminPage() {
       <div className="space-y-12">
         {/* FEEDBACK SECTION */}
         <section>
-          <h2 className="text-xl font-bold mb-4 flex items-center gap-2">💡 Sugerencias y Reportes ({feedbackItems.length})</h2>
+          <h2 className="text-xl font-bold mb-4 flex items-center gap-2">Sugerencias y Reportes ({feedbackItems.length})</h2>
           {feedbackItems.length === 0 ? (
-            <div className="card p-10 text-center text-muted">No hay sugerencias pendientes. ¡Todo al día! 🌟</div>
+            <div className="card p-10 text-center text-muted">No hay sugerencias pendientes. ¡Todo al día!</div>
           ) : (
             <div className="grid grid-cols-1 gap-4">
               {feedbackItems.map(item => (
@@ -154,7 +154,7 @@ export default function AdminPage() {
                   <div className="flex justify-between items-start mb-3">
                     <div>
                       <span className={`badge ${item.type === 'bug' ? 'badge-danger' : 'badge-primary'} mb-2`}>
-                        {item.type === 'bug' ? '🐛 Bug' : '💡 Sugerencia'}
+                        {item.type === 'bug' ? 'Bug' : 'Sugerencia'}
                       </span>
                       <h3 className="text-lg font-bold">{item.subject}</h3>
                     </div>
@@ -166,8 +166,8 @@ export default function AdminPage() {
                     "{item.message}"
                   </p>
                   <div className="flex gap-2 justify-end">
-                    <button className="btn btn-primary btn-sm" onClick={() => handleFeedbackStatus(item.id, 'resolved')}>✅ Marcar como Resuelto</button>
-                    <button className="btn btn-ghost btn-sm" onClick={() => handleDelete('feedback', item.id)}>🗑️</button>
+                    <button className="btn btn-primary btn-sm" onClick={() => handleFeedbackStatus(item.id, 'resolved')}>Marcar como Resuelto</button>
+                    <button className="btn btn-ghost btn-sm" onClick={() => handleDelete('feedback', item.id)}>Eliminar</button>
                   </div>
                 </div>
               ))}
@@ -177,9 +177,9 @@ export default function AdminPage() {
 
         {/* PRINTERS SECTION */}
         <section>
-          <h2 className="text-xl font-bold mb-4 flex items-center gap-2">🖨️ Impresoras Pendientes ({pendingPrinters.length})</h2>
+          <h2 className="text-xl font-bold mb-4 flex items-center gap-2">Impresoras Pendientes ({pendingPrinters.length})</h2>
           {pendingPrinters.length === 0 ? (
-            <div className="card p-10 text-center text-muted">No hay impresoras pendientes. ✨</div>
+            <div className="card p-10 text-center text-muted">No hay impresoras pendientes.</div>
           ) : (
             <div className="card p-0 overflow-hidden">
               <table className="w-full text-left">
@@ -200,7 +200,7 @@ export default function AdminPage() {
                       <td className="p-4 text-right">
                         <div className="flex gap-2 justify-end">
                           <button className="btn btn-primary btn-sm" onClick={() => handleVerify('printer', p.id)}>Verificar</button>
-                          <button className="btn btn-ghost btn-sm" onClick={() => handleDelete('printer', p.id)}>🗑️</button>
+                          <button className="btn btn-ghost btn-sm" onClick={() => handleDelete('printer', p.id)}>Eliminar</button>
                         </div>
                       </td>
                     </tr>
@@ -213,9 +213,9 @@ export default function AdminPage() {
 
         {/* FILAMENTS SECTION */}
         <section>
-          <h2 className="text-xl font-bold mb-4 flex items-center gap-2">🧵 Filamentos Pendientes ({pendingFilaments.length})</h2>
+          <h2 className="text-xl font-bold mb-4 flex items-center gap-2">Filamentos Pendientes ({pendingFilaments.length})</h2>
           {pendingFilaments.length === 0 ? (
-            <div className="card p-10 text-center text-muted">No hay filamentos pendientes. ✨</div>
+            <div className="card p-10 text-center text-muted">No hay filamentos pendientes.</div>
           ) : (
             <div className="card p-0 overflow-hidden">
               <table className="w-full text-left">
@@ -237,7 +237,7 @@ export default function AdminPage() {
                       <td className="p-4 text-right">
                         <div className="flex gap-2 justify-end">
                           <button className="btn btn-primary btn-sm" onClick={() => handleVerify('filament', f.id)}>Verificar</button>
-                          <button className="btn btn-ghost btn-sm" onClick={() => handleDelete('filament', f.id)}>🗑️</button>
+                          <button className="btn btn-ghost btn-sm" onClick={() => handleDelete('filament', f.id)}>Eliminar</button>
                         </div>
                       </td>
                     </tr>
