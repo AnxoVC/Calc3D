@@ -112,7 +112,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               <polyline points="22 8.5 12 15.5 2 8.5"/>
             </svg>
           </div>
-          <span style={{ fontWeight: 800, fontSize: '1rem' }}>Calc<span className="text-gradient">3D</span></span>
+          <span style={{ fontWeight: 800, fontSize: '1rem' }}>MyCalc<span className="text-gradient">3D</span></span>
         </div>
       </header>
 
@@ -127,7 +127,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               <polyline points="22 8.5 12 15.5 2 8.5"/>
             </svg>
           </div>
-          <span style={{ fontWeight: 800, fontSize: '1.125rem' }}>Calc<span className="text-gradient">3D</span></span>
+          <span style={{ fontWeight: 800, fontSize: '1.125rem' }}>MyCalc<span className="text-gradient">3D</span></span>
         </div>
         {renderNavItems()}
       </aside>
@@ -142,7 +142,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               <polyline points="22 8.5 12 15.5 2 8.5"/>
             </svg>
           </div>
-          <span style={{ fontWeight: 800, fontSize: '1.125rem' }}>Calc<span className="text-gradient">3D</span></span>
+          <span style={{ fontWeight: 800, fontSize: '1.125rem' }}>MyCalc<span className="text-gradient">3D</span></span>
         </div>
         {renderNavItems()}
       </aside>
