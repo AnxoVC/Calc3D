@@ -84,7 +84,7 @@ export default function CalculadoraPage() {
         <p className="page-subtitle">Calcula el coste exacto de tu impresión</p>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) minmax(0,380px)', gap: '1.5rem', alignItems: 'start' }}>
+      <div className="app-grid">
         {/* FORM */}
         <form onSubmit={handleCalculate} className="flex flex-col gap-5">
           {/* Impresora */}

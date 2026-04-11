@@ -258,7 +258,7 @@ export default function PresupuestoPage() {
         <h1 className="page-title">Presupuesto Rápido</h1>
         <p className="page-subtitle">Calcula el precio de venta con mano de obra y margen</p>
       </div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) minmax(0,380px)', gap: '1.5rem', alignItems: 'start' }}>
+      <div className="app-grid">
         <form onSubmit={handleCalc} className="flex flex-col gap-5">
           <div className="card">
             <h3 style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>Cliente / Pedido</h3>
@@ -356,7 +356,7 @@ export default function PresupuestoPage() {
             <div className="form-grid">
               <div className="form-group" style={{ gridColumn: '1/-1' }}>
                 <label className="form-label">Tiempo del operador (preparación + postprocesado)</label>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div className="form-grid">
                   <div className="input-wrapper">
                     <input type="number" className="form-input" value={form.laborH} onChange={e => setForm({...form, laborH: e.target.value})} />
                     <span className="text-muted text-sm ml-2 absolute right-3 top-3">Horas</span>
