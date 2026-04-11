@@ -30,6 +30,7 @@ interface Feedback {
   subject: string
   message: string
   status: string
+  is_public: boolean
   created_at: string
 }
 
@@ -41,6 +42,9 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(true)
   const [authorized, setAuthorized] = useState<boolean | null>(null)
   const [expanded, setExpanded] = useState<string | null>(null)
+  const [annTitle, setAnnTitle] = useState('')
+  const [annContent, setAnnContent] = useState('')
+  const [annLoading, setAnnLoading] = useState(false)
   const router = useRouter()
 
   async function checkAuth() {
@@ -109,6 +113,22 @@ export default function AdminPage() {
     loadData()
   }
 
+  async function togglePublic(id: string, current: boolean) {
+    const supabase = createClient()
+    await supabase.from('feedback').update({ is_public: !current }).eq('id', id)
+    loadData()
+  }
+
+  async function postAnnouncement(e: React.FormEvent) {
+    e.preventDefault()
+    if (!annTitle || !annContent) return
+    setAnnLoading(true)
+    const supabase = createClient()
+    await supabase.from('announcements').insert({ title: annTitle, content: annContent })
+    setAnnTitle(''); setAnnContent(''); setAnnLoading(false)
+    alert('Anuncio publicado con éxito')
+  }
+
   if (authorized === false) return null
   if (loading) return <div className="p-8 text-center">Cargando panel de control...</div>
 
@@ -124,30 +144,40 @@ export default function AdminPage() {
       <div className="flex flex-col gap-2 mb-10">
         <button 
           onClick={() => setExpanded(expanded === 'users' ? null : 'users')}
-          className={`card p-4 flex justify-between items-center hover:border-brand-light transition-all ${expanded === 'users' ? 'border-brand' : ''}`}
+          className={`card p-6 flex justify-between items-center hover:border-brand-light transition-all ${expanded === 'users' ? 'border-brand' : ''}`}
           style={{ cursor: 'pointer', textAlign: 'left', width: '100%', background: 'var(--bg-card)' }}
         >
-          <span className="text-sm font-semibold text-muted uppercase tracking-wider">Usuarios Totales</span>
-          <div className="flex items-center gap-4">
-            <span className="text-2xl font-bold">{stats.users}</span>
-            <span className="text-xs border border-white/10 px-2 py-0.5 rounded uppercase">{expanded === 'users' ? 'Cerrar' : 'Ver'}</span>
+          <span className="text-base font-semibold text-muted uppercase tracking-wider">Usuarios Totales</span>
+          <div className="flex items-center gap-6">
+            <span className="text-3xl font-bold">{stats.users}</span>
+            <span className="text-sm border border-white/10 px-3 py-1 rounded uppercase">{expanded === 'users' ? 'Cerrar' : 'Ver'}</span>
           </div>
         </button>
         {expanded === 'users' && (
           <div className="card p-6 border-t-0 rounded-t-none animate-slide-down mb-2">
-            <p className="text-sm text-muted">Próximamente: Lista detallada de usuarios y actividad reciente.</p>
+            <h4 className="text-sm font-bold uppercase mb-4">Usuarios recientes</h4>
+            <p className="text-sm text-muted mb-6">Próximamente: Lista detallada de usuarios y actividad reciente.</p>
+            
+            <div className="border-t border-white/5 pt-6">
+              <h4 className="text-sm font-bold uppercase mb-4">Nuevo Anuncio Oficial</h4>
+              <form onSubmit={postAnnouncement} className="flex flex-col gap-3">
+                <input className="form-input" placeholder="Título del anuncio" value={annTitle} onChange={e => setAnnTitle(e.target.value)} required />
+                <textarea className="form-input" placeholder="Contenido del mensaje..." rows={3} value={annContent} onChange={e => setAnnContent(e.target.value)} required />
+                <button type="submit" className="btn btn-primary btn-sm" disabled={annLoading}>{annLoading ? 'Publicando...' : 'Publicar Anuncio'}</button>
+              </form>
+            </div>
           </div>
         )}
 
         <button 
           onClick={() => setExpanded(expanded === 'feedback' ? null : 'feedback')}
-          className={`card p-4 flex justify-between items-center hover:border-brand-light transition-all ${expanded === 'feedback' ? 'border-brand' : ''}`}
+          className={`card p-6 flex justify-between items-center hover:border-brand-light transition-all ${expanded === 'feedback' ? 'border-brand' : ''}`}
           style={{ cursor: 'pointer', textAlign: 'left', width: '100%', background: 'var(--bg-card)' }}
         >
-          <span className="text-sm font-semibold text-muted uppercase tracking-wider">Sugerencias y Reportes</span>
-          <div className="flex items-center gap-4">
-            <span className={`text-2xl font-bold ${stats.pendingFeedback > 0 ? 'text-brand' : ''}`}>{stats.pendingFeedback}</span>
-            <span className="text-xs border border-white/10 px-2 py-0.5 rounded uppercase">{expanded === 'feedback' ? 'Cerrar' : 'Ver'}</span>
+          <span className="text-base font-semibold text-muted uppercase tracking-wider">Sugerencias y Reportes</span>
+          <div className="flex items-center gap-6">
+            <span className={`text-3xl font-bold ${stats.pendingFeedback > 0 ? 'text-brand' : ''}`}>{stats.pendingFeedback}</span>
+            <span className="text-sm border border-white/10 px-3 py-1 rounded uppercase">{expanded === 'feedback' ? 'Cerrar' : 'Ver'}</span>
           </div>
         </button>
         {expanded === 'feedback' && (
@@ -165,6 +195,9 @@ export default function AdminPage() {
                     <h4 className="font-bold mb-1">{item.subject}</h4>
                     <p className="text-sm text-muted mb-4 italic">"{item.message}"</p>
                     <div className="flex gap-2 justify-end">
+                      <button className={`btn btn-sm ${item.is_public ? 'btn-primary' : 'btn-ghost'}`} onClick={() => togglePublic(item.id, !!item.is_public)}>
+                        {item.is_public ? 'Público ✓' : 'Hacer Público'}
+                      </button>
                       <button className="btn btn-primary btn-sm" onClick={() => handleFeedbackStatus(item.id, 'resolved')}>Resolver</button>
                       <button className="btn btn-ghost btn-sm" onClick={() => handleDelete('feedback', item.id)}>Borrar</button>
                     </div>
@@ -177,13 +210,13 @@ export default function AdminPage() {
 
         <button 
           onClick={() => setExpanded(expanded === 'printers' ? null : 'printers')}
-          className={`card p-4 flex justify-between items-center hover:border-brand-light transition-all ${expanded === 'printers' ? 'border-brand' : ''}`}
+          className={`card p-6 flex justify-between items-center hover:border-brand-light transition-all ${expanded === 'printers' ? 'border-brand' : ''}`}
           style={{ cursor: 'pointer', textAlign: 'left', width: '100%', background: 'var(--bg-card)' }}
         >
-          <span className="text-sm font-semibold text-muted uppercase tracking-wider">Impresoras Pendientes</span>
-          <div className="flex items-center gap-4">
-            <span className={`text-2xl font-bold ${stats.pendingP > 0 ? 'text-orange-500' : ''}`}>{stats.pendingP}</span>
-            <span className="text-xs border border-white/10 px-2 py-0.5 rounded uppercase">{expanded === 'printers' ? 'Cerrar' : 'Ver'}</span>
+          <span className="text-base font-semibold text-muted uppercase tracking-wider">Impresoras Pendientes</span>
+          <div className="flex items-center gap-6">
+            <span className={`text-3xl font-bold ${stats.pendingP > 0 ? 'text-orange-500' : ''}`}>{stats.pendingP}</span>
+            <span className="text-sm border border-white/10 px-3 py-1 rounded uppercase">{expanded === 'printers' ? 'Cerrar' : 'Ver'}</span>
           </div>
         </button>
         {expanded === 'printers' && (
@@ -217,13 +250,13 @@ export default function AdminPage() {
 
         <button 
           onClick={() => setExpanded(expanded === 'filaments' ? null : 'filaments')}
-          className={`card p-4 flex justify-between items-center hover:border-brand-light transition-all ${expanded === 'filaments' ? 'border-brand' : ''}`}
+          className={`card p-6 flex justify-between items-center hover:border-brand-light transition-all ${expanded === 'filaments' ? 'border-brand' : ''}`}
           style={{ cursor: 'pointer', textAlign: 'left', width: '100%', background: 'var(--bg-card)' }}
         >
-          <span className="text-sm font-semibold text-muted uppercase tracking-wider">Filamentos Pendientes</span>
-          <div className="flex items-center gap-4">
-            <span className={`text-2xl font-bold ${stats.pendingF > 0 ? 'text-orange-500' : ''}`}>{stats.pendingF}</span>
-            <span className="text-xs border border-white/10 px-2 py-0.5 rounded uppercase">{expanded === 'filaments' ? 'Cerrar' : 'Ver'}</span>
+          <span className="text-base font-semibold text-muted uppercase tracking-wider">Filamentos Pendientes</span>
+          <div className="flex items-center gap-6">
+            <span className={`text-3xl font-bold ${stats.pendingF > 0 ? 'text-orange-500' : ''}`}>{stats.pendingF}</span>
+            <span className="text-sm border border-white/10 px-3 py-1 rounded uppercase">{expanded === 'filaments' ? 'Cerrar' : 'Ver'}</span>
           </div>
         </button>
         {expanded === 'filaments' && (

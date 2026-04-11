@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import ThemeToggle from '@/components/ThemeToggle'
+import ForumFeed from '@/components/ForumFeed'
 
 export default function LandingPage() {
   return (
@@ -114,6 +115,18 @@ export default function LandingPage() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* COMMUNITY FORUM */}
+      <section className="forum-section" style={{ padding: '6rem 0', background: 'var(--bg-surface)' }}>
+        <div className="container">
+          <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
+            <span className="badge badge-purple" style={{ marginBottom: '1rem' }}>Comunidad</span>
+            <h2>Muro de Sugerencias<br /><span className="text-gradient">y Actualizaciones</span></h2>
+            <p className="text-muted mt-4">Lo que la comunidad propone y lo que estamos construyendo.</p>
+          </div>
+          <ForumFeed />
         </div>
       </section>
 
