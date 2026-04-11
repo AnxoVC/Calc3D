@@ -2,6 +2,7 @@
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import ThemeToggle from '@/components/ThemeToggle'
 
 const NAV_ITEMS = [
   { href: '/app', label: 'Diario', icon: '📋' },
@@ -59,6 +60,10 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         <div className="sidebar-divider" />
 
         <div className="sidebar-bottom flex flex-col gap-1">
+          <div className="sidebar-nav-item" style={{ width: '100%', justifyContent: 'space-between', cursor: 'default' }}>
+            <span className="flex items-center gap-2">🎨 Tema</span>
+            <ThemeToggle />
+          </div>
           <button onClick={handleLogout} className="sidebar-nav-item" style={{ width: '100%', textAlign: 'left' }}>
             <span>🚪</span> Cerrar sesión
           </button>
