@@ -208,19 +208,6 @@ export default function AdminPage() {
                         }).join(' ')} L 240 100 Z`}
                         fill="url(#gradHour)"
                       />
-                      {/* Line */}
-                      <path 
-                        d={`M 0 ${100 - (activityData.hours[0] / Math.max(...activityData.hours, 1)) * 80} ${activityData.hours.map((val, i) => {
-                          const max = Math.max(...activityData.hours, 1)
-                          const h = 100 - (val / max) * 80
-                          return `L ${i * (240/23)} ${h}`
-                        }).join(' ')}`}
-                        fill="none"
-                        stroke="var(--brand)"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
                     </svg>
                     {/* Tooltip Overlay */}
                     <div className="absolute inset-0 flex">
@@ -253,18 +240,6 @@ export default function AdminPage() {
                           return `L ${i * (70/6)} ${h}`
                         }).join(' ')} L 70 100 Z`}
                         fill="url(#gradWeek)"
-                      />
-                      <path 
-                        d={`M 0 ${100 - (activityData.days[0] / Math.max(...activityData.days, 1)) * 80} ${activityData.days.map((val, i) => {
-                          const max = Math.max(...activityData.days, 1)
-                          const h = 100 - (val / max) * 80
-                          return `L ${i * (70/6)} ${h}`
-                        }).join(' ')}`}
-                        fill="none"
-                        stroke="var(--brand)"
-                        strokeWidth="3"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
                       />
                     </svg>
                     {/* Tooltip Overlay */}
