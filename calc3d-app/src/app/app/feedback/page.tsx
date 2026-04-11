@@ -7,6 +7,7 @@ export default function FeedbackPage() {
   const [success, setSuccess] = useState(false)
   const [form, setForm] = useState({ type: 'suggestion', subject: '', message: '' })
   const [honeyPot, setHoneyPot] = useState('') // Bot trap
+  const [error, setError] = useState('')
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -19,17 +20,23 @@ export default function FeedbackPage() {
     }
 
     setLoading(true)
+    setError('')
     const supabase = createClient()
     const { data: { user } } = await supabase.auth.getUser()
-    
-    await supabase.from('feedback').insert({
+
+    const { error: insertError } = await supabase.from('feedback').insert({
       user_id: user?.id || null,
       type: form.type,
       subject: form.subject,
-      message: form.message
+      message: form.message,
+      status: 'pending'
     })
 
     setLoading(false)
+    if (insertError) {
+      setError('Error al enviar la sugerencia: ' + insertError.message)
+      return
+    }
     setSuccess(true)
     setForm({ type: 'suggestion', subject: '', message: '' })
   }
@@ -52,6 +59,7 @@ export default function FeedbackPage() {
         </div>
       ) : (
         <div className="card">
+          {error && <div className="alert alert-danger mb-6">{error}</div>}
           <form onSubmit={handleSubmit} className="flex flex-col gap-6">
             <div className="form-group">
               <label className="form-label">¿Qué quieres enviarnos?</label>

@@ -28,6 +28,7 @@ export default function BobinasPage() {
     remaining_weight_g: '1000', purchase_price: '' 
   })
   const [saving, setSaving] = useState(false)
+  const [error, setError] = useState('')
 
   async function load() {
     const supabase = createClient()
@@ -57,6 +58,7 @@ export default function BobinasPage() {
   async function handleSave(e: React.FormEvent) {
     e.preventDefault()
     setSaving(true)
+    setError('')
     const supabase = createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
@@ -83,16 +85,28 @@ export default function BobinasPage() {
     }
 
     if (editId) {
-      await supabase.from('spools').update(payload).eq('id', editId)
+      const { error: updateErr } = await supabase.from('spools').update(payload).eq('id', editId)
+      if (updateErr) {
+        setError('Error al guardar cambios: ' + updateErr.message)
+        setSaving(false); return
+      }
     } else {
-      await supabase.from('spools').insert(payload)
+      const { error: insertErr } = await supabase.from('spools').insert(payload)
+      if (insertErr) {
+        setError('Error al añadir bobina: ' + insertErr.message)
+        setSaving(false); return
+      }
       
       // Smart contribution to public DB
       if (isManual && contributeToDb) {
-        await supabase.from('filaments').insert({
+        const { error: contributionErr } = await supabase.from('filaments').insert({
           brand, material, color_name, color_hex,
           verified: false
         })
+        if (contributionErr) {
+          setError('Error al contribuir al catálogo: ' + contributionErr.message)
+          setSaving(false); return
+        }
       }
     }
     
@@ -174,6 +188,8 @@ export default function BobinasPage() {
               <h3>{editId ? 'Editar bobina' : 'Nueva bobina'}</h3>
               <button className="btn btn-ghost btn-icon" onClick={() => { setShowModal(false); resetForm() }}>✕</button>
             </div>
+            
+            {error && <div className="alert alert-danger mb-4">{error}</div>}
             
             <form onSubmit={handleSave} className="flex flex-col gap-4">
               {!editId && (

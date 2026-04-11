@@ -17,6 +17,7 @@ export default function ImpresorasPage() {
   const [isManual, setIsManual] = useState(false)
   const [manualName, setManualName] = useState('')
   const [manualWattage, setManualWattage] = useState('300')
+  const [error, setError] = useState('')
 
   async function load() {
     const supabase = createClient()
@@ -58,27 +59,38 @@ export default function ImpresorasPage() {
     const supabase = createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
-
+    setError('')
     if (isManual) {
       let newPublicId: string | null = null
       if (contributeToDb) {
         const parts = manualName.trim().split(' ')
         const brand = parts[0]
         const model = parts.slice(1).join(' ') || manualName
-        const { data: inserted } = await supabase.from('printers').insert({
+        const { data: inserted, error: insertErr } = await supabase.from('printers').insert({
           brand, model,
           wattage_w: Number(manualWattage),
           type: manualType,
           verified: false,
         }).select().single()
+        
+        if (insertErr) {
+          setError('Error al contribuir a la base de datos: ' + insertErr.message)
+          setSaving(false)
+          return
+        }
         newPublicId = inserted?.id ?? null
       }
-      await supabase.from('user_printers').insert({
+      const { error: userPrinterErr } = await supabase.from('user_printers').insert({
         user_id: user.id,
         printer_id: newPublicId,
         nickname: manualName,
         custom_wattage_w: Number(manualWattage),
       })
+      if (userPrinterErr) {
+          setError('Error al guardar en tus impresoras: ' + userPrinterErr.message)
+          setSaving(false)
+          return
+      }
     } else {
       const printer = dbPrinters.find(p => p.id === selectedId)
       await supabase.from('user_printers').insert({
@@ -147,6 +159,7 @@ export default function ImpresorasPage() {
               <button className="btn btn-ghost btn-icon" onClick={() => setShowModal(false)}>✕</button>
             </div>
             <form onSubmit={handleAdd} className="flex flex-col gap-4">
+              {error && <div className="alert alert-danger">{error}</div>}
               <div className="flex gap-2 mb-2 p-1 bg-input" style={{ background: 'rgba(255,255,255,0.05)', borderRadius: '8px' }}>
                 <button type="button" className={`btn btn-sm ${!isManual ? 'btn-primary' : 'btn-ghost'}`} style={{ flex: 1, justifyContent: 'center' }} onClick={() => setIsManual(false)}>Base de Datos</button>
                 <button type="button" className={`btn btn-sm ${isManual ? 'btn-primary' : 'btn-ghost'}`} style={{ flex: 1, justifyContent: 'center' }} onClick={() => setIsManual(true)}>Manual</button>

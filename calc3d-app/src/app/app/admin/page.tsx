@@ -40,6 +40,7 @@ export default function AdminPage() {
   const [feedbackItems, setFeedbackItems] = useState<Feedback[]>([])
   const [loading, setLoading] = useState(true)
   const [authorized, setAuthorized] = useState<boolean | null>(null)
+  const [expanded, setExpanded] = useState<string | null>(null)
   const router = useRouter()
 
   async function checkAuth() {
@@ -120,134 +121,141 @@ export default function AdminPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-10">
-        <div className="card">
-          <div className="text-muted text-xs uppercase tracking-wider mb-1">Usuarios Totales</div>
-          <div className="text-3xl font-bold">{stats.users}</div>
-        </div>
-        <div className="card">
-          <div className="text-muted text-xs uppercase tracking-wider mb-1">Impresoras</div>
-          <div className="text-3xl font-bold">{stats.printers}</div>
-        </div>
-        <div className="card">
-          <div className="text-muted text-xs uppercase tracking-wider mb-1">Filamentos</div>
-          <div className="text-3xl font-bold">{stats.filaments}</div>
-        </div>
-        <div className="card" style={{ border: (stats.pendingP + stats.pendingF + stats.pendingFeedback) > 0 ? '1px solid var(--accent-orange)' : '' }}>
-          <div className="text-muted text-xs uppercase tracking-wider mb-1">Pendientes de Revisión</div>
-          <div className={`text-3xl font-bold ${ (stats.pendingP + stats.pendingF + stats.pendingFeedback) > 0 ? 'text-orange-500' : ''}`}>
-            {stats.pendingP + stats.pendingF + stats.pendingFeedback}
+      <div className="flex flex-col gap-2 mb-10">
+        <button 
+          onClick={() => setExpanded(expanded === 'users' ? null : 'users')}
+          className={`card p-4 flex justify-between items-center hover:border-brand-light transition-all ${expanded === 'users' ? 'border-brand' : ''}`}
+          style={{ cursor: 'pointer', textAlign: 'left', width: '100%', background: 'var(--bg-card)' }}
+        >
+          <span className="text-sm font-semibold text-muted uppercase tracking-wider">Usuarios Totales</span>
+          <div className="flex items-center gap-4">
+            <span className="text-2xl font-bold">{stats.users}</span>
+            <span className="text-xs border border-white/10 px-2 py-0.5 rounded uppercase">{expanded === 'users' ? 'Cerrar' : 'Ver'}</span>
           </div>
-        </div>
-      </div>
+        </button>
+        {expanded === 'users' && (
+          <div className="card p-6 border-t-0 rounded-t-none animate-slide-down mb-2">
+            <p className="text-sm text-muted">Próximamente: Lista detallada de usuarios y actividad reciente.</p>
+          </div>
+        )}
 
-      <div className="space-y-12">
-        {/* FEEDBACK SECTION */}
-        <section>
-          <h2 className="text-xl font-bold mb-4 flex items-center gap-2">Sugerencias y Reportes ({feedbackItems.length})</h2>
-          {feedbackItems.length === 0 ? (
-            <div className="card p-10 text-center text-muted">No hay sugerencias pendientes. ¡Todo al día!</div>
-          ) : (
-            <div className="grid grid-cols-1 gap-4">
-              {feedbackItems.map(item => (
-                <div key={item.id} className="card p-5">
-                  <div className="flex justify-between items-start mb-3">
-                    <div>
-                      <span className={`badge ${item.type === 'bug' ? 'badge-danger' : 'badge-primary'} mb-2`}>
-                        {item.type === 'bug' ? 'Bug' : 'Sugerencia'}
-                      </span>
-                      <h3 className="text-lg font-bold">{item.subject}</h3>
+        <button 
+          onClick={() => setExpanded(expanded === 'feedback' ? null : 'feedback')}
+          className={`card p-4 flex justify-between items-center hover:border-brand-light transition-all ${expanded === 'feedback' ? 'border-brand' : ''}`}
+          style={{ cursor: 'pointer', textAlign: 'left', width: '100%', background: 'var(--bg-card)' }}
+        >
+          <span className="text-sm font-semibold text-muted uppercase tracking-wider">Sugerencias y Reportes</span>
+          <div className="flex items-center gap-4">
+            <span className={`text-2xl font-bold ${stats.pendingFeedback > 0 ? 'text-brand' : ''}`}>{stats.pendingFeedback}</span>
+            <span className="text-xs border border-white/10 px-2 py-0.5 rounded uppercase">{expanded === 'feedback' ? 'Cerrar' : 'Ver'}</span>
+          </div>
+        </button>
+        {expanded === 'feedback' && (
+          <div className="card p-6 border-t-0 rounded-t-none animate-slide-down mb-2">
+            {feedbackItems.length === 0 ? (
+              <div className="text-center text-muted py-4">No hay sugerencias vivas.</div>
+            ) : (
+              <div className="grid grid-cols-1 gap-4">
+                {feedbackItems.map(item => (
+                  <div key={item.id} className="p-4 bg-white/5 rounded-lg border border-white/5">
+                    <div className="flex justify-between items-start mb-2">
+                      <span className={`badge ${item.type === 'bug' ? 'badge-danger' : 'badge-primary'}`}>{item.type}</span>
+                      <span className="text-xs text-muted">{new Date(item.created_at).toLocaleDateString()}</span>
                     </div>
-                    <div className="text-xs text-muted">
-                      {new Date(item.created_at).toLocaleDateString()}
+                    <h4 className="font-bold mb-1">{item.subject}</h4>
+                    <p className="text-sm text-muted mb-4 italic">"{item.message}"</p>
+                    <div className="flex gap-2 justify-end">
+                      <button className="btn btn-primary btn-sm" onClick={() => handleFeedbackStatus(item.id, 'resolved')}>Resolver</button>
+                      <button className="btn btn-ghost btn-sm" onClick={() => handleDelete('feedback', item.id)}>Borrar</button>
                     </div>
                   </div>
-                  <p className="text-sm border-l-2 border-white/10 pl-4 mb-4 py-1 italic text-muted">
-                    "{item.message}"
-                  </p>
-                  <div className="flex gap-2 justify-end">
-                    <button className="btn btn-primary btn-sm" onClick={() => handleFeedbackStatus(item.id, 'resolved')}>Marcar como Resuelto</button>
-                    <button className="btn btn-ghost btn-sm" onClick={() => handleDelete('feedback', item.id)}>Eliminar</button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </section>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
-        {/* PRINTERS SECTION */}
-        <section>
-          <h2 className="text-xl font-bold mb-4 flex items-center gap-2">Impresoras Pendientes ({pendingPrinters.length})</h2>
-          {pendingPrinters.length === 0 ? (
-            <div className="card p-10 text-center text-muted">No hay impresoras pendientes.</div>
-          ) : (
-            <div className="card p-0 overflow-hidden">
-              <table className="w-full text-left">
-                <thead className="bg-white/5 border-b border-white/10 uppercase text-xs text-muted">
+        <button 
+          onClick={() => setExpanded(expanded === 'printers' ? null : 'printers')}
+          className={`card p-4 flex justify-between items-center hover:border-brand-light transition-all ${expanded === 'printers' ? 'border-brand' : ''}`}
+          style={{ cursor: 'pointer', textAlign: 'left', width: '100%', background: 'var(--bg-card)' }}
+        >
+          <span className="text-sm font-semibold text-muted uppercase tracking-wider">Impresoras Pendientes</span>
+          <div className="flex items-center gap-4">
+            <span className={`text-2xl font-bold ${stats.pendingP > 0 ? 'text-orange-500' : ''}`}>{stats.pendingP}</span>
+            <span className="text-xs border border-white/10 px-2 py-0.5 rounded uppercase">{expanded === 'printers' ? 'Cerrar' : 'Ver'}</span>
+          </div>
+        </button>
+        {expanded === 'printers' && (
+          <div className="card p-0 border-t-0 rounded-t-none overflow-hidden animate-slide-down mb-2">
+            {pendingPrinters.length === 0 ? (
+              <div className="p-10 text-center text-muted">Limpio.</div>
+            ) : (
+              <table className="w-full text-left text-sm">
+                <thead className="bg-white/5 text-muted uppercase text-xs">
                   <tr>
-                    <th className="p-4">Marca / Modelo</th>
-                    <th className="p-4">Consumo</th>
+                    <th className="p-4">Modelo</th>
                     <th className="p-4">Tipo</th>
-                    <th className="p-4 text-right">Acciones</th>
+                    <th className="p-4 text-right">Acción</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/5">
                   {pendingPrinters.map(p => (
                     <tr key={p.id}>
-                      <td className="p-4 font-semibold">{p.brand} <span className="font-normal text-muted">{p.model}</span></td>
-                      <td className="p-4">{p.wattage_w}W</td>
-                      <td className="p-4"><span className="badge badge-purple">{p.type}</span></td>
+                      <td className="p-4">{p.brand} {p.model}</td>
+                      <td className="p-4">{p.type}</td>
                       <td className="p-4 text-right">
-                        <div className="flex gap-2 justify-end">
-                          <button className="btn btn-primary btn-sm" onClick={() => handleVerify('printer', p.id)}>Verificar</button>
-                          <button className="btn btn-ghost btn-sm" onClick={() => handleDelete('printer', p.id)}>Eliminar</button>
-                        </div>
+                        <button className="btn btn-primary btn-sm" onClick={() => handleVerify('printer', p.id)}>OK</button>
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
-            </div>
-          )}
-        </section>
+            )}
+          </div>
+        )}
 
-        {/* FILAMENTS SECTION */}
-        <section>
-          <h2 className="text-xl font-bold mb-4 flex items-center gap-2">Filamentos Pendientes ({pendingFilaments.length})</h2>
-          {pendingFilaments.length === 0 ? (
-            <div className="card p-10 text-center text-muted">No hay filamentos pendientes.</div>
-          ) : (
-            <div className="card p-0 overflow-hidden">
-              <table className="w-full text-left">
-                <thead className="bg-white/5 border-b border-white/10 uppercase text-xs text-muted">
+        <button 
+          onClick={() => setExpanded(expanded === 'filaments' ? null : 'filaments')}
+          className={`card p-4 flex justify-between items-center hover:border-brand-light transition-all ${expanded === 'filaments' ? 'border-brand' : ''}`}
+          style={{ cursor: 'pointer', textAlign: 'left', width: '100%', background: 'var(--bg-card)' }}
+        >
+          <span className="text-sm font-semibold text-muted uppercase tracking-wider">Filamentos Pendientes</span>
+          <div className="flex items-center gap-4">
+            <span className={`text-2xl font-bold ${stats.pendingF > 0 ? 'text-orange-500' : ''}`}>{stats.pendingF}</span>
+            <span className="text-xs border border-white/10 px-2 py-0.5 rounded uppercase">{expanded === 'filaments' ? 'Cerrar' : 'Ver'}</span>
+          </div>
+        </button>
+        {expanded === 'filaments' && (
+          <div className="card p-0 border-t-0 rounded-t-none overflow-hidden animate-slide-down mb-2">
+            {pendingFilaments.length === 0 ? (
+              <div className="p-10 text-center text-muted">Limpio.</div>
+            ) : (
+              <table className="w-full text-left text-sm">
+                <thead className="bg-white/5 text-muted uppercase text-xs">
                   <tr>
-                    <th className="p-4">Marca / Material</th>
+                    <th className="p-4">Material</th>
                     <th className="p-4">Color</th>
-                    <th className="p-4 text-right">Acciones</th>
+                    <th className="p-4 text-right">Acción</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/5">
                   {pendingFilaments.map(f => (
                     <tr key={f.id}>
-                      <td className="p-4 font-semibold">{f.brand} <span className="font-normal text-muted">{f.material}</span></td>
-                      <td className="p-4 flex items-center gap-2">
-                        <div style={{ background: f.color_hex, width: 16, height: 16, borderRadius: '50%', border: '1px solid var(--border)' }} />
-                        {f.color_name}
-                      </td>
+                      <td className="p-4">{f.brand} {f.material}</td>
+                      <td className="p-4">{f.color_name}</td>
                       <td className="p-4 text-right">
-                        <div className="flex gap-2 justify-end">
-                          <button className="btn btn-primary btn-sm" onClick={() => handleVerify('filament', f.id)}>Verificar</button>
-                          <button className="btn btn-ghost btn-sm" onClick={() => handleDelete('filament', f.id)}>Eliminar</button>
-                        </div>
+                        <button className="btn btn-primary btn-sm" onClick={() => handleVerify('filament', f.id)}>OK</button>
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
-            </div>
-          )}
-        </section>
+            )}
+          </div>
+        )}
       </div>
+
     </div>
   )
 }
