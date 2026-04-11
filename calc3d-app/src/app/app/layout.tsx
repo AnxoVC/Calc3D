@@ -81,11 +81,11 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
         <div className="sidebar-bottom flex flex-col gap-1">
           <div className="sidebar-nav-item" style={{ width: '100%', justifyContent: 'space-between', cursor: 'default' }}>
-            <span className="flex items-center gap-2">🎨 Tema</span>
+            <span className="flex items-center gap-2">Tema</span>
             <ThemeToggle />
           </div>
           <button onClick={handleLogout} className="sidebar-nav-item" style={{ width: '100%', textAlign: 'left' }}>
-            <span>🚪</span> Cerrar sesión
+            Cerrar sesión
           </button>
         </div>
       </aside>
