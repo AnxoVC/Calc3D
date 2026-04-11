@@ -227,14 +227,11 @@ export default function AdminPage() {
                       {activityData.hours.map((val, i) => (
                         <div key={i} className="flex-1 group relative h-full">
                           <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-surface border border-brand/50 text-brand text-[10px] px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity z-10 whitespace-nowrap pointer-events-none">
-                            {i}:00 — {val}
+                            {val > 0 ? val : ''}
                           </div>
                         </div>
                       ))}
                     </div>
-                  </div>
-                  <div className="flex justify-between text-[10px] text-muted mt-2 px-1">
-                    <span>00:00</span><span>06:00</span><span>12:00</span><span>18:00</span><span>23:00</span>
                   </div>
                 </div>
 
@@ -275,14 +272,11 @@ export default function AdminPage() {
                       {activityData.days.map((val, i) => (
                         <div key={i} className="flex-1 group relative h-full">
                           <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-surface border border-brand/50 text-brand text-[10px] px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity z-10 whitespace-nowrap pointer-events-none">
-                            {val}
+                            {val > 0 ? val : ''}
                           </div>
                         </div>
                       ))}
                     </div>
-                  </div>
-                  <div className="flex justify-between text-[10px] text-muted mt-2 px-2 font-bold">
-                    <span>D</span><span>L</span><span>M</span><span>X</span><span>J</span><span>V</span><span>S</span>
                   </div>
                 </div>
               </div>
