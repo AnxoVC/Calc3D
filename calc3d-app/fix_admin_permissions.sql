@@ -127,3 +127,29 @@ DO $$ BEGIN
         CREATE POLICY "Admins can read all activity" ON activity_logs FOR SELECT USING (auth.jwt() ->> 'email' = 'vigoanxo000@gmail.com');
     END IF;
 END $$;
+
+-- 11. Rate Limiting for Feedback (Protección contra Spam)
+-- Limitamos a 3 mensajes por hora por usuario para evitar inundaciones.
+CREATE OR REPLACE FUNCTION public.check_feedback_rate_limit()
+RETURNS TRIGGER AS $$
+DECLARE
+  msg_count INTEGER;
+BEGIN
+  -- Contar mensajes del mismo usuario en la última hora
+  SELECT count(*) INTO msg_count
+  FROM public.feedback
+  WHERE (user_id = auth.uid() OR (user_id IS NULL AND auth.uid() IS NULL))
+    AND created_at > NOW() - INTERVAL '1 hour';
+
+  IF msg_count >= 3 THEN
+    RAISE EXCEPTION 'Límite de sugerencias excedido. Inténtalo de nuevo en una hora.';
+  END IF;
+
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+DROP TRIGGER IF EXISTS tr_feedback_rate_limit ON public.feedback;
+CREATE TRIGGER tr_feedback_rate_limit
+  BEFORE INSERT ON public.feedback
+  FOR EACH ROW EXECUTE FUNCTION public.check_feedback_rate_limit();
