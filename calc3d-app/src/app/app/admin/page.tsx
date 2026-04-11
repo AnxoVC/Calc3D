@@ -187,37 +187,41 @@ export default function AdminPage() {
           </button>
           {openSections.users && (
             <div className="card p-6 border-t-0 rounded-t-none animate-slide-down mb-2">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div>
+              <div className="flex flex-col lg:flex-row gap-8">
+                <div style={{ flex: 1, maxWidth: '600px' }}>
                   <h4 className="text-xs font-bold uppercase text-muted mb-4">Conexiones por Hora (24h)</h4>
-                  <div className="flex items-end gap-1 h-32 w-full bg-white/5 p-2 rounded relative">
+                  <div className="flex items-end gap-[2px] h-32 w-full bg-white/5 p-3 rounded-lg border border-white/5">
                     {activityData.hours.map((val, i) => {
                       const max = Math.max(...activityData.hours, 1)
-                      const height = (val / max) * 100
+                      const height = Math.max((val / max) * 100, 2) // Min 2% height
                       return (
-                        <div key={i} className="flex-1 bg-brand/40 hover:bg-brand transition-all relative group" style={{ height: `${height}%`, borderRadius: '2px' }}>
-                          <span className="absolute -top-6 left-1/2 -translate-x-1/2 text-[10px] hidden group-hover:block bg-brand px-1 rounded">{val}</span>
+                        <div key={i} className="flex-1 bg-brand/30 hover:bg-brand transition-all relative group" style={{ height: `${height}%`, borderRadius: '1px' }}>
+                          <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-surface border border-brand/50 text-brand text-[10px] px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity z-10 whitespace-nowrap pointer-events-none">
+                            {i}:00 - {val}
+                          </div>
                         </div>
                       )
                     })}
                   </div>
-                  <div className="flex justify-between text-[10px] text-muted mt-2">
-                    <span>00:00</span><span>12:00</span><span>23:00</span>
+                  <div className="flex justify-between text-[10px] text-muted mt-2 px-1">
+                    <span>00:00</span><span>06:00</span><span>12:00</span><span>18:00</span><span>23:00</span>
                   </div>
                 </div>
-                <div>
+                <div style={{ flex: 1, maxWidth: '400px' }}>
                   <h4 className="text-xs font-bold uppercase text-muted mb-4">Actividad Semanal</h4>
-                  <div className="flex items-end gap-2 h-32 w-full bg-white/5 p-2 rounded">
-                    {['D','L','M','M','J','V','S'].map((day, i) => {
+                  <div className="flex items-end gap-3 h-32 w-full bg-white/5 p-3 rounded-lg border border-white/5">
+                    {['D','L','M','X','J','V','S'].map((day, i) => {
                       const val = activityData.days[i]
                       const max = Math.max(...activityData.days, 1)
-                      const height = (val / max) * 100
+                      const height = Math.max((val / max) * 100, 2)
                       return (
                         <div key={i} className="flex-1 flex flex-col justify-end items-center gap-2 h-full">
-                           <div className="w-full bg-brand/40 group relative" style={{ height: `${height}%`, borderRadius: '4px' }}>
-                             <span className="absolute -top-6 left-1/2 -translate-x-1/2 text-[10px] hidden group-hover:block bg-brand px-1 rounded">{val}</span>
+                           <div className="w-full bg-brand/30 hover:bg-brand transition-all group relative" style={{ height: `${height}%`, borderRadius: '4px' }}>
+                             <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-surface border border-brand/50 text-brand text-[10px] px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity z-10 whitespace-nowrap pointer-events-none">
+                               {val} visitas
+                             </div>
                            </div>
-                           <span className="text-[10px] text-muted">{day}</span>
+                           <span className="text-[10px] text-muted font-bold">{day}</span>
                         </div>
                       )
                     })}
