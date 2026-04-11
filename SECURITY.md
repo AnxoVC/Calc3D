@@ -17,7 +17,13 @@ Configura estos límites en el dashboard de Supabase para evitar el spam y la sa
    - **Recovery emails per hour**: 3.
 3. Esto previene que alguien "inunde" tu servidor con peticiones de registro falsas.
 
-## 3. Seguridad contra Suplantación (Spoofing)
+## 3. Protección a Nivel de Aplicación
+MyCalc3D incluye medidas de seguridad integradas en el código:
+-   **Content-Security-Policy (CSP)**: El servidor tiene una política estricta que impide la ejecución de scripts maliciosos de terceros (protección proactiva contra XSS).
+-   **Database Rate Limiting**: La tabla de sugerencias tiene un cerrojo (Trigger de Postgres) que limita a cada usuario a un máximo de 3 mensajes por hora, evitando ataques de spam manual o automatizado.
+-   **Sanitización Automática**: React gestiona el escape de datos en todas las vistas de administración y comunidad.
+
+## 4. Seguridad contra Suplantación (Spoofing)
 - **Token Firmado**: MyCalc3D utiliza tokens JWT firmados dinámicamente. Es imposible que un atacante suplante tu identidad de administrador modificando el código del navegador, ya que el servidor de Supabase verifica la firma criptográfica en cada petición.
 - **RLS Crítico**: Las políticas de seguridad a nivel de fila aseguran que, aunque alguien conociera el enlace privado de otro usuario, el sistema le devolvería un error "404" o "Acceso Denegado" al intentar leer los datos.
 
