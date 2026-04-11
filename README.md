@@ -14,6 +14,12 @@ MyCalc3D es una calculadora de costes de impresion 3D y un panel de gestion prof
 - **Exportacion a PDF**: Genera presupuestos limpios y profesionales en formato PDF vectorial.
 - **Gestion de Flota**: Cataloga tus impresoras 3D y haz un seguimiento del inventario de tus bobinas de filamento.
 - **Optimizacion Movil**: Interfaz responsiva con menu lateral tipo "drawer" para una navegacion fluida en cualquier dispositivo.
+- **Seguridad & Hardening (Nuevo)**:
+    - **Auditoría Profesional**: Auditoría de seguridad completa superada con éxito.
+    - **Content-Security-Policy (CSP)**: Protección de servidor contra inyecciones de código (XSS).
+    - **Anti-Spam Database Trigger**: Límite de tasa (Rate Limiting) en base de datos para el muro de sugerencias.
+    - **Protección Anti-Bots**: Honeypot inteligente en todos los formularios públicos.
+    - **Privacidad Total**: Políticas RLS (Row Level Security) que aseguran el aislamiento total de los datos de cada usuario.
 - **Base de Datos Pre-cargada**: Mas de 50 impresoras y filamentos contemporaneos (Bambu Lab, Prusa, Creality, etc.).
 
 ## Tecnologias Utilizadas
