@@ -43,7 +43,7 @@ A ferramenta devolverá automaticamente o custo total de produción.
 
 ## Autor
 
-* [cite_start]**Anxo Vigo Canosa** - *Desenvolvemento e idea orixinal* - [AnxoVC](https://github.com/AnxoVC)[cite: 454].
+* **Anxo Vigo Canosa** - *Desenvolvemento e idea orixinal* - [AnxoVC](https://github.com/AnxoVC).
 
 ## Licenza
 
