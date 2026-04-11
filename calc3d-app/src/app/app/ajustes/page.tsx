@@ -84,7 +84,7 @@ export default function AjustesPage() {
         <div style={{ height: '1px', background: 'var(--border)', margin: '2rem 0' }} />
         
         <h4 style={{ marginBottom: '0.5rem', fontWeight: 600 }}>Cambiar Contraseña</h4>
-        <p className="text-sm text-muted mb-4">Actualiza tu contraseña de acceso a Calc3D.</p>
+        <p className="text-sm text-muted mb-4">Actualiza tu contraseña de acceso a MyCalc3D.</p>
         
         {passwordError && <div className="alert alert-danger mb-4">{passwordError}</div>}
         {passwordChanged && <div className="alert alert-success mb-4">Contraseña actualizada correctamente</div>}
@@ -133,7 +133,7 @@ export default function AjustesPage() {
 
 
       <div style={{ marginTop: '3rem', textAlign: 'center', opacity: 0.5 }}>
-        <p className="text-xs">Calc3D by AnxoVC - Versión 1.0.0</p>
+        <p className="text-xs">MyCalc3D by AnxoVC - Versión 1.0.0</p>
       </div>
     </div>
   )

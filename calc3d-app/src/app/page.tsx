@@ -11,7 +11,7 @@ export default function LandingPage() {
           <div className="logo-icon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5"/><line x1="12" y1="22" x2="12" y2="15.5"/><polyline points="22 8.5 12 15.5 2 8.5"/></svg>
           </div>
-          <span style={{ fontWeight: 800, fontSize: '1.125rem' }}>Calc<span className="text-gradient">3D</span></span>
+          <span style={{ fontWeight: 800, fontSize: '1.125rem' }}>MyCalc<span className="text-gradient">3D</span></span>
         </div>
         <div className="flex items-center gap-3">
           <ThemeToggle />

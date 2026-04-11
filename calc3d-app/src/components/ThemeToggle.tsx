@@ -7,7 +7,7 @@ export default function ThemeToggle() {
 
   useEffect(() => {
     // Check initial
-    const saved = localStorage.getItem('calc3d-theme')
+    const saved = localStorage.getItem('mycalc3d-theme')
     if (saved) {
       setTheme(saved)
       document.documentElement.setAttribute('data-theme', saved)
@@ -18,7 +18,7 @@ export default function ThemeToggle() {
     const next = theme === 'dark' ? 'light' : 'dark'
     setTheme(next)
     document.documentElement.setAttribute('data-theme', next)
-    localStorage.setItem('calc3d-theme', next)
+    localStorage.setItem('mycalc3d-theme', next)
   }
 
   return (

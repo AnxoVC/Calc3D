@@ -1,6 +1,6 @@
 {
-  "name": "calc3d-app",
-  "version": "0.1.0",
+  "name": "mycalc3d",
+  "version": "1.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",

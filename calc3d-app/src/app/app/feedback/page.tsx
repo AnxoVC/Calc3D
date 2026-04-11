@@ -46,7 +46,7 @@ export default function FeedbackPage() {
       <div className="section-header mb-8">
         <div>
           <h1 className="page-title">Sugerencias y Fallos</h1>
-          <p className="page-subtitle">Ayúdanos a mejorar Calc3D reportando errores o proponiendo ideas.</p>
+          <p className="page-subtitle">Ayúdanos a mejorar MyCalc3D reportando errores o proponiendo ideas.</p>
         </div>
       </div>
 

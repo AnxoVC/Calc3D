@@ -1,5 +1,5 @@
 -- =============================================
--- Calc3D - Supabase Database Schema
+-- MyCalc3D - Supabase Database Schema
 -- Run this in the Supabase SQL Editor
 -- =============================================
 

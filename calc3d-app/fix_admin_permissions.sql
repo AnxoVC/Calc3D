@@ -1,5 +1,5 @@
 -- =============================================
--- Calc3D - Admin & Database Full Setup Fix
+-- MyCalc3D - Admin & Database Full Setup Fix
 -- Run this in the Supabase SQL Editor
 -- =============================================
 

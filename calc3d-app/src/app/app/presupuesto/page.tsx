@@ -255,7 +255,7 @@ export default function PresupuestoPage() {
   return (
     <div className="animate-fade-in">
       <div className="page-header">
-        <h1 className="page-title">Presupuesto Rápido</h1>
+        <h1 className="page-title">Presupuesto MyCalc3D</h1>
         <p className="page-subtitle">Calcula el precio de venta con mano de obra y margen</p>
       </div>
       <div className="app-grid">
