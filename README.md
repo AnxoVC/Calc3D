@@ -1,6 +1,6 @@
-# Calc3D 🚀
+# Calc3D 
 
-🌐 **Prueba la aplicación online:** [https://mycalc3d.vercel.app](https://mycalc3d.vercel.app)
+**Prueba la aplicación online:** [https://mycalc3d.vercel.app](https://mycalc3d.vercel.app)
 
 Calc3D es una calculadora de costes de impresion 3D y un panel de gestion profesional de codigo abierto diseñado para makers y pequeñas empresas. Permite a los usuarios llevar un registro de sus bobinas, gestionar su flota de impresoras 3D, calcular presupuestos altamente personalizados con multiples materiales e impresoras, y exportar facturas en PDF limpias y precisas.
 
