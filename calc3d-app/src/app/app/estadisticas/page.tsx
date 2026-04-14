@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { formatCurrency, formatNumber } from '@/lib/formatters'
 
 import Link from 'next/link'
 
@@ -56,11 +57,11 @@ export default function EstadisticasPage() {
         <>
           <div className="stats-grid mb-6">
             {[
-              { label: 'Gasto total', value: `${totalCost.toFixed(2)}€`, color: 'rgba(249,115,22,0.15)', textColor: 'var(--brand)' },
+              { label: 'Gasto total', value: formatCurrency(totalCost), color: 'rgba(249,115,22,0.15)', textColor: 'var(--brand)' },
               { label: 'Cálculos guardados', value: String(calcs.length), color: 'rgba(59,130,246,0.15)', textColor: 'var(--accent-blue)' },
-              { label: 'Material total', value: `${totalWeight.toFixed(0)}g`, color: 'rgba(34,197,94,0.15)', textColor: 'var(--accent-green)' },
-              { label: 'Tiempo total', value: `${totalTime.toFixed(1)}h`, color: 'rgba(168,85,247,0.15)', textColor: 'var(--accent-purple)' },
-              { label: 'Coste medio', value: `${avgCost.toFixed(2)}€`, color: 'rgba(6,182,212,0.15)', textColor: 'var(--accent-cyan)' },
+              { label: 'Material total', value: `${formatNumber(totalWeight, 0)}g`, color: 'rgba(34,197,94,0.15)', textColor: 'var(--accent-green)' },
+              { label: 'Tiempo total', value: `${formatNumber(totalTime, 1)}h`, color: 'rgba(168,85,247,0.15)', textColor: 'var(--accent-purple)' },
+              { label: 'Coste medio', value: formatCurrency(avgCost), color: 'rgba(6,182,212,0.15)', textColor: 'var(--accent-cyan)' },
             ].map(stat => (
               <div key={stat.label} className="card-stat">
                 <div className="card-stat-icon" style={{ background: stat.color }}>
@@ -79,7 +80,7 @@ export default function EstadisticasPage() {
               <div style={{ display: 'flex', alignItems: 'flex-end', gap: '0.75rem', height: 180 }}>
                 {monthEntries.map(([month, val]) => (
                   <div key={month} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem', height: '100%', justifyContent: 'flex-end' }}>
-                    <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 600 }}>{val.toFixed(1)}€</span>
+                    <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 600 }}>{formatNumber(val, 1)}€</span>
                     <div style={{ width: '100%', background: 'var(--gradient-brand)', borderRadius: '6px 6px 0 0', height: `${(val / maxMonthVal) * 140}px`, minHeight: 4, boxShadow: '0 0 16px rgba(249,115,22,0.3)' }} />
                     <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>{month}</span>
                   </div>
@@ -102,8 +103,8 @@ export default function EstadisticasPage() {
                           {c.name || 'Presupuesto'}
                         </Link>
                       </td>
-                      <td>{(c.material_cost || 0).toFixed(3)}€</td>
-                      <td style={{ color: 'var(--text)', fontWeight: 700 }}>{c.total_cost.toFixed(3)}€</td>
+                      <td>{formatCurrency(c.material_cost || 0)}</td>
+                      <td style={{ color: 'var(--text)', fontWeight: 700 }}>{formatCurrency(c.total_cost)}</td>
                       <td align="right" className="flex items-center justify-end gap-2">
                         <Link href={`/app/presupuesto?id=${c.id}`}>
                           <button className="btn btn-ghost" style={{ padding: '0.25rem 0.5rem', fontSize: '0.8rem' }}>Abrir</button>

@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import ThemeToggle from '@/components/ThemeToggle'
@@ -105,12 +106,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           <div className="hamburger-line" />
         </button>
         <div className="flex items-center gap-2 ml-4">
-          <div className="logo-icon" style={{ width: '28px', height: '28px', borderRadius: '6px' }}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5">
-              <polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5"/>
-              <line x1="12" y1="22" x2="12" y2="15.5"/>
-              <polyline points="22 8.5 12 15.5 2 8.5"/>
-            </svg>
+          <div className="logo-icon" style={{ width: '28px', height: '28px', borderRadius: '6px', overflow: 'hidden', background: 'none' }}>
+            <Image src="/logo.png" alt="Logo" width={28} height={28} style={{ objectFit: 'contain' }} />
           </div>
           <span style={{ fontWeight: 800, fontSize: '1rem' }}>MyCalc<span className="text-gradient">3D</span></span>
         </div>
@@ -120,12 +117,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       {isMenuOpen && <div className="nav-drawer-overlay" onClick={() => setIsMenuOpen(false)} />}
       <aside className={`nav-drawer ${isMenuOpen ? 'open' : ''}`}>
         <div className="sidebar-logo">
-          <div className="logo-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5">
-              <polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5"/>
-              <line x1="12" y1="22" x2="12" y2="15.5"/>
-              <polyline points="22 8.5 12 15.5 2 8.5"/>
-            </svg>
+          <div className="logo-icon" style={{ overflow: 'hidden', background: 'none' }}>
+            <Image src="/logo.png" alt="Logo" width={36} height={36} style={{ objectFit: 'contain' }} />
           </div>
           <span style={{ fontWeight: 800, fontSize: '1.125rem' }}>MyCalc<span className="text-gradient">3D</span></span>
         </div>
@@ -135,12 +128,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       {/* DESKTOP SIDEBAR */}
       <aside className="sidebar">
         <div className="sidebar-logo">
-          <div className="logo-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5">
-              <polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5"/>
-              <line x1="12" y1="22" x2="12" y2="15.5"/>
-              <polyline points="22 8.5 12 15.5 2 8.5"/>
-            </svg>
+          <div className="logo-icon" style={{ overflow: 'hidden', background: 'none' }}>
+            <Image src="/logo.png" alt="Logo" width={36} height={36} style={{ objectFit: 'contain' }} />
           </div>
           <span style={{ fontWeight: 800, fontSize: '1.125rem' }}>MyCalc<span className="text-gradient">3D</span></span>
         </div>

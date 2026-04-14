@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { calculate, type CalculationResult } from '@/lib/calculations'
+import { formatCurrency } from '@/lib/formatters'
 
 interface Printer { id: string; brand: string; model: string; wattage_w: number }
 interface Filament { id: string; brand: string; material: string; color_name: string; price_per_kg: number | null }
@@ -180,25 +181,25 @@ export default function CalculadoraPage() {
           {result && (
             <div className="result-box animate-slide-up">
               <p style={{ color: 'var(--text-secondary)', fontSize: '0.8125rem', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>Coste total</p>
-              <div className="result-total">{result.total.toFixed(3)}€</div>
+              <div className="result-total">{formatCurrency(result.total)}</div>
               <div className="result-breakdown">
                 <div className="breakdown-item">
                   <span className="breakdown-label">Material</span>
-                  <span className="breakdown-value">{result.materialCost.toFixed(3)}€</span>
+                  <span className="breakdown-value">{formatCurrency(result.materialCost)}</span>
                 </div>
                 <div className="breakdown-item">
                   <span className="breakdown-label">Electricidad</span>
-                  <span className="breakdown-value">{result.electricityCost.toFixed(3)}€</span>
+                  <span className="breakdown-value">{formatCurrency(result.electricityCost)}</span>
                 </div>
                 {result.amortizationCost > 0 && (
                   <div className="breakdown-item">
                     <span className="breakdown-label">Amortización</span>
-                    <span className="breakdown-value">{result.amortizationCost.toFixed(3)}€</span>
+                    <span className="breakdown-value">{formatCurrency(result.amortizationCost)}</span>
                   </div>
                 )}
                 <div className="breakdown-item breakdown-total">
                   <span className="breakdown-label" style={{ fontWeight: 700 }}>TOTAL</span>
-                  <span className="breakdown-value" style={{ color: 'var(--brand)', fontSize: '1.1rem' }}>{result.total.toFixed(3)}€</span>
+                  <span className="breakdown-value" style={{ color: 'var(--brand)', fontSize: '1.1rem' }}>{formatCurrency(result.total)}</span>
                 </div>
               </div>
               <div style={{ marginTop: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>

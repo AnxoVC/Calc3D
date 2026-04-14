@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
+import { formatCurrency } from '@/lib/formatters'
 
 interface PrintEntry {
   id: string
@@ -93,7 +94,7 @@ export default function DiarioPage() {
                 <div className="flex gap-4" style={{ fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
                   {p.weight_g && <span>Peso: {p.weight_g}g</span>}
                   {p.time_hours && <span>Tiempo: {p.time_hours}h</span>}
-                  {p.cost_total && <span style={{ color: 'var(--brand)', fontWeight: 600 }}>Coste: {p.cost_total.toFixed(2)}€</span>}
+                  {p.cost_total && <span style={{ color: 'var(--brand)', fontWeight: 600 }}>Coste: {formatCurrency(p.cost_total)}</span>}
                   <span>{new Date(p.created_at).toLocaleDateString('es-ES')}</span>
                 </div>
               </div>

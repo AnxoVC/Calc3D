@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/client'
 import { calculate, type CalculationResult } from '@/lib/calculations'
 import jsPDF from 'jspdf'
 import html2canvas from 'html2canvas'
+import { formatCurrency, formatNumber } from '@/lib/formatters'
 
 export default function PresupuestoPage() {
   const [form, setForm] = useState({
@@ -154,6 +155,14 @@ export default function PresupuestoPage() {
     pdf.rect(0, 0, 210, 297, 'F')
     pdf.setTextColor(0, 0, 0)
     
+    // Logo (Top Right)
+    try {
+      // Intentamos cargar el logo desde la carpeta public
+      pdf.addImage('/logo.png', 'PNG', 160, 10, 35, 35);
+    } catch (e) {
+      console.error("Error loading logo for PDF", e);
+    }
+
     // Cabecera
     pdf.setFontSize(22)
     pdf.setFont('helvetica', 'bold')
@@ -179,7 +188,7 @@ export default function PresupuestoPage() {
     pdf.setFontSize(14)
     pdf.setFont('helvetica', 'bold')
     pdf.text("Especificaciones", 20, 65)
-
+182: 
     pdf.setFontSize(11)
     pdf.setFont('helvetica', 'normal')
     
@@ -187,7 +196,7 @@ export default function PresupuestoPage() {
     mats.forEach((m, idx) => {
       const s = mySpools.find(x => x.id === m.spoolId)
       const name = s ? `${s.brand || ''} ${s.material || ''} ${s.color_name || ''}`.trim() : `Material ${idx+1}`
-      filString += `${idx > 0 ? ' + ' : ''}${name} (${m.weight || 0}g)`
+      filString += `${idx > 0 ? ' + ' : ''}${name} (${formatNumber(Number(m.weight) || 0, 0)}g)`
     })
     
     let prnString = ''
@@ -196,14 +205,14 @@ export default function PresupuestoPage() {
       const name = p ? (p.nickname || (p.printers ? p.printers.model : `Impresora ${idx + 1}`)) : `Impresora ${idx + 1}`
       prnString += `${idx > 0 ? ' + ' : ''}${name} (${pState.timeH}h ${pState.timeM}m)`
     })
-
+199: 
     pdf.text(`Materiales: ${filString}`, 20, 75)
     pdf.text(`Equipos: ${prnString}`, 20, 82)
-
+202: 
     // Línea separadora
     pdf.setDrawColor(200, 200, 200)
     pdf.line(20, 90, 190, 90)
-
+206: 
     // Título desglose
     pdf.setTextColor(0, 0, 0)
     pdf.setFontSize(14)
@@ -214,39 +223,29 @@ export default function PresupuestoPage() {
     pdf.setFontSize(12)
     pdf.setFont('helvetica', 'normal')
     let y = 110
-    pdf.text("Material:", 20, y); pdf.text(`${result.materialCost.toFixed(3)} EUR`, 170, y, { align: 'right' }); y += 10;
-    pdf.text("Electricidad:", 20, y); pdf.text(`${result.electricityCost.toFixed(3)} EUR`, 170, y, { align: 'right' }); y += 10;
+    pdf.text("Material:", 20, y); pdf.text(`${formatCurrency(result.materialCost)}`, 170, y, { align: 'right' }); y += 10;
+    pdf.text("Electricidad:", 20, y); pdf.text(`${formatCurrency(result.electricityCost)}`, 170, y, { align: 'right' }); y += 10;
     
     if (result.amortizationCost > 0) {
-      pdf.text("Amortizacion:", 20, y); pdf.text(`${result.amortizationCost.toFixed(3)} EUR`, 170, y, { align: 'right' }); y += 10;
+      pdf.text("Amortizacion:", 20, y); pdf.text(`${formatCurrency(result.amortizationCost)}`, 170, y, { align: 'right' }); y += 10;
     }
     if (result.laborCost > 0) {
-      pdf.text("Mano de obra:", 20, y); pdf.text(`${result.laborCost.toFixed(3)} EUR`, 170, y, { align: 'right' }); y += 10;
+      pdf.text("Mano de obra:", 20, y); pdf.text(`${formatCurrency(result.laborCost)}`, 170, y, { align: 'right' }); y += 10;
     }
     
-    // Subtotal
-    pdf.line(20, y, 190, y); y += 10;
-    pdf.setFont('helvetica', 'bold')
-    pdf.text("Subtotal:", 20, y); pdf.text(`${result.subtotal.toFixed(3)} EUR`, 170, y, { align: 'right' }); y += 10;
-    
-    // Margen
-    if (result.margin > 0) {
-      pdf.setFont('helvetica', 'normal')
-      pdf.text(`Margen (${form.marginPercent}%):`, 20, y); pdf.text(`+${result.margin.toFixed(3)} EUR`, 170, y, { align: 'right' }); y += 10;
-    }
     
     // Total Final
     pdf.line(20, y, 190, y); y += 10;
     pdf.setFontSize(16)
     pdf.setFont('helvetica', 'bold')
     pdf.setTextColor(249, 115, 22) // Naranja
-    pdf.text("PRECIO FINAL:", 20, y); pdf.text(`${result.total.toFixed(2)} EUR`, 170, y, { align: 'right' });
+    pdf.text("PRECIO FINAL:", 20, y); pdf.text(`${formatCurrency(result.total)}`, 170, y, { align: 'right' });
     
     // Pie de página
     pdf.setFontSize(10)
     pdf.setTextColor(150, 150, 150)
     pdf.setFont('helvetica', 'normal')
-    pdf.text("Generado con Calc3D", 20, 280)
+    pdf.text("Generado con MyCalc3D", 20, 280)
 
     const safeClientName = form.clientName ? form.clientName.replace(/[^a-zA-Z0-9]/g, '_') : '3d'
     pdf.save(`presupuesto_${safeClientName}.pdf`)
@@ -402,15 +401,15 @@ export default function PresupuestoPage() {
                 <p style={{ color: 'var(--text-secondary)', fontSize: '0.8125rem', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>Precio de venta</p>
                 <div id="calc3d-watermark" style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Calc3D App</div>
               </div>
-              <div className="result-total">{result.total.toFixed(2)}€</div>
+              <div className="result-total">{formatCurrency(result.total)}</div>
               <div className="result-breakdown">
-                <div className="breakdown-item"><span className="breakdown-label">Material</span><span className="breakdown-value">{result.materialCost.toFixed(3)}€</span></div>
-                <div className="breakdown-item"><span className="breakdown-label">Electricidad</span><span className="breakdown-value">{result.electricityCost.toFixed(3)}€</span></div>
-                {result.amortizationCost > 0 && <div className="breakdown-item"><span className="breakdown-label">Amortización</span><span className="breakdown-value">{result.amortizationCost.toFixed(3)}€</span></div>}
-                {result.laborCost > 0 && <div className="breakdown-item"><span className="breakdown-label">Mano de obra</span><span className="breakdown-value">{result.laborCost.toFixed(3)}€</span></div>}
-                <div className="breakdown-item"><span className="breakdown-label">Subtotal</span><span className="breakdown-value">{result.subtotal.toFixed(3)}€</span></div>
-                {result.margin > 0 && <div className="breakdown-item"><span className="breakdown-label">Margen ({form.marginPercent}%)</span><span className="breakdown-value">+{result.margin.toFixed(3)}€</span></div>}
-                <div className="breakdown-item breakdown-total"><span className="breakdown-label" style={{ fontWeight: 700 }}>PRECIO FINAL</span><span className="breakdown-value" style={{ color: 'var(--brand)', fontSize: '1.1rem' }}>{result.total.toFixed(2)}€</span></div>
+                <div className="breakdown-item"><span className="breakdown-label">Material</span><span className="breakdown-value">{formatCurrency(result.materialCost)}</span></div>
+                <div className="breakdown-item"><span className="breakdown-label">Electricidad</span><span className="breakdown-value">{formatCurrency(result.electricityCost)}</span></div>
+                {result.amortizationCost > 0 && <div className="breakdown-item"><span className="breakdown-label">Amortización</span><span className="breakdown-value">{formatCurrency(result.amortizationCost)}</span></div>}
+                {result.laborCost > 0 && <div className="breakdown-item"><span className="breakdown-label">Mano de obra</span><span className="breakdown-value">{formatCurrency(result.laborCost)}</span></div>}
+                <div className="breakdown-item"><span className="breakdown-label">Subtotal</span><span className="breakdown-value">{formatCurrency(result.subtotal)}</span></div>
+                {result.margin > 0 && <div className="breakdown-item"><span className="breakdown-label">Margen ({form.marginPercent}%)</span><span className="breakdown-value">+{formatCurrency(result.margin)}</span></div>}
+                <div className="breakdown-item breakdown-total"><span className="breakdown-label" style={{ fontWeight: 700 }}>PRECIO FINAL</span><span className="breakdown-value" style={{ color: 'var(--brand)', fontSize: '1.1rem' }}>{formatCurrency(result.total)}</span></div>
               </div>
               <div style={{ marginTop: '1.5rem', display: 'flex', gap: '0.75rem' }} data-html2canvas-ignore="true">
                 <button className="btn btn-primary" style={{ flex: 1, justifyContent: 'center' }} onClick={handleDownloadPDF}>Descargar PDF</button>
