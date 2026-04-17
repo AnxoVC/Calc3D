@@ -164,8 +164,20 @@ export default function PresupuestoPage() {
         img.onload = resolve
         img.onerror = reject
       })
-      // Proporción 1:1, ajustamos un poco el tamaño
-      pdf.addImage(img, 'PNG', 160, 10, 35, 35)
+      
+      // Ajuste de proporciones para no encogerlo
+      const maxWidth = 45;
+      const maxHeight = 35;
+      const ratio = img.width / img.height;
+      let w = maxWidth;
+      let h = w / ratio;
+      if (h > maxHeight) {
+        h = maxHeight;
+        w = h * ratio;
+      }
+      
+      // Colocar alineado a la derecha en x=190 aprox
+      pdf.addImage(img, 'PNG', 195 - w, 10, w, h)
     } catch (e) {
       console.error("Error loading logo for PDF", e)
     }
