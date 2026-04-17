@@ -157,10 +157,17 @@ export default function PresupuestoPage() {
     
     // Logo (Top Right)
     try {
-      // Intentamos cargar el logo desde la carpeta public
-      pdf.addImage('/logo.png', 'PNG', 160, 10, 35, 35);
+      // Cargamos el logo como HTMLImageElement
+      const img = new window.Image()
+      img.src = '/logo.png'
+      await new Promise((resolve, reject) => {
+        img.onload = resolve
+        img.onerror = reject
+      })
+      // Proporción 1:1, ajustamos un poco el tamaño
+      pdf.addImage(img, 'PNG', 160, 10, 35, 35)
     } catch (e) {
-      console.error("Error loading logo for PDF", e);
+      console.error("Error loading logo for PDF", e)
     }
 
     // Cabecera
