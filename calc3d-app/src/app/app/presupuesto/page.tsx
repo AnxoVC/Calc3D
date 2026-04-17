@@ -195,7 +195,7 @@ export default function PresupuestoPage() {
     pdf.setFontSize(14)
     pdf.setFont('helvetica', 'bold')
     pdf.text("Especificaciones", 20, 65)
-    182:
+
     pdf.setFontSize(11)
     pdf.setFont('helvetica', 'normal')
 
@@ -212,14 +212,14 @@ export default function PresupuestoPage() {
       const name = p ? (p.nickname || (p.printers ? p.printers.model : `Impresora ${idx + 1}`)) : `Impresora ${idx + 1}`
       prnString += `${idx > 0 ? ' + ' : ''}${name} (${pState.timeH}h ${pState.timeM}m)`
     })
-    199:
+
     pdf.text(`Materiales: ${filString}`, 20, 75)
     pdf.text(`Equipos: ${prnString}`, 20, 82)
-    202:
+    
     // Línea separadora
     pdf.setDrawColor(200, 200, 200)
     pdf.line(20, 90, 190, 90)
-    206:
+    
     // Título desglose
     pdf.setTextColor(0, 0, 0)
     pdf.setFontSize(14)
