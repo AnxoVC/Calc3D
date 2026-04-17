@@ -17,7 +17,7 @@ export default function PresupuestoPage() {
   const [result, setResult] = useState<CalculationResult | null>(null)
   const [saved, setSaved] = useState(false)
   const [saving, setSaving] = useState(false)
-  
+
   const [myPrinters, setMyPrinters] = useState<any[]>([])
   const [mySpools, setMySpools] = useState<any[]>([])
   const [selectedPrinter, setSelectedPrinter] = useState('')
@@ -28,7 +28,7 @@ export default function PresupuestoPage() {
       const supabase = createClient()
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
-      
+
       const { data: printers } = await supabase.from('user_printers').select('*, printers(*)').eq('user_id', user.id)
       setMyPrinters(printers || [])
 
@@ -46,7 +46,7 @@ export default function PresupuestoPage() {
             if (config.mats) setMats(config.mats)
             if (config.prns) setPrns(config.prns)
             if (config.result) setResult(config.result)
-          } catch(e) {}
+          } catch (e) { }
         }
       }
     }
@@ -100,11 +100,11 @@ export default function PresupuestoPage() {
 
   async function handleCalc(e: React.FormEvent) {
     e.preventDefault()
-    
+
     // Calculate Material
     const totalWeight = mats.reduce((sum, m) => sum + (Number(m.weight) || 0), 0)
-    const matCostTotal = mats.reduce((sum, m) => sum + ((Number(m.weight) || 0)/1000)*(Number(m.price) || 0), 0)
-    const equivPriceKg = totalWeight > 0 ? (matCostTotal / (totalWeight/1000)) : 0
+    const matCostTotal = mats.reduce((sum, m) => sum + ((Number(m.weight) || 0) / 1000) * (Number(m.price) || 0), 0)
+    const equivPriceKg = totalWeight > 0 ? (matCostTotal / (totalWeight / 1000)) : 0
 
     // Calculate Electricity
     const totalTimeHours = prns.reduce((sum, p) => sum + ((Number(p.timeH) || 0) + (Number(p.timeM) || 0) / 60), 0)
@@ -149,12 +149,12 @@ export default function PresupuestoPage() {
   async function handleDownloadPDF() {
     if (!result) return
     const pdf = new jsPDF('p', 'mm', 'a4')
-    
+
     // Configuración inicial (Fondo blanco y texto negro)
     pdf.setFillColor(255, 255, 255)
     pdf.rect(0, 0, 210, 297, 'F')
     pdf.setTextColor(0, 0, 0)
-    
+
     // Logo (Top Right)
     try {
       // Cargamos el logo como HTMLImageElement
@@ -174,7 +174,7 @@ export default function PresupuestoPage() {
     pdf.setFontSize(22)
     pdf.setFont('helvetica', 'bold')
     pdf.text("Presupuesto de Impresion 3D", 20, 30)
-    
+
     pdf.setFontSize(11)
     pdf.setFont('helvetica', 'normal')
     pdf.setTextColor(100, 100, 100)
@@ -185,69 +185,69 @@ export default function PresupuestoPage() {
       pdf.setFont('helvetica', 'bold')
       pdf.text(form.clientName, 38, 48)
     }
-    
+
     // Línea separadora
     pdf.setDrawColor(200, 200, 200)
     pdf.line(20, 55, 190, 55)
-    
+
     // Especificaciones Técnicas
     pdf.setTextColor(0, 0, 0)
     pdf.setFontSize(14)
     pdf.setFont('helvetica', 'bold')
     pdf.text("Especificaciones", 20, 65)
-182: 
+    182:
     pdf.setFontSize(11)
     pdf.setFont('helvetica', 'normal')
-    
+
     let filString = ''
     mats.forEach((m, idx) => {
       const s = mySpools.find(x => x.id === m.spoolId)
-      const name = s ? `${s.brand || ''} ${s.material || ''} ${s.color_name || ''}`.trim() : `Material ${idx+1}`
+      const name = s ? `${s.brand || ''} ${s.material || ''} ${s.color_name || ''}`.trim() : `Material ${idx + 1}`
       filString += `${idx > 0 ? ' + ' : ''}${name} (${formatNumber(Number(m.weight) || 0, 0)}g)`
     })
-    
+
     let prnString = ''
     prns.forEach((pState, idx) => {
       const p = myPrinters.find(x => x.id === pState.printerId)
       const name = p ? (p.nickname || (p.printers ? p.printers.model : `Impresora ${idx + 1}`)) : `Impresora ${idx + 1}`
       prnString += `${idx > 0 ? ' + ' : ''}${name} (${pState.timeH}h ${pState.timeM}m)`
     })
-199: 
+    199:
     pdf.text(`Materiales: ${filString}`, 20, 75)
     pdf.text(`Equipos: ${prnString}`, 20, 82)
-202: 
+    202:
     // Línea separadora
     pdf.setDrawColor(200, 200, 200)
     pdf.line(20, 90, 190, 90)
-206: 
+    206:
     // Título desglose
     pdf.setTextColor(0, 0, 0)
     pdf.setFontSize(14)
     pdf.setFont('helvetica', 'bold')
     pdf.text("Desglose de costes", 20, 100)
-    
+
     // Conceptos
     pdf.setFontSize(12)
     pdf.setFont('helvetica', 'normal')
     let y = 110
     pdf.text("Material:", 20, y); pdf.text(`${formatCurrency(result.materialCost)}`, 170, y, { align: 'right' }); y += 10;
     pdf.text("Electricidad:", 20, y); pdf.text(`${formatCurrency(result.electricityCost)}`, 170, y, { align: 'right' }); y += 10;
-    
+
     if (result.amortizationCost > 0) {
       pdf.text("Amortizacion:", 20, y); pdf.text(`${formatCurrency(result.amortizationCost)}`, 170, y, { align: 'right' }); y += 10;
     }
     if (result.laborCost > 0) {
       pdf.text("Mano de obra:", 20, y); pdf.text(`${formatCurrency(result.laborCost)}`, 170, y, { align: 'right' }); y += 10;
     }
-    
-    
+
+
     // Total Final
     pdf.line(20, y, 190, y); y += 10;
     pdf.setFontSize(16)
     pdf.setFont('helvetica', 'bold')
     pdf.setTextColor(249, 115, 22) // Naranja
     pdf.text("PRECIO FINAL:", 20, y); pdf.text(`${formatCurrency(result.total)}`, 170, y, { align: 'right' });
-    
+
     // Pie de página
     pdf.setFontSize(10)
     pdf.setTextColor(150, 150, 150)
@@ -270,7 +270,7 @@ export default function PresupuestoPage() {
             <h3 style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>Cliente / Pedido</h3>
             <div className="form-group">
               <label className="form-label">Nombre del cliente / Proyecto</label>
-              <input className="form-input" placeholder="Ej: Juan Pérez - Trofeo Torneo" value={form.clientName} onChange={e => setForm({...form, clientName: e.target.value})} />
+              <input className="form-input" placeholder="Ej: Juan Pérez - Trofeo Torneo" value={form.clientName} onChange={e => setForm({ ...form, clientName: e.target.value })} />
             </div>
           </div>
           <div className="card">
@@ -279,7 +279,7 @@ export default function PresupuestoPage() {
             </h3>
             <div className="materials-list">
               {mats.map((m, idx) => (
-                <div key={m.id} style={{ marginBottom: idx === mats.length-1 ? 0 : '1.5rem', paddingBottom: idx === mats.length-1 ? 0 : '1.5rem', borderBottom: idx === mats.length-1 ? 'none' : '1px dashed var(--border)' }}>
+                <div key={m.id} style={{ marginBottom: idx === mats.length - 1 ? 0 : '1.5rem', paddingBottom: idx === mats.length - 1 ? 0 : '1.5rem', borderBottom: idx === mats.length - 1 ? 'none' : '1px dashed var(--border)' }}>
                   <div className="form-group" style={{ marginBottom: '1rem' }}>
                     <div className="flex justify-between items-center mb-1">
                       <label className="form-label" style={{ color: 'var(--brand)', margin: 0 }}>Bobina {idx + 1}</label>
@@ -311,10 +311,10 @@ export default function PresupuestoPage() {
             <h3 style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <span className="flex items-center gap-2">Equipos y Tiempo</span>
             </h3>
-            
+
             <div className="printers-list">
               {prns.map((p, idx) => (
-                <div key={p.id} style={{ marginBottom: idx === prns.length-1 ? 0 : '1.5rem', paddingBottom: idx === prns.length-1 ? 0 : '1.5rem', borderBottom: idx === prns.length-1 ? 'none' : '1px dashed var(--border)' }}>
+                <div key={p.id} style={{ marginBottom: idx === prns.length - 1 ? 0 : '1.5rem', paddingBottom: idx === prns.length - 1 ? 0 : '1.5rem', borderBottom: idx === prns.length - 1 ? 'none' : '1px dashed var(--border)' }}>
                   <div className="form-group" style={{ marginBottom: '1rem' }}>
                     <div className="flex justify-between items-center mb-1">
                       <label className="form-label" style={{ color: 'var(--brand)', margin: 0 }}>Impresora {idx + 1}</label>
@@ -346,14 +346,14 @@ export default function PresupuestoPage() {
                 </div>
               ))}
             </div>
-            
+
             <button type="button" className="btn btn-ghost w-full mt-4" style={{ border: '1px dashed var(--border)', justifyContent: 'center' }} onClick={addPrinter}>
               + Añadir otra impresora
             </button>
-            
+
             <div className="form-group" style={{ marginTop: '1.5rem', paddingTop: '1.5rem', borderTop: '2px solid var(--border)' }}>
               <label className="form-label">Precio general kWh (€)</label>
-              <input type="number" step="0.001" className="form-input" value={form.kwhPrice} onChange={e => setForm({...form, kwhPrice: e.target.value})} required />
+              <input type="number" step="0.001" className="form-input" value={form.kwhPrice} onChange={e => setForm({ ...form, kwhPrice: e.target.value })} required />
             </div>
           </div>
           <div className="card" style={{ background: 'linear-gradient(135deg, rgba(249,115,22,0.08), rgba(245,158,11,0.04))' }}>
@@ -364,11 +364,11 @@ export default function PresupuestoPage() {
                 <label className="form-label">Tiempo del operador (preparación + postprocesado)</label>
                 <div className="form-grid">
                   <div className="input-wrapper">
-                    <input type="number" className="form-input" value={form.laborH} onChange={e => setForm({...form, laborH: e.target.value})} />
+                    <input type="number" className="form-input" value={form.laborH} onChange={e => setForm({ ...form, laborH: e.target.value })} />
                     <span className="text-muted text-sm ml-2 absolute right-3 top-3">Horas</span>
                   </div>
                   <div className="input-wrapper">
-                    <input type="number" min="0" max="59" className="form-input" value={form.laborM} onChange={e => setForm({...form, laborM: e.target.value})} />
+                    <input type="number" min="0" max="59" className="form-input" value={form.laborM} onChange={e => setForm({ ...form, laborM: e.target.value })} />
                     <span className="text-muted text-sm ml-2 absolute right-3 top-3">Min.</span>
                   </div>
                 </div>
@@ -377,19 +377,19 @@ export default function PresupuestoPage() {
                 <label className="form-label">Coste operador (€/h)</label>
                 <div className="input-wrapper">
                   <span className="input-prefix">€</span>
-                  <input type="number" step="0.5" className="form-input" value={form.laborPerHour} onChange={e => setForm({...form, laborPerHour: e.target.value})} />
+                  <input type="number" step="0.5" className="form-input" value={form.laborPerHour} onChange={e => setForm({ ...form, laborPerHour: e.target.value })} />
                 </div>
               </div>
               <div className="form-group">
                 <label className="form-label">Amortización (€/h)</label>
                 <div className="input-wrapper">
                   <span className="input-prefix">€</span>
-                  <input type="number" step="0.01" className="form-input" value={form.amortization} onChange={e => setForm({...form, amortization: e.target.value})} />
+                  <input type="number" step="0.01" className="form-input" value={form.amortization} onChange={e => setForm({ ...form, amortization: e.target.value })} />
                 </div>
               </div>
               <div className="form-group" style={{ gridColumn: '1/-1' }}>
                 <label className="form-label">Margen de beneficio (%)</label>
-                <input type="range" min="0" max="100" className="form-input" style={{ padding: '0.5rem 0', background: 'transparent', border: 'none' }} value={form.marginPercent} onChange={e => setForm({...form, marginPercent: e.target.value})} />
+                <input type="range" min="0" max="100" className="form-input" style={{ padding: '0.5rem 0', background: 'transparent', border: 'none' }} value={form.marginPercent} onChange={e => setForm({ ...form, marginPercent: e.target.value })} />
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
                   <span>0%</span><span style={{ color: 'var(--brand)', fontWeight: 700 }}>{form.marginPercent}%</span><span>100%</span>
                 </div>
