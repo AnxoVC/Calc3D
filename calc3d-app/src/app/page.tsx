@@ -1,8 +1,13 @@
+'use client'
 import Link from 'next/link'
 import ThemeToggle from '@/components/ThemeToggle'
 import ForumFeed from '@/components/ForumFeed'
+import LanguageSelector from '@/components/LanguageSelector'
+import { useTranslation } from '@/contexts/I18nContext'
 
 export default function LandingPage() {
+  const { t } = useTranslation()
+
   return (
     <>
       {/* NAV */}
@@ -15,8 +20,9 @@ export default function LandingPage() {
         </div>
         <div className="flex items-center gap-3">
           <ThemeToggle />
-          <Link href="/login" className="btn btn-ghost btn-sm hidden-mobile">Iniciar sesión</Link>
-          <Link href="/register" className="btn btn-primary btn-sm">Empezar gratis</Link>
+          <LanguageSelector />
+          <Link href="/login" className="btn btn-ghost btn-sm hidden-mobile">{t('nav.login')}</Link>
+          <Link href="/register" className="btn btn-primary btn-sm">{t('nav.register')}</Link>
         </div>
       </nav>
 
@@ -29,23 +35,17 @@ export default function LandingPage() {
         <div className="hero-content animate-fade-in">
           <span className="hero-badge">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-            100% Gratuita · Sin límites · Sin suscripción
+            {t('landing.badge')}
           </span>
-          <h1 className="hero-title">
-            La calculadora de costes<br />
-            para <span className="text-gradient">impresión 3D</span><br />
-            que siempre quisiste
-          </h1>
+          <h1 className="hero-title" dangerouslySetInnerHTML={{ __html: t('landing.title').replace('impresión 3D', '<span class="text-gradient">impresión 3D</span>') }} />
           <p className="hero-desc">
-            Calcula el coste exacto de cada impresión, gestiona tus bobinas e impresoras,
-            y analiza tus estadísticas. Todo en un solo lugar, completamente gratis.
+            {t('landing.desc')}
           </p>
           <div className="hero-cta">
             <Link href="/register" className="btn btn-primary btn-lg">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-              Empezar gratis ahora
+              {t('landing.cta')}
             </Link>
-
           </div>
         </div>
       </section>
@@ -55,10 +55,10 @@ export default function LandingPage() {
         <div className="container">
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '2rem', textAlign: 'center' }}>
             {[
-              { value: '30+', label: 'Impresoras en BD' },
-              { value: '40+', label: 'Filamentos en BD' },
-              { value: '€0', label: 'Coste mensual' },
-              { value: '∞', label: 'Cálculos guardados' },
+              { value: '30+', label: t('landing.stats.printers') },
+              { value: '40+', label: t('landing.stats.filaments') },
+              { value: '€0', label: t('landing.stats.monthly_cost') },
+              { value: '∞', label: t('landing.stats.saved_calcs') },
             ].map((s) => (
               <div key={s.label}>
                 <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--brand)' }}>{s.value}</div>
@@ -73,17 +73,17 @@ export default function LandingPage() {
       <section className="features-section">
         <div className="container">
           <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
-            <span className="badge badge-orange" style={{ marginBottom: '1rem' }}>Funcionalidades</span>
-            <h2>Todo lo que necesitas,<br /><span className="text-gradient">todo gratis</span></h2>
+            <span className="badge badge-orange" style={{ marginBottom: '1rem' }}>{t('landing.features.subtitle')}</span>
+            <h2 dangerouslySetInnerHTML={{ __html: t('landing.features.title').replace('todo gratis', '<span class="text-gradient">todo gratis</span>') }} />
           </div>
           <div className="features-grid">
             {[
-              { icon: '🧮', color: 'rgba(249,115,22,0.15)', title: 'Calculadora de costes', desc: 'Material, electricidad, amortización y mano de obra. Desglose completo al instante.' },
-              { icon: '💰', color: 'rgba(34,197,94,0.15)', title: 'Presupuesto rápido', desc: 'Añade mano de obra y margen de beneficio. Obtén el precio de venta perfecto.' },
-              { icon: '🗂️', color: 'rgba(59,130,246,0.15)', title: 'Inventario de bobinas', desc: 'Visualiza cuánto filamento te queda en cada bobina con barra de progreso.' },
-              { icon: '🖨️', color: 'rgba(168,85,247,0.15)', title: 'Base de datos pública', desc: 'Más de 30 impresoras y 40 filamentos preconfigurados. Solo selecciona y listo.' },
-              { icon: '📊', color: 'rgba(6,182,212,0.15)', title: 'Estadísticas completas', desc: 'Gráficos de gastos, tiempo de impresión y materiales usados por mes.' },
-              { icon: '📱', color: 'rgba(249,115,22,0.15)', title: 'Diseño mobile-first', desc: 'Funciona perfecto en el móvil. Úsala desde el taller sin complicaciones.' },
+              { icon: '🧮', color: 'rgba(249,115,22,0.15)', title: t('landing.features.calc.title'), desc: t('landing.features.calc.desc') },
+              { icon: '💰', color: 'rgba(34,197,94,0.15)', title: t('landing.features.budget.title'), desc: t('landing.features.budget.desc') },
+              { icon: '🗂️', color: 'rgba(59,130,246,0.15)', title: t('landing.features.inventory.title'), desc: t('landing.features.inventory.desc') },
+              { icon: '🖨️', color: 'rgba(168,85,247,0.15)', title: t('landing.features.public_db.title'), desc: t('landing.features.public_db.desc') },
+              { icon: '📊', color: 'rgba(6,182,212,0.15)', title: t('landing.features.stats.title'), desc: t('landing.features.stats.desc') },
+              { icon: '📱', color: 'rgba(249,115,22,0.15)', title: t('landing.features.mobile.title'), desc: t('landing.features.mobile.desc') },
             ].map((f) => (
               <div key={f.title} className="feature-card">
                 <div className="feature-icon" style={{ background: f.color }}>{f.icon}</div>
@@ -99,14 +99,14 @@ export default function LandingPage() {
       <section className="steps-section">
         <div className="container">
           <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
-            <span className="badge badge-orange" style={{ marginBottom: '1rem' }}>Cómo funciona</span>
-            <h2>Tres pasos para <span className="text-gradient">empezar</span></h2>
+            <span className="badge badge-orange" style={{ marginBottom: '1rem' }}>{t('landing.how_it_works.subtitle')}</span>
+            <h2 dangerouslySetInnerHTML={{ __html: t('landing.how_it_works.start').replace('empezar', '<span class="text-gradient">' + (language === 'gl' ? 'comezar' : language === 'pt' ? 'começar' : language === 'en' ? 'start' : 'empezar') + '</span>') }} />
           </div>
           <div className="steps-grid">
             {[
-              { n: '1', title: 'Crea tu cuenta', desc: 'Regístrate gratis con tu email.' },
-              { n: '2', title: 'Selecciona tu equipo', desc: 'Elige tu impresora y filamento de nuestra base de datos. Los datos se autocompletan.' },
-              { n: '3', title: 'Calcula y guarda', desc: 'Introduce el peso y el tiempo y obtén el coste exacto. Guárdalo en tu historial.' },
+              { n: '1', title: t('landing.how_it_works.step1.title'), desc: t('landing.how_it_works.step1.desc') },
+              { n: '2', title: t('landing.how_it_works.step2.title'), desc: t('landing.how_it_works.step2.desc') },
+              { n: '3', title: t('landing.how_it_works.step3.title'), desc: t('landing.how_it_works.step3.desc') },
             ].map((s) => (
               <div key={s.n} className="step-card">
                 <div className="step-number">{s.n}</div>
@@ -122,9 +122,9 @@ export default function LandingPage() {
       <section className="forum-section" style={{ padding: '6rem 0', background: 'var(--bg-surface)' }}>
         <div className="container">
           <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
-            <span className="badge badge-purple" style={{ marginBottom: '1rem' }}>Comunidad</span>
-            <h2>Muro de Sugerencias<br /><span className="text-gradient">y Actualizaciones</span></h2>
-            <p className="text-muted mt-4">Lo que la comunidad propone y lo que estamos construyendo.</p>
+            <span className="badge badge-purple" style={{ marginBottom: '1rem' }}>{t('landing.community.subtitle')}</span>
+            <h2 dangerouslySetInnerHTML={{ __html: t('landing.community.title').replace('y Actualizaciones', '<br /><span class="text-gradient">y Actualizaciones</span>') }} />
+            <p className="text-muted mt-4">{t('landing.community.desc')}</p>
           </div>
           <ForumFeed />
         </div>
@@ -136,20 +136,20 @@ export default function LandingPage() {
           <div className="hero-glow-1" style={{ opacity: 0.1 }} />
         </div>
         <div className="container" style={{ position: 'relative', zIndex: 1 }}>
-          <span className="badge badge-orange" style={{ marginBottom: '1rem' }}>Empieza hoy</span>
-          <h2 style={{ marginBottom: '1rem' }}>Deja de adivinar,<br /><span className="text-gradient">empieza a calcular</span></h2>
+          <span className="badge badge-orange" style={{ marginBottom: '1rem' }}>{t('landing.cta_final.subtitle')}</span>
+          <h2 dangerouslySetInnerHTML={{ __html: t('landing.cta_final.title').replace('empezar a calcular', '<span class="text-gradient">empezar a calcular</span>') }} />
           <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem', fontSize: '1rem' }}>
-            Únete a la comunidad de makers que calculan sus costes con Calc3D.
+            {t('landing.cta_final.desc')}
           </p>
           <Link href="/register" className="btn btn-primary btn-lg">
-            Crear cuenta gratis →
+            {t('landing.cta_final.btn')}
           </Link>
         </div>
       </section>
 
       {/* FOOTER */}
       <footer className="footer">
-        <p>© {new Date().getFullYear()} Calc3D · Hecho con ❤️ para la comunidad maker</p>
+        <p>© {new Date().getFullYear()} {t('landing.footer')}</p>
       </footer>
     </>
   )

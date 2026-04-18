@@ -12,10 +12,16 @@ export const metadata: Metadata = {
   },
 }
 
+import { I18nProvider } from '@/contexts/I18nContext'
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="es">
-      <body>{children}</body>
+      <body>
+        <I18nProvider>
+          {children}
+        </I18nProvider>
+      </body>
     </html>
   )
 }

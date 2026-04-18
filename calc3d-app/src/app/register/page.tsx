@@ -2,8 +2,10 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
+import { useTranslation } from '@/contexts/I18nContext'
 
 export default function RegisterPage() {
+  const { t } = useTranslation()
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -13,7 +15,7 @@ export default function RegisterPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    if (password.length < 6) { setError('La contraseña debe tener al menos 6 caracteres'); return }
+    if (password.length < 6) { setError(t('auth.pass_min')); return }
     setLoading(true)
     setError('')
     const supabase = createClient()
@@ -58,29 +60,29 @@ export default function RegisterPage() {
           </div>
           <span style={{ fontWeight: 800, fontSize: '1.25rem' }}>Calc<span className="text-gradient">3D</span></span>
         </div>
-        <h2 style={{ marginBottom: '0.25rem' }}>Crea tu cuenta</h2>
-        <p className="text-muted text-sm mb-6">Gratis para siempre · Sin límites</p>
+        <h2 style={{ marginBottom: '0.25rem' }}>{t('auth.register_title')}</h2>
+        <p className="text-muted text-sm mb-6">{t('auth.register_subtitle')}</p>
         {error && <div className="alert alert-danger mb-4">{error}</div>}
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div className="form-group">
-            <label className="form-label">Nombre</label>
+            <label className="form-label">{t('auth.name')}</label>
             <input type="text" className="form-input" placeholder="Tu nombre" value={name} onChange={e => setName(e.target.value)} required />
           </div>
           <div className="form-group">
-            <label className="form-label">Email</label>
+            <label className="form-label">{t('auth.email')}</label>
             <input type="email" className="form-input" placeholder="tu@email.com" value={email} onChange={e => setEmail(e.target.value)} required />
           </div>
           <div className="form-group">
-            <label className="form-label">Contraseña</label>
-            <input type="password" className="form-input" placeholder="Mín. 6 caracteres" value={password} onChange={e => setPassword(e.target.value)} required />
+            <label className="form-label">{t('auth.password')}</label>
+            <input type="password" className="form-input" placeholder={t('auth.pass_min')} value={password} onChange={e => setPassword(e.target.value)} required />
           </div>
           <button type="submit" className="btn btn-primary w-full" style={{ justifyContent: 'center', marginTop: '0.5rem' }} disabled={loading}>
-            {loading ? 'Creando cuenta...' : 'Crear cuenta gratis →'}
+            {loading ? t('auth.creating') : t('auth.register_btn')}
           </button>
         </form>
         <p className="text-center text-sm text-muted" style={{ marginTop: '1.5rem' }}>
-          ¿Ya tienes cuenta?{' '}
-          <Link href="/login" style={{ color: 'var(--brand)', fontWeight: 600 }}>Iniciar sesión</Link>
+          {t('auth.have_account')}{' '}
+          <Link href="/login" style={{ color: 'var(--brand)', fontWeight: 600 }}>{t('auth.login_link')}</Link>
         </p>
       </div>
     </div>

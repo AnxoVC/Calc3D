@@ -3,8 +3,10 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { useTranslation } from '@/contexts/I18nContext'
 
 export default function LoginPage() {
+  const { t } = useTranslation()
   const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -18,7 +20,7 @@ export default function LoginPage() {
     const supabase = createClient()
     const { error } = await supabase.auth.signInWithPassword({ email, password })
     if (error) {
-      setError('Email o contraseña incorrectos')
+      setError(t('auth.error_login'))
       setLoading(false)
     } else {
       router.push('/app')
@@ -37,31 +39,31 @@ export default function LoginPage() {
           </div>
           <span style={{ fontWeight: 800, fontSize: '1.25rem' }}>Calc<span className="text-gradient">3D</span></span>
         </div>
-        <h2 style={{ marginBottom: '0.25rem' }}>Bienvenido de vuelta</h2>
-        <p className="text-muted text-sm mb-6">Inicia sesión en tu cuenta</p>
+        <h2 style={{ marginBottom: '0.25rem' }}>{t('auth.login_title')}</h2>
+        <p className="text-muted text-sm mb-6">{t('auth.login_subtitle')}</p>
         {error && <div className="alert alert-danger mb-4">{error}</div>}
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div className="form-group">
-            <label className="form-label">Email</label>
+            <label className="form-label">{t('auth.email')}</label>
             <input type="email" className="form-input" placeholder="tu@email.com" value={email} onChange={e => setEmail(e.target.value)} required />
           </div>
           <div className="form-group">
             <div className="flex justify-between items-center mb-1">
-              <label className="form-label mb-0">Contraseña</label>
-              <Link href="/forgot-password" style={{ color: 'var(--brand)', fontSize: '0.8rem', fontWeight: 500 }}>¿Olvidaste tu contraseña?</Link>
+              <label className="form-label mb-0">{t('auth.password')}</label>
+              <Link href="/forgot-password" style={{ color: 'var(--brand)', fontSize: '0.8rem', fontWeight: 500 }}>{t('auth.forgot')}</Link>
             </div>
             <input type="password" className="form-input" placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)} required />
           </div>
           <button type="submit" className="btn btn-primary w-full" style={{ justifyContent: 'center', marginTop: '0.5rem' }} disabled={loading}>
-            {loading ? 'Iniciando sesión...' : 'Iniciar sesión →'}
+            {loading ? t('auth.logging_in') : t('auth.login_btn')}
           </button>
         </form>
         <p className="text-center text-sm text-muted" style={{ marginTop: '1.5rem' }}>
-          ¿No tienes cuenta?{' '}
-          <Link href="/register" style={{ color: 'var(--brand)', fontWeight: 600 }}>Regístrate gratis</Link>
+          {t('auth.no_account')}{' '}
+          <Link href="/register" style={{ color: 'var(--brand)', fontWeight: 600 }}>{t('auth.register_link')}</Link>
         </p>
         <p className="text-center" style={{ marginTop: '1rem' }}>
-          <Link href="/" style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>← Volver al inicio</Link>
+          <Link href="/" style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>{t('auth.back_home')}</Link>
         </p>
       </div>
     </div>

@@ -7,19 +7,23 @@ import { createClient } from '@/lib/supabase/client'
 import ThemeToggle from '@/components/ThemeToggle'
 
 
-const NAV_ITEMS = [
-  { href: '/app', label: 'Diario' },
-  { href: '/app/calculadora', label: 'Calculadora' },
-  { href: '/app/presupuesto', label: 'Presupuesto' },
-  { href: '/app/bobinas', label: 'Bobinas' },
-  { href: '/app/impresoras', label: 'Impresoras' },
-  { href: '/app/estadisticas', label: 'Estadísticas' },
-  { href: '/app/consumibles', label: 'Consumibles' },
-  { href: '/app/ajustes', label: 'Ajustes' },
-  { href: '/app/feedback', label: 'Sugerencias' },
-]
+import { useTranslation } from '@/contexts/I18nContext'
+
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
+  const { t } = useTranslation()
+  
+  const NAV_ITEMS = [
+    { href: '/app', label: t('nav.diario') },
+    { href: '/app/calculadora', label: t('nav.calculadora') },
+    { href: '/app/presupuesto', label: t('nav.presupuesto') },
+    { href: '/app/bobinas', label: t('nav.bobinas') },
+    { href: '/app/impresoras', label: t('nav.impresoras') },
+    { href: '/app/estadisticas', label: t('nav.estadisticas') },
+    { href: '/app/consumibles', label: t('nav.consumibles') },
+    { href: '/app/ajustes', label: t('nav.ajustes') },
+    { href: '/app/feedback', label: t('nav.feedback') },
+  ]
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const pathname = usePathname()
   const router = useRouter()
@@ -79,7 +83,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             className={`sidebar-nav-item ${pathname.startsWith('/app/admin') ? 'active' : ''}`}
             style={{ background: 'rgba(249,115,22,0.1)', border: '1px solid rgba(249,115,22,0.2)' }}
           >
-            Panel Admin
+            {t('nav.admin')}
           </Link>
         )}
       </nav>
@@ -91,7 +95,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           <ThemeToggle />
         </div>
         <button onClick={handleLogout} className="sidebar-nav-item" style={{ width: '100%', textAlign: 'left' }}>
-          Cerrar sesión
+          {t('nav.logout')}
         </button>
       </div>
     </>

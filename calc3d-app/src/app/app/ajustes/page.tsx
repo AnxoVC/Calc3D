@@ -1,8 +1,11 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useTranslation } from '@/contexts/I18nContext'
+import { type Language } from '@/locales'
 
 export default function AjustesPage() {
+  const { t, language, setLanguage } = useTranslation()
   const [form, setForm] = useState({ default_kwh_price: '0.15', default_spool_weight_g: '1000' })
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -45,7 +48,7 @@ export default function AjustesPage() {
 
   async function handlePasswordChange() {
     if (!newPassword || newPassword.length < 6) {
-      setPasswordError('La contraseña debe tener al menos 6 caracteres')
+      setPasswordError(t('settings.password.min'))
       return
     }
     setChangingPassword(true)
@@ -65,36 +68,60 @@ export default function AjustesPage() {
     }
   }
 
-  if (loading) return <div style={{ padding: '4rem', textAlign: 'center', color: 'var(--text-muted)' }}>Cargando...</div>
+  if (loading) return <div style={{ padding: '4rem', textAlign: 'center', color: 'var(--text-muted)' }}>{t('common.loading') || 'Cargando...'}</div>
 
   return (
     <div className="animate-fade-in" style={{ maxWidth: 600 }}>
       <div className="page-header">
-        <h1 className="page-title">Ajustes</h1>
-        <p className="page-subtitle">Configura tu perfil y valores por defecto</p>
+        <h1 className="page-title">{t('settings.title')}</h1>
+        <p className="page-subtitle">{t('settings.subtitle')}</p>
       </div>
 
       <div className="card mb-6">
-        <h3 style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>Perfil</h3>
-        <div className="form-group mb-6">
-          <label className="form-label">Email de la cuenta</label>
+        <h3 style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>{t('settings.profile')}</h3>
+        <div className="form-group mb-4">
+          <label className="form-label">{t('settings.email')}</label>
           <input className="form-input" value={userEmail} disabled style={{ opacity: 0.7 }} />
         </div>
 
         <div style={{ height: '1px', background: 'var(--border)', margin: '2rem 0' }} />
+
+        <h4 style={{ marginBottom: '0.5rem', fontWeight: 600 }}>{t('settings.language.title')}</h4>
+        <p className="text-sm text-muted mb-4">{t('settings.language.desc')}</p>
         
-        <h4 style={{ marginBottom: '0.5rem', fontWeight: 600 }}>Cambiar Contraseña</h4>
-        <p className="text-sm text-muted mb-4">Actualiza tu contraseña de acceso a MyCalc3D.</p>
+        <div className="flex gap-2 mb-6" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
+          {[
+            { code: 'es', label: 'Español', flag: '🇪🇸' },
+            { code: 'en', label: 'English', flag: '🇺🇸' },
+            { code: 'gl', label: 'Galego', flag: '⬜🟦' },
+            { code: 'pt', label: 'Português', flag: '🇵🇹' }
+          ].map((l) => (
+            <button 
+              key={l.code}
+              onClick={() => setLanguage(l.code as Language)}
+              className={`btn ${language === l.code ? 'btn-primary' : 'btn-outline'}`}
+              style={{ justifyContent: 'center', padding: '0.75rem' }}
+            >
+              <span style={{ marginRight: '0.5rem' }}>{l.flag}</span>
+              {l.label}
+            </button>
+          ))}
+        </div>
+
+        <div style={{ height: '1px', background: 'var(--border)', margin: '2rem 0' }} />
+        
+        <h4 style={{ marginBottom: '0.5rem', fontWeight: 600 }}>{t('settings.password.title')}</h4>
+        <p className="text-sm text-muted mb-4">{t('settings.password.desc')}</p>
         
         {passwordError && <div className="alert alert-danger mb-4">{passwordError}</div>}
-        {passwordChanged && <div className="alert alert-success mb-4">Contraseña actualizada correctamente</div>}
+        {passwordChanged && <div className="alert alert-success mb-4">{t('settings.password.success')}</div>}
 
         <div className="form-group mb-4">
-          <label className="form-label">Nueva Contraseña</label>
+          <label className="form-label">{t('settings.password.new')}</label>
           <input 
             type="password" 
             className="form-input" 
-            placeholder="Mínimo 6 caracteres" 
+            placeholder={t('settings.password.min')}
             value={newPassword} 
             onChange={e => setNewPassword(e.target.value)} 
           />
@@ -105,29 +132,29 @@ export default function AjustesPage() {
           disabled={changingPassword || !newPassword}
           onClick={handlePasswordChange}
         >
-          {changingPassword ? 'Actualizando...' : 'Actualizar Contraseña'}
+          {changingPassword ? t('settings.password.updating') : t('settings.password.update')}
         </button>
       </div>
 
       <form className="card mb-10" onSubmit={handleSave}>
-        <h3 style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>Valores por defecto</h3>
-        <p className="text-sm text-muted mb-6">Estos valores se usarán automáticamente en la calculadora si no seleccionas una impresora o filamento específico.</p>
+        <h3 style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>{t('settings.defaults.title')}</h3>
+        <p className="text-sm text-muted mb-6">{t('settings.defaults.desc')}</p>
         <div className="form-grid mb-6">
           <div className="form-group">
-            <label className="form-label">Precio Electricidad (€/kWh)</label>
+            <label className="form-label">{t('settings.defaults.elec')}</label>
             <div className="input-wrapper">
               <span className="input-prefix">€</span>
               <input type="number" step="0.001" className="form-input" value={form.default_kwh_price} onChange={e => setForm({...form, default_kwh_price: e.target.value})} required />
             </div>
           </div>
           <div className="form-group">
-            <label className="form-label">Peso estándar bobinas (g)</label>
+            <label className="form-label">{t('settings.defaults.weight')}</label>
             <input type="number" className="form-input" value={form.default_spool_weight_g} onChange={e => setForm({...form, default_spool_weight_g: e.target.value})} required />
           </div>
         </div>
         <div className="flex justify-between items-center">
-          {saved ? <span className="alert alert-success" style={{ padding: '0.5rem 1rem' }}>Ajustes guardados</span> : <span />}
-          <button type="submit" className="btn btn-primary" disabled={saving}>{saving ? 'Guardando...' : 'Guardar ajustes'}</button>
+          {saved ? <span className="alert alert-success" style={{ padding: '0.5rem 1rem' }}>{t('settings.defaults.saved')}</span> : <span />}
+          <button type="submit" className="btn btn-primary" disabled={saving}>{saving ? t('settings.defaults.saving') : t('settings.defaults.save')}</button>
         </div>
       </form>
 
