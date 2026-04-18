@@ -1,11 +1,13 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useTranslation } from '@/contexts/I18nContext'
 
 interface Printer { id: string; brand: string; model: string; wattage_w: number; type: string }
 interface UserPrinter { id: string; printer_id: string | null; nickname: string | null; custom_wattage_w: number | null; printers: Printer | null }
 
 export default function ImpresorasPage() {
+  const { t } = useTranslation()
   const [dbPrinters, setDbPrinters] = useState<Printer[]>([])
   const [myPrinters, setMyPrinters] = useState<UserPrinter[]>([])
   const [loading, setLoading] = useState(true)
@@ -51,7 +53,7 @@ export default function ImpresorasPage() {
 
   function validateWattage(val: string) {
     const n = Number(val)
-    if (!val || isNaN(n)) { setWattageError('Introduce un número válido'); return false }
+    if (!val || isNaN(n)) { setWattageError(t('printers.modal.save_error')); return false }
     if (n < 50) { setWattageError('⚠️ Consumo muy bajo, ¿seguro? Mínimo típico: 50W'); return false }
     if (n > 5000) { setWattageError('⚠️ Consumo muy alto, ¿seguro? Máximo típico: 5000W'); return false }
     setWattageError(''); return true
@@ -59,8 +61,8 @@ export default function ImpresorasPage() {
 
   function validateEditWattage(val: string) {
     const n = Number(val)
-    if (!val || isNaN(n) || n <= 0) { setEditError('Introduce un número válido'); return false }
-    if (n > 5000) { setEditError('Máximo 5000W'); return false }
+    if (!val || isNaN(n) || n <= 0) { setEditError(t('common.error')); return false }
+    if (n > 5000) { setEditError('Max 5000W'); return false }
     setEditError(''); return true
   }
 
@@ -109,7 +111,7 @@ export default function ImpresorasPage() {
         }).select().single()
         
         if (insertErr) {
-          setError('Error al contribuir a la base de datos: ' + insertErr.message)
+          setError(t('printers.modal.contrib_error') + ' ' + insertErr.message)
           setSaving(false)
           return
         }
@@ -122,7 +124,7 @@ export default function ImpresorasPage() {
         custom_wattage_w: Number(manualWattage),
       })
       if (userPrinterErr) {
-          setError('Error al guardar en tus impresoras: ' + userPrinterErr.message)
+          setError(t('printers.modal.save_error') + ' ' + userPrinterErr.message)
           setSaving(false)
           return
       }
@@ -151,16 +153,18 @@ export default function ImpresorasPage() {
   return (
     <div className="animate-fade-in">
       <div className="section-header mb-6">
-        <div><h1 className="page-title">Impresoras</h1><p className="page-subtitle">Tus equipos de impresión</p></div>
-        <button className="btn btn-primary" onClick={() => setShowModal(true)}>+ Añadir impresora</button>
+        <div><h1 className="page-title">{t('printers.title')}</h1><p className="page-subtitle">{t('printers.subtitle')}</p></div>
+        <button className="btn btn-primary" onClick={() => setShowModal(true)}>{t('printers.add_btn')}</button>
       </div>
+
+      {loading && <div style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '4rem' }}>{t('common.loading')}</div>}
 
       {!loading && myPrinters.length === 0 && (
         <div className="empty-state">
           <div className="empty-state-icon"></div>
-          <h3 style={{ marginBottom: '0.5rem' }}>Sin impresoras añadidas</h3>
-          <p style={{ marginBottom: '1.5rem' }}>Añade tus impresoras desde nuestra base de datos para tenerlas disponibles al calcular.</p>
-          <button className="btn btn-primary" onClick={() => setShowModal(true)}>+ Añadir tu primera impresora</button>
+          <h3 style={{ marginBottom: '0.5rem' }}>{t('printers.empty.title')}</h3>
+          <p style={{ marginBottom: '1.5rem' }}>{t('printers.empty.desc')}</p>
+          <button className="btn btn-primary" onClick={() => setShowModal(true)}>{t('printers.empty.btn')}</button>
         </div>
       )}
 
@@ -177,7 +181,7 @@ export default function ImpresorasPage() {
               <div className="flex items-center gap-3 mb-3">
                 <div style={{ width: 48, height: 48, background: 'rgba(249,115,22,0.12)', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem' }}>🖨️</div>
                 <div>
-                  <div style={{ fontWeight: 700 }}>{up.nickname || (p ? `${p.brand} ${p.model}` : 'Impresora personalizada')}</div>
+                  <div style={{ fontWeight: 700 }}>{up.nickname || (p ? `${p.brand} ${p.model}` : t('printers.card.custom'))}</div>
                   {p && <div className="text-muted text-sm">{p.brand} {p.model}</div>}
                 </div>
               </div>
@@ -185,7 +189,7 @@ export default function ImpresorasPage() {
               {/* Consumo - modo visualización o edición */}
               {isEditing ? (
                 <div style={{ marginBottom: '1rem', padding: '0.75rem', background: 'rgba(249,115,22,0.06)', borderRadius: '8px', border: '1px solid rgba(249,115,22,0.15)' }}>
-                  <label className="form-label" style={{ fontSize: '0.75rem', marginBottom: '0.5rem' }}>Consumo (W)</label>
+                  <label className="form-label" style={{ fontSize: '0.75rem', marginBottom: '0.5rem' }}>{t('printers.card.consumption')}</label>
                   <div className="flex gap-2" style={{ alignItems: 'center' }}>
                     <input
                       type="number"
@@ -198,24 +202,24 @@ export default function ImpresorasPage() {
                       min={1}
                       max={5000}
                     />
-                    <button type="button" className="btn btn-primary btn-sm" onClick={() => saveEdit(up.id)} title="Guardar" style={{ padding: '0.4rem 0.6rem', minWidth: 'auto' }}>✓</button>
-                    <button type="button" className="btn btn-ghost btn-sm" onClick={cancelEdit} title="Cancelar" style={{ padding: '0.4rem 0.6rem', minWidth: 'auto' }}>✕</button>
+                    <button type="button" className="btn btn-primary btn-sm" onClick={() => saveEdit(up.id)} title={t('common.save')} style={{ padding: '0.4rem 0.6rem', minWidth: 'auto' }}>✓</button>
+                    <button type="button" className="btn btn-ghost btn-sm" onClick={cancelEdit} title={t('common.cancel')} style={{ padding: '0.4rem 0.6rem', minWidth: 'auto' }}>✕</button>
                   </div>
                   {editError && <p style={{ color: 'var(--accent-red)', fontSize: '0.7rem', marginTop: '0.25rem' }}>{editError}</p>}
-                  {defaultW > 0 && <p className="text-muted" style={{ fontSize: '0.7rem', marginTop: '0.25rem' }}>Valor por defecto: {defaultW}W</p>}
+                  {defaultW > 0 && <p className="text-muted" style={{ fontSize: '0.7rem', marginTop: '0.25rem' }}>{t('printers.card.default_val')} {defaultW}W</p>}
                 </div>
               ) : (
                 <div className="flex gap-3 text-sm text-muted" style={{ marginBottom: '1rem', alignItems: 'center' }}>
-                  <span style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.35rem' }} onClick={() => startEdit(up)} title="Clic para editar consumo">
+                  <span style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.35rem' }} onClick={() => startEdit(up)} title={t('printers.card.edit_consumption')}>
                     ⚡ {currentW}W
-                    {isCustom && <span style={{ fontSize: '0.65rem', background: 'rgba(249,115,22,0.15)', color: 'var(--accent-orange)', padding: '0.1rem 0.35rem', borderRadius: '4px' }}>personalizado</span>}
+                    {isCustom && <span style={{ fontSize: '0.65rem', background: 'rgba(249,115,22,0.15)', color: 'var(--accent-orange)', padding: '0.1rem 0.35rem', borderRadius: '4px' }}>{t('printers.card.manual_tag')}</span>}
                     <span style={{ fontSize: '0.75rem', opacity: 0.5 }}>✏️</span>
                   </span>
                   <span className={`badge ${p?.type === 'FDM' ? 'badge-orange' : p?.type === 'SLA' ? 'badge-blue' : 'badge-purple'}`}>{p?.type || 'FDM'}</span>
                 </div>
               )}
 
-              <button className="btn btn-danger btn-sm w-full" style={{ justifyContent: 'center' }} onClick={() => handleDelete(up.id)}>Eliminar</button>
+              <button className="btn btn-danger btn-sm w-full" style={{ justifyContent: 'center' }} onClick={() => handleDelete(up.id)}>{t('common.delete')}</button>
             </div>
           )
         })}
@@ -225,41 +229,41 @@ export default function ImpresorasPage() {
         <div className="modal-overlay" onClick={e => e.target === e.currentTarget && setShowModal(false)}>
           <div className="modal">
             <div className="modal-header">
-              <h3>Añadir impresora</h3>
+              <h3>{t('printers.modal.title')}</h3>
               <button className="btn btn-ghost btn-icon" onClick={() => setShowModal(false)}>✕</button>
             </div>
             <form onSubmit={handleAdd} className="flex flex-col gap-4">
               {error && <div className="alert alert-danger">{error}</div>}
               <div className="flex gap-2 mb-2 p-1 bg-input" style={{ background: 'rgba(255,255,255,0.05)', borderRadius: '8px' }}>
-                <button type="button" className={`btn btn-sm ${!isManual ? 'btn-primary' : 'btn-ghost'}`} style={{ flex: 1, justifyContent: 'center' }} onClick={() => setIsManual(false)}>Base de Datos</button>
-                <button type="button" className={`btn btn-sm ${isManual ? 'btn-primary' : 'btn-ghost'}`} style={{ flex: 1, justifyContent: 'center' }} onClick={() => setIsManual(true)}>Manual</button>
+                <button type="button" className={`btn btn-sm ${!isManual ? 'btn-primary' : 'btn-ghost'}`} style={{ flex: 1, justifyContent: 'center' }} onClick={() => setIsManual(false)}>{t('printers.modal.tab_db')}</button>
+                <button type="button" className={`btn btn-sm ${isManual ? 'btn-primary' : 'btn-ghost'}`} style={{ flex: 1, justifyContent: 'center' }} onClick={() => setIsManual(true)}>{t('printers.modal.tab_manual')}</button>
               </div>
 
               {!isManual ? (
                 <>
                   <div className="form-group">
-                    <label className="form-label">Buscar en la base de datos</label>
-                    <input className="form-input" placeholder="Bambu, Prusa, Creality, Artillery..." value={search} onChange={e => setSearch(e.target.value)} />
+                    <label className="form-label">{t('printers.modal.search_label')}</label>
+                    <input className="form-input" placeholder={t('printers.modal.search_placeholder')} value={search} onChange={e => setSearch(e.target.value)} />
                   </div>
                   <div className="form-group">
-                    <label className="form-label">Seleccionar impresora</label>
+                    <label className="form-label">{t('printers.modal.select_label')}</label>
                     <select className="form-select" value={selectedId} onChange={e => setSelectedId(e.target.value)} required={!isManual}>
-                      <option value="">— Selecciona —</option>
+                      <option value="">— {t('common.select')} —</option>
                       {filtered.map(p => <option key={p.id} value={p.id}>{p.brand} {p.model} ({p.wattage_w}W) [{p.type}]</option>)}
                     </select>
                   </div>
                   <div className="form-group">
-                    <label className="form-label">Apodo (opcional)</label>
-                    <input className="form-input" placeholder="Mi Bambu, Impresora del taller..." value={nickname} onChange={e => setNickname(e.target.value)} />
+                    <label className="form-label">{t('printers.modal.nickname_label')}</label>
+                    <input className="form-input" placeholder={t('printers.modal.nickname_placeholder')} value={nickname} onChange={e => setNickname(e.target.value)} />
                   </div>
                 </>
               ) : (
                 <>
                   <div className="form-group">
-                    <label className="form-label">Nombre de tu impresora</label>
+                    <label className="form-label">{t('printers.modal.manual_name')}</label>
                     <input
                       className="form-input"
-                      placeholder="Ej: Artillery Genius Pro"
+                      placeholder={t('printers.modal.manual_name_placeholder')}
                       value={manualName}
                       onChange={e => { setManualName(e.target.value); checkDuplicates(e.target.value) }}
                       required={isManual}
@@ -268,7 +272,7 @@ export default function ImpresorasPage() {
 
                   {duplicates.length > 0 && (
                     <div className="alert alert-warn" style={{ flexDirection: 'column', gap: '0.5rem' }}>
-                      <strong>Posibles coincidencias en la BD. ¿No es una de estas?</strong>
+                      <strong>{t('printers.modal.duplicates_warn')}</strong>
                       {duplicates.map(d => (
                         <button key={d.id} type="button" className="btn btn-secondary btn-sm" style={{ justifyContent: 'flex-start' }}
                           onClick={() => { setIsManual(false); setSelectedId(d.id); setDuplicates([]) }}>
@@ -280,18 +284,18 @@ export default function ImpresorasPage() {
 
                   <div className="form-grid">
                     <div className="form-group">
-                      <label className="form-label">Consumo (W)</label>
+                      <label className="form-label">{t('printers.modal.wattage_label')}</label>
                       <input
-                        type="number" className="form-input" placeholder="300"
+                        type="number" className="form-input" placeholder={t('printers.modal.wattage_placeholder')}
                         value={manualWattage}
                         onChange={e => { setManualWattage(e.target.value); validateWattage(e.target.value) }}
                         required={isManual}
                       />
                       {wattageError && <p className="text-xs" style={{ color: 'var(--accent-red)', marginTop: '0.25rem' }}>{wattageError}</p>}
-                      {!wattageError && <p className="text-xs text-muted mt-1">Típico: 150W–500W</p>}
+                      {!wattageError && <p className="text-xs text-muted mt-1">{t('printers.modal.wattage_hint')}</p>}
                     </div>
                     <div className="form-group">
-                      <label className="form-label">Tipo</label>
+                      <label className="form-label">{t('printers.modal.type_label')}</label>
                       <select className="form-select" value={manualType} onChange={e => setManualType(e.target.value)}>
                         <option value="FDM">FDM</option>
                         <option value="Resina">Resina (MSLA)</option>
@@ -305,8 +309,8 @@ export default function ImpresorasPage() {
                     <label style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer', padding: '0.75rem', background: 'rgba(249,115,22,0.06)', borderRadius: '8px', border: '1px solid rgba(249,115,22,0.15)' }}>
                       <input type="checkbox" checked={contributeToDb} onChange={e => setContributeToDb(e.target.checked)} />
                       <span style={{ fontSize: '0.875rem' }}>
-                        <strong>Añadir a la base de datos pública</strong>
-                        <span className="text-muted" style={{ display: 'block', fontSize: '0.75rem' }}>Se añadirá como &quot;no verificada&quot; hasta revisión</span>
+                        <strong>{t('printers.modal.contribute_label')}</strong>
+                        <span className="text-muted" style={{ display: 'block', fontSize: '0.75rem' }}>{t('printers.modal.contribute_desc')}</span>
                       </span>
                     </label>
                   )}
@@ -314,8 +318,8 @@ export default function ImpresorasPage() {
               )}
 
               <div className="flex gap-3 mt-2">
-                <button type="button" className="btn btn-ghost w-full" style={{ justifyContent: 'center' }} onClick={() => setShowModal(false)}>Cancelar</button>
-                <button type="submit" className="btn btn-primary w-full" style={{ justifyContent: 'center' }} disabled={saving}>{saving ? 'Guardando...' : 'Añadir'}</button>
+                <button type="button" className="btn btn-ghost w-full" style={{ justifyContent: 'center' }} onClick={() => setShowModal(false)}>{t('common.cancel')}</button>
+                <button type="submit" className="btn btn-primary w-full" style={{ justifyContent: 'center' }} disabled={saving}>{saving ? t('common.saving') : t('common.add')}</button>
               </div>
             </form>
           </div>

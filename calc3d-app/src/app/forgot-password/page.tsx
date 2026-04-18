@@ -2,8 +2,10 @@
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
+import { useTranslation } from '@/contexts/I18nContext'
 
 export default function ForgotPasswordPage() {
+  const { t } = useTranslation()
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
@@ -23,7 +25,7 @@ export default function ForgotPasswordPage() {
     if (error) {
       setError(error.message)
     } else {
-      setMessage('Se ha enviado un correo de recuperación. Revisa tu bandeja de entrada.')
+      setMessage(t('auth.forgot_password.success'))
     }
     setLoading(false)
   }
@@ -32,15 +34,15 @@ export default function ForgotPasswordPage() {
     <div className="auth-page">
       <div className="auth-bg-glow" style={{ background: 'var(--brand)', top: '-100px', left: '-100px' }} />
       <div className="auth-card animate-slide-up">
-        <h2 style={{ marginBottom: '1rem' }}>Recuperar contraseña</h2>
-        <p className="text-muted text-sm mb-6">Introduce tu email y te enviaremos un enlace para restablecer tu contraseña.</p>
+        <h2 style={{ marginBottom: '1rem' }}>{t('auth.forgot_password.title')}</h2>
+        <p className="text-muted text-sm mb-6">{t('auth.forgot_password.desc')}</p>
 
         {message && <div className="alert alert-success mb-4">{message}</div>}
         {error && <div className="alert alert-danger mb-4">{error}</div>}
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div className="form-group">
-            <label className="form-label">Email</label>
+            <label className="form-label">{t('auth.email')}</label>
             <input 
               type="email" 
               className="form-input" 
@@ -51,12 +53,12 @@ export default function ForgotPasswordPage() {
             />
           </div>
           <button type="submit" className="btn btn-primary w-full" style={{ justifyContent: 'center' }} disabled={loading}>
-            {loading ? 'Enviando...' : 'Enviar enlace de recuperación'}
+            {loading ? t('auth.forgot_password.sending') : t('auth.forgot_password.submit_btn')}
           </button>
         </form>
 
         <p className="text-center" style={{ marginTop: '1.5rem' }}>
-          <Link href="/login" style={{ color: 'var(--brand)', fontSize: '0.9rem', fontWeight: 600 }}>Volver a iniciar sesión</Link>
+          <Link href="/login" style={{ color: 'var(--brand)', fontSize: '0.9rem', fontWeight: 600 }}>{t('auth.forgot_password.back_login')}</Link>
         </p>
       </div>
     </div>

@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
+import { useTranslation } from '@/contexts/I18nContext'
 
 interface Printer {
   id: string
@@ -35,6 +36,7 @@ interface Feedback {
 }
 
 export default function AdminPage() {
+  const { t } = useTranslation()
   const [stats, setStats] = useState({ printers: 0, filaments: 0, users: 0, pendingP: 0, pendingF: 0, pendingFeedback: 0 })
   const [pendingPrinters, setPendingPrinters] = useState<Printer[]>([])
   const [pendingFilaments, setPendingFilaments] = useState<Filament[]>([])
@@ -126,7 +128,7 @@ export default function AdminPage() {
   }
 
   async function handleDelete(type: 'printer' | 'filament' | 'feedback', id: string) {
-    if (!confirm('¿Seguro que quieres borrar esta entrada permanentemente?')) return
+    if (!confirm(t('admin.delete_confirm'))) return
     const supabase = createClient()
     if (type === 'feedback') {
       await supabase.from('feedback').delete().eq('id', id)
@@ -158,19 +160,19 @@ export default function AdminPage() {
     setAnnLoading(false)
     if (!error) {
       setAnnTitle(''); setAnnContent('')
-      alert('Anuncio publicado con éxito')
+      alert(t('admin.announcements.success'))
     }
   }
 
   if (authorized === false) return null
-  if (loading) return <div className="p-8 text-center text-muted">Cargando panel de control...</div>
+  if (loading) return <div className="p-8 text-center text-muted">{t('admin.loading')}</div>
 
   return (
     <div className="animate-fade-in p-6">
       <div className="section-header mb-8">
         <div>
-          <h1 className="page-title">Panel de Administración</h1>
-          <p className="page-subtitle">Gestión global y analíticas de la comunidad</p>
+          <h1 className="page-title">{t('admin.title')}</h1>
+          <p className="page-subtitle">{t('admin.subtitle')}</p>
         </div>
       </div>
 
@@ -182,10 +184,10 @@ export default function AdminPage() {
             className={`card p-6 flex justify-between items-center transition-all ${openSections.users ? 'border-brand' : ''}`}
             style={{ cursor: 'pointer', textAlign: 'left', width: '100%', marginBottom: openSections.users ? 0 : '10px' }}
           >
-            <span className="text-base font-semibold text-muted uppercase tracking-wider">Usuarios y Actividad</span>
+            <span className="text-base font-semibold text-muted uppercase tracking-wider">{t('admin.sections.users')}</span>
             <div className="flex items-center gap-6">
               <span className="text-3xl font-bold">{stats.users}</span>
-              <span className="text-sm border border-white/10 px-3 py-1 rounded uppercase">{openSections.users ? 'Cerrar' : 'Ver'}</span>
+              <span className="text-sm border border-white/10 px-3 py-1 rounded uppercase">{openSections.users ? t('common.cancel').toUpperCase() : t('common.open').toUpperCase()}</span>
             </div>
           </button>
           {openSections.users && (
@@ -193,7 +195,7 @@ export default function AdminPage() {
               <div className="flex flex-col lg:flex-row gap-8">
                 {/* HOURS CHART (SVG AREA) */}
                 <div style={{ flex: 1, maxWidth: '600px' }}>
-                  <h4 className="text-xs font-bold uppercase text-muted mb-4">Conexiones por Hora (24h)</h4>
+                  <h4 className="text-xs font-bold uppercase text-muted mb-4">{t('admin.charts.hours')}</h4>
                   <div className="h-32 w-full bg-white/5 rounded-lg border border-white/5 relative overflow-hidden p-0">
                     <svg className="w-full h-full" viewBox="0 0 240 100" preserveAspectRatio="none">
                       <defs>
@@ -227,7 +229,7 @@ export default function AdminPage() {
 
                 {/* WEEKLY CHART (SVG AREA) */}
                 <div style={{ flex: 1, maxWidth: '400px' }}>
-                  <h4 className="text-xs font-bold uppercase text-muted mb-4">Actividad Semanal</h4>
+                  <h4 className="text-xs font-bold uppercase text-muted mb-4">{t('admin.charts.weekly')}</h4>
                   <div className="h-32 w-full bg-white/5 rounded-lg border border-white/5 relative overflow-hidden">
                     <svg className="w-full h-full" viewBox="0 0 70 100" preserveAspectRatio="none">
                       <defs>
@@ -269,18 +271,18 @@ export default function AdminPage() {
             className={`card p-6 flex justify-between items-center transition-all ${openSections.announcements ? 'border-brand' : ''}`}
             style={{ cursor: 'pointer', textAlign: 'left', width: '100%', marginBottom: openSections.announcements ? 0 : '10px' }}
           >
-            <span className="text-base font-semibold text-muted uppercase tracking-wider">Gestión de Anuncios</span>
+            <span className="text-base font-semibold text-muted uppercase tracking-wider">{t('admin.sections.announcements')}</span>
             <div className="flex items-center gap-6">
-              <span className="text-sm border border-white/10 px-3 py-1 rounded uppercase">{openSections.announcements ? 'Cerrar' : 'Nuevo Anuncio'}</span>
+              <span className="text-sm border border-white/10 px-3 py-1 rounded uppercase">{openSections.announcements ? t('common.cancel').toUpperCase() : t('admin.announcements.submit_btn').toUpperCase()}</span>
             </div>
           </button>
           {openSections.announcements && (
             <div className="card p-6 border-t-0 rounded-t-none animate-slide-down mb-2">
-              <h4 className="text-sm font-bold uppercase mb-4 text-brand">Publicar Anuncio Oficial</h4>
+              <h4 className="text-sm font-bold uppercase mb-4 text-brand">{t('admin.announcements.title')}</h4>
               <form onSubmit={postAnnouncement} className="flex flex-col gap-3">
-                <input className="form-input" placeholder="Título del anuncio" value={annTitle} onChange={e => setAnnTitle(e.target.value)} required />
-                <textarea className="form-input" placeholder="Contenido del mensaje..." rows={3} value={annContent} onChange={e => setAnnContent(e.target.value)} required />
-                <button type="submit" className="btn btn-primary btn-sm" disabled={annLoading}>{annLoading ? 'Publicando...' : 'Publicar Anuncio'}</button>
+                <input className="form-input" placeholder={t('admin.announcements.form_title')} value={annTitle} onChange={e => setAnnTitle(e.target.value)} required />
+                <textarea className="form-input" placeholder={t('admin.announcements.form_content')} rows={3} value={annContent} onChange={e => setAnnContent(e.target.value)} required />
+                <button type="submit" className="btn btn-primary btn-sm" disabled={annLoading}>{annLoading ? t('admin.announcements.publishing') : t('admin.announcements.submit_btn')}</button>
               </form>
             </div>
           )}
@@ -293,16 +295,16 @@ export default function AdminPage() {
             className={`card p-6 flex justify-between items-center transition-all ${openSections.feedback ? 'border-brand' : ''}`}
             style={{ cursor: 'pointer', textAlign: 'left', width: '100%', marginBottom: openSections.feedback ? 0 : '10px' }}
           >
-            <span className="text-base font-semibold text-muted uppercase tracking-wider">Sugerencias y Reportes</span>
+            <span className="text-base font-semibold text-muted uppercase tracking-wider">{t('admin.sections.feedback')}</span>
             <div className="flex items-center gap-6">
               <span className={`text-3xl font-bold ${stats.pendingFeedback > 0 ? 'text-brand' : ''}`}>{stats.pendingFeedback}</span>
-              <span className="text-sm border border-white/10 px-3 py-1 rounded uppercase">{openSections.feedback ? 'Cerrar' : 'Ver'}</span>
+              <span className="text-sm border border-white/10 px-3 py-1 rounded uppercase">{openSections.feedback ? t('common.cancel').toUpperCase() : t('common.open').toUpperCase()}</span>
             </div>
           </button>
           {openSections.feedback && (
             <div className="card p-6 border-t-0 rounded-t-none animate-slide-down mb-2">
               {feedbackItems.length === 0 ? (
-                <div className="text-center text-muted py-4">No hay sugerencias pendientes.</div>
+                <div className="text-center text-muted py-4">{t('admin.feedback.empty')}</div>
               ) : (
                 <div className="grid grid-cols-1 gap-4">
                   {feedbackItems.map(item => (
@@ -315,10 +317,10 @@ export default function AdminPage() {
                       <p className="text-sm text-muted mb-4 italic">&quot;{item.message}&quot;</p>
                       <div className="flex gap-2 justify-end">
                         <button className={`btn btn-sm ${item.is_public ? 'btn-primary' : 'btn-ghost'}`} onClick={() => togglePublic(item.id, !!item.is_public)}>
-                          {item.is_public ? 'Público ✓' : 'Hacer Público'}
+                          {item.is_public ? t('admin.feedback.public') : t('admin.feedback.make_public')}
                         </button>
-                        <button className="btn btn-primary btn-sm" onClick={() => handleFeedbackStatus(item.id, 'resolved')}>Resolver</button>
-                        <button className="btn btn-ghost btn-sm" onClick={() => handleDelete('feedback', item.id)}>Borrar</button>
+                        <button className="btn btn-primary btn-sm" onClick={() => handleFeedbackStatus(item.id, 'resolved')}>{t('admin.feedback.resolve')}</button>
+                        <button className="btn btn-ghost btn-sm" onClick={() => handleDelete('feedback', item.id)}>{t('common.delete')}</button>
                       </div>
                     </div>
                   ))}
@@ -335,10 +337,10 @@ export default function AdminPage() {
             className={`card p-6 flex justify-between items-center transition-all ${openSections.printers ? 'border-brand' : ''}`}
             style={{ cursor: 'pointer', textAlign: 'left', width: '100%', marginBottom: openSections.printers ? 0 : '10px' }}
           >
-            <span className="text-base font-semibold text-muted uppercase tracking-wider">Impresoras Pendientes</span>
+            <span className="text-base font-semibold text-muted uppercase tracking-wider">{t('admin.sections.printers')}</span>
             <div className="flex items-center gap-6">
               <span className={`text-3xl font-bold ${stats.pendingP > 0 ? 'text-brand' : ''}`}>{stats.pendingP}</span>
-              <span className="text-sm border border-white/10 px-3 py-1 rounded uppercase">{openSections.printers ? 'Cerrar' : 'Ver'}</span>
+              <span className="text-sm border border-white/10 px-3 py-1 rounded uppercase">{openSections.printers ? t('common.cancel').toUpperCase() : t('common.open').toUpperCase()}</span>
             </div>
           </button>
           {openSections.printers && (
@@ -349,9 +351,9 @@ export default function AdminPage() {
                 <table className="w-full text-left text-sm">
                   <thead className="bg-white/5 text-muted uppercase text-xs">
                     <tr>
-                      <th className="p-4">Modelo</th>
-                      <th className="p-4">Tipo</th>
-                      <th className="p-4 text-right">Acción</th>
+                      <th className="p-4">{t('admin.table.model')}</th>
+                      <th className="p-4">{t('admin.table.type')}</th>
+                      <th className="p-4 text-right">{t('admin.table.action')}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-white/5">
@@ -378,10 +380,10 @@ export default function AdminPage() {
             className={`card p-6 flex justify-between items-center transition-all ${openSections.filaments ? 'border-brand' : ''}`}
             style={{ cursor: 'pointer', textAlign: 'left', width: '100%', marginBottom: openSections.filaments ? 0 : '10px' }}
           >
-            <span className="text-base font-semibold text-muted uppercase tracking-wider">Filamentos Pendientes</span>
+            <span className="text-base font-semibold text-muted uppercase tracking-wider">{t('admin.sections.filaments')}</span>
             <div className="flex items-center gap-6">
               <span className={`text-3xl font-bold ${stats.pendingF > 0 ? 'text-brand' : ''}`}>{stats.pendingF}</span>
-              <span className="text-sm border border-white/10 px-3 py-1 rounded uppercase">{openSections.filaments ? 'Cerrar' : 'Ver'}</span>
+              <span className="text-sm border border-white/10 px-3 py-1 rounded uppercase">{openSections.filaments ? t('common.cancel').toUpperCase() : t('common.open').toUpperCase()}</span>
             </div>
           </button>
           {openSections.filaments && (
@@ -392,9 +394,9 @@ export default function AdminPage() {
                 <table className="w-full text-left text-sm">
                   <thead className="bg-white/5 text-muted uppercase text-xs">
                     <tr>
-                      <th className="p-4">Material</th>
-                      <th className="p-4">Color</th>
-                      <th className="p-4 text-right">Acción</th>
+                      <th className="p-4">{t('admin.table.material')}</th>
+                      <th className="p-4">{t('admin.table.color')}</th>
+                      <th className="p-4 text-right">{t('admin.table.action')}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-white/5">

@@ -1,13 +1,15 @@
 'use client'
-import { useEffect, useState } from 'react'
+import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { calculate, type CalculationResult } from '@/lib/calculations'
 import { formatCurrency } from '@/lib/formatters'
+import { useTranslation } from '@/contexts/I18nContext'
 
 interface Printer { id: string; brand: string; model: string; wattage_w: number }
 interface Filament { id: string; brand: string; material: string; color_name: string; price_per_kg: number | null }
 
 export default function CalculadoraPage() {
+  const { t } = useTranslation()
   const [printers, setPrinters] = useState<Printer[]>([])
   const [filaments, setFilaments] = useState<Filament[]>([])
   const [selectedPrinter, setSelectedPrinter] = useState<Printer | null>(null)
@@ -81,8 +83,8 @@ export default function CalculadoraPage() {
   return (
     <div className="animate-fade-in">
       <div className="page-header">
-        <h1 className="page-title">Calculadora</h1>
-        <p className="page-subtitle">Calcula el coste exacto de tu impresión</p>
+        <h1 className="page-title">{t('calculator.title')}</h1>
+        <p className="page-subtitle">{t('calculator.subtitle')}</p>
       </div>
 
       <div className="app-grid">
@@ -90,46 +92,46 @@ export default function CalculadoraPage() {
         <form onSubmit={handleCalculate} className="flex flex-col gap-5">
           {/* Impresora */}
           <div className="card">
-            <h3 style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>Impresora</h3>
+            <h3 style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>{t('calculator.form.printer_label')}</h3>
             <div className="form-group" style={{ marginBottom: '0.75rem' }}>
-              <label className="form-label">Seleccionar impresora</label>
+              <label className="form-label">{t('calculator.form.printer_select')}</label>
               <select className="form-select" onChange={e => handlePrinterChange(e.target.value)} defaultValue="">
-                <option value="">— Manual —</option>
+                <option value="">— {t('calculator.form.manual')} —</option>
                 {printers.map(p => <option key={p.id} value={p.id}>{p.brand} {p.model} ({p.wattage_w}W)</option>)}
               </select>
             </div>
             <div className="form-group">
-              <label className="form-label">Consumo (W)</label>
+              <label className="form-label">{t('calculator.form.wattage_label')}</label>
               <input type="number" className="form-input" value={form.wattage} onChange={e => setForm({...form, wattage: e.target.value})} required />
             </div>
           </div>
 
           {/* Filamento */}
           <div className="card">
-            <h3 style={{ marginBottom: '1rem' }}>Filamento</h3>
+            <h3 style={{ marginBottom: '1rem' }}>{t('calculator.form.spool_label')}</h3>
             <div className="form-grid" style={{ marginBottom: '0.75rem' }}>
               <div className="form-group">
-                <label className="form-label">Material</label>
+                <label className="form-label">{t('spools.modal.material_label')}</label>
                 <select className="form-select" value={filterMat} onChange={e => setFilterMat(e.target.value)}>
-                  <option value="">Todos</option>
+                  <option value="">{t('common.all')}</option>
                   {materials.map(m => <option key={m} value={m}>{m}</option>)}
                 </select>
               </div>
               <div className="form-group">
-                <label className="form-label">Filamento</label>
+                <label className="form-label">{t('calculator.form.spool_select')}</label>
                 <select className="form-select" onChange={e => handleFilamentChange(e.target.value)} defaultValue="">
-                  <option value="">— Manual —</option>
+                  <option value="">— {t('calculator.form.manual')} —</option>
                   {filteredFilaments.map(f => <option key={f.id} value={f.id}>{f.brand} {f.material} - {f.color_name}</option>)}
                 </select>
               </div>
             </div>
             <div className="form-grid">
               <div className="form-group">
-                <label className="form-label">Peso usado (g)</label>
+                <label className="form-label">{t('calculator.form.weight_label')}</label>
                 <input type="number" className="form-input" value={form.weightG} onChange={e => setForm({...form, weightG: e.target.value})} required />
               </div>
               <div className="form-group">
-                <label className="form-label">Precio por kg (€)</label>
+                <label className="form-label">{t('calculator.form.price_per_kg')}</label>
                 <div className="input-wrapper">
                   <span className="input-prefix">€</span>
                   <input type="number" step="0.01" className="form-input" value={form.pricePerKg} onChange={e => setForm({...form, pricePerKg: e.target.value})} required />
@@ -138,27 +140,27 @@ export default function CalculadoraPage() {
             </div>
           </div>
 
-          {/* Tiempo y electricidad */}
+          {/* Tiempo y Electricidad */}
           <div className="card">
-            <h3 style={{ marginBottom: '1rem' }}>Tiempo & Electricidad</h3>
+            <h3 style={{ marginBottom: '1rem' }}>{t('calculator.form.time_elec_title')}</h3>
             <div className="form-grid">
               <div className="form-group">
-                <label className="form-label">Horas</label>
+                <label className="form-label">{t('calculator.form.hours')}</label>
                 <input type="number" className="form-input" value={form.timeH} onChange={e => setForm({...form, timeH: e.target.value})} required />
               </div>
               <div className="form-group">
-                <label className="form-label">Minutos</label>
+                <label className="form-label">{t('calculator.form.minutes')}</label>
                 <input type="number" min="0" max="59" className="form-input" value={form.timeM} onChange={e => setForm({...form, timeM: e.target.value})} />
               </div>
               <div className="form-group">
-                <label className="form-label">Precio kWh (€)</label>
+                <label className="form-label">{t('calculator.form.elec_price_label')}</label>
                 <div className="input-wrapper">
                   <span className="input-prefix">€</span>
                   <input type="number" step="0.001" className="form-input" value={form.kwhPrice} onChange={e => setForm({...form, kwhPrice: e.target.value})} required />
                 </div>
               </div>
               <div className="form-group">
-                <label className="form-label">Amortización (€/h)</label>
+                <label className="form-label">{t('calculator.form.amortization_label')}</label>
                 <div className="input-wrapper">
                   <span className="input-prefix">€</span>
                   <input type="number" step="0.01" className="form-input" value={form.amortization} onChange={e => setForm({...form, amortization: e.target.value})} />
@@ -167,33 +169,33 @@ export default function CalculadoraPage() {
             </div>
           </div>
 
-          <button type="submit" className="btn btn-primary btn-lg w-full" style={{ justifyContent: 'center' }}>Calcular coste →</button>
+          <button type="submit" className="btn btn-primary btn-lg w-full" style={{ justifyContent: 'center' }}>{t('calculator.form.calculate_btn')}</button>
         </form>
 
         {/* RESULT */}
         <div style={{ position: 'sticky', top: '1rem' }}>
           {!result && (
             <div className="card" style={{ textAlign: 'center', padding: '3rem 1.5rem' }}>
-              <div style={{ fontSize: '3rem', marginBottom: '1rem', opacity: 0.4 }}></div>
-              <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>Rellena los datos y pulsa calcular para ver el desglose de costes</p>
+              <div style={{ fontSize: '3rem', marginBottom: '1rem', opacity: 0.4 }}>📊</div>
+              <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>{t('calculator.results.empty_desc')}</p>
             </div>
           )}
           {result && (
             <div className="result-box animate-slide-up">
-              <p style={{ color: 'var(--text-secondary)', fontSize: '0.8125rem', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>Coste total</p>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.8125rem', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>{t('calculator.results.total_title')}</p>
               <div className="result-total">{formatCurrency(result.total)}</div>
               <div className="result-breakdown">
                 <div className="breakdown-item">
-                  <span className="breakdown-label">Material</span>
+                  <span className="breakdown-label">{t('calculator.results.material')}</span>
                   <span className="breakdown-value">{formatCurrency(result.materialCost)}</span>
                 </div>
                 <div className="breakdown-item">
-                  <span className="breakdown-label">Electricidad</span>
+                  <span className="breakdown-label">{t('calculator.results.energy')}</span>
                   <span className="breakdown-value">{formatCurrency(result.electricityCost)}</span>
                 </div>
                 {result.amortizationCost > 0 && (
                   <div className="breakdown-item">
-                    <span className="breakdown-label">Amortización</span>
+                    <span className="breakdown-label">{t('calculator.results.amortization')}</span>
                     <span className="breakdown-value">{formatCurrency(result.amortizationCost)}</span>
                   </div>
                 )}
@@ -204,13 +206,13 @@ export default function CalculadoraPage() {
               </div>
               <div style={{ marginTop: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                 {saved ? (
-                  <div className="alert alert-success">¡Cálculo guardado en tu historial!</div>
+                  <div className="alert alert-success">{t('calculator.results.saved_msg')}</div>
                 ) : (
                   <button className="btn btn-secondary w-full" style={{ justifyContent: 'center' }} onClick={handleSave} disabled={saving}>
-                    {saving ? 'Guardando...' : 'Guardar cálculo'}
+                    {saving ? t('common.saving') : t('calculator.results.save_btn')}
                   </button>
                 )}
-                <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textAlign: 'center' }}>Para presupuestos con mano de obra y margen, usa <a href="/app/presupuesto" style={{ color: 'var(--brand)' }}>Presupuesto Rápido →</a></p>
+                <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textAlign: 'center' }}>{t('calculator.results.quote_hint')} <a href="/app/presupuesto" style={{ color: 'var(--brand)' }}>{t('calculator.results.quote_link')} →</a></p>
               </div>
             </div>
           )}

@@ -37,7 +37,7 @@ export default function LandingPage() {
             <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
             {t('landing.badge')}
           </span>
-          <h1 className="hero-title" dangerouslySetInnerHTML={{ __html: t('landing.title').replace('impresión 3D', '<span class="text-gradient">impresión 3D</span>') }} />
+          <h1 className="hero-title" dangerouslySetInnerHTML={{ __html: t('landing.title') }} />
           <p className="hero-desc">
             {t('landing.desc')}
           </p>
@@ -74,7 +74,7 @@ export default function LandingPage() {
         <div className="container">
           <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
             <span className="badge badge-orange" style={{ marginBottom: '1rem' }}>{t('landing.features.subtitle')}</span>
-            <h2 dangerouslySetInnerHTML={{ __html: t('landing.features.title').replace('todo gratis', '<span class="text-gradient">todo gratis</span>') }} />
+            <h2 dangerouslySetInnerHTML={{ __html: t('landing.features.title') }} />
           </div>
           <div className="features-grid">
             {[
@@ -100,7 +100,7 @@ export default function LandingPage() {
         <div className="container">
           <div style={{ textAlign: 'center', marginBottom: '1rem' }}>
             <span className="badge badge-orange" style={{ marginBottom: '1rem' }}>{t('landing.how_it_works.subtitle')}</span>
-            <h2 dangerouslySetInnerHTML={{ __html: t('landing.how_it_works.start').replace('empezar', '<span class="text-gradient">' + (language === 'gl' ? 'comezar' : language === 'pt' ? 'começar' : language === 'en' ? 'start' : 'empezar') + '</span>') }} />
+            <h2 dangerouslySetInnerHTML={{ __html: t('landing.how_it_works.start') }} />
           </div>
           <div className="steps-grid">
             {[
@@ -123,7 +123,7 @@ export default function LandingPage() {
         <div className="container">
           <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
             <span className="badge badge-purple" style={{ marginBottom: '1rem' }}>{t('landing.community.subtitle')}</span>
-            <h2 dangerouslySetInnerHTML={{ __html: t('landing.community.title').replace('y Actualizaciones', '<br /><span class="text-gradient">y Actualizaciones</span>') }} />
+            <h2 dangerouslySetInnerHTML={{ __html: t('landing.community.title') }} />
             <p className="text-muted mt-4">{t('landing.community.desc')}</p>
           </div>
           <ForumFeed />
@@ -137,7 +137,7 @@ export default function LandingPage() {
         </div>
         <div className="container" style={{ position: 'relative', zIndex: 1 }}>
           <span className="badge badge-orange" style={{ marginBottom: '1rem' }}>{t('landing.cta_final.subtitle')}</span>
-          <h2 dangerouslySetInnerHTML={{ __html: t('landing.cta_final.title').replace('empezar a calcular', '<span class="text-gradient">empezar a calcular</span>') }} />
+          <h2 dangerouslySetInnerHTML={{ __html: t('landing.cta_final.title') }} />
           <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem', fontSize: '1rem' }}>
             {t('landing.cta_final.desc')}
           </p>

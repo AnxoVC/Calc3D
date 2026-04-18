@@ -1,8 +1,10 @@
 'use client'
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useTranslation } from '@/contexts/I18nContext'
 
 export default function FeedbackPage() {
+  const { t } = useTranslation()
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [form, setForm] = useState({ type: 'suggestion', subject: '', message: '' })
@@ -34,7 +36,7 @@ export default function FeedbackPage() {
 
     setLoading(false)
     if (insertError) {
-      setError('Error al enviar la sugerencia: ' + insertError.message)
+      setError(t('feedback.error_sending') + insertError.message)
       return
     }
     setSuccess(true)
@@ -45,41 +47,41 @@ export default function FeedbackPage() {
     <div className="animate-fade-in p-6 max-w-2xl mx-auto">
       <div className="section-header mb-8">
         <div>
-          <h1 className="page-title">Sugerencias y Fallos</h1>
-          <p className="page-subtitle">Ayúdanos a mejorar MyCalc3D reportando errores o proponiendo ideas.</p>
+          <h1 className="page-title">{t('feedback.title')}</h1>
+          <p className="page-subtitle">{t('feedback.subtitle')}</p>
         </div>
       </div>
 
       {success ? (
         <div className="card p-12 text-center animate-slide-up">
-          <div style={{ fontSize: '4rem', marginBottom: '1.5rem' }}></div>
-          <h2 style={{ marginBottom: '1rem' }}>¡Gracias por tu mensaje!</h2>
-          <p className="text-muted mb-8">Hemos recibido tu sugerencia. El equipo de administración la revisará pronto.</p>
-          <button className="btn btn-primary" onClick={() => setSuccess(false)}>Enviar otro mensaje</button>
+          <div style={{ fontSize: '4rem', marginBottom: '1.5rem' }}>✅</div>
+          <h2 style={{ marginBottom: '1rem' }}>{t('feedback.success.title')}</h2>
+          <p className="text-muted mb-8">{t('feedback.success.desc')}</p>
+          <button className="btn btn-primary" onClick={() => setSuccess(false)}>{t('feedback.success.send_another')}</button>
         </div>
       ) : (
         <div className="card">
           {error && <div className="alert alert-danger mb-6">{error}</div>}
           <form onSubmit={handleSubmit} className="flex flex-col gap-6">
             <div className="form-group">
-              <label className="form-label">¿Qué quieres enviarnos?</label>
+              <label className="form-label">{t('feedback.form.type_label')}</label>
               <div className="flex gap-4">
                 <label className={`form-input flex items-center gap-2 cursor-pointer ${form.type === 'suggestion' ? 'bg-primary/10 border-primary' : ''}`} style={{ flex: 1 }}>
                   <input type="radio" name="type" value="suggestion" checked={form.type === 'suggestion'} onChange={e => setForm({...form, type: e.target.value})} />
-                  <span>Sugerencia</span>
+                  <span>{t('feedback.form.suggestion')}</span>
                 </label>
                 <label className={`form-input flex items-center gap-2 cursor-pointer ${form.type === 'bug' ? 'bg-primary/10 border-primary' : ''}`} style={{ flex: 1 }}>
                   <input type="radio" name="type" value="bug" checked={form.type === 'bug'} onChange={e => setForm({...form, type: e.target.value})} />
-                  <span>Reportar Fallo</span>
+                  <span>{t('feedback.form.bug')}</span>
                 </label>
               </div>
             </div>
 
             <div className="form-group">
-              <label className="form-label">Asunto</label>
+              <label className="form-label">{t('feedback.form.subject_label')}</label>
               <input 
                 className="form-input" 
-                placeholder="Ej: Nueva funcionalidad, Error en la calculadora..." 
+                placeholder={t('feedback.form.subject_placeholder')} 
                 value={form.subject} 
                 onChange={e => setForm({...form, subject: e.target.value})} 
                 required 
@@ -87,11 +89,11 @@ export default function FeedbackPage() {
             </div>
 
             <div className="form-group">
-              <label className="form-label">Mensaje detallado</label>
+              <label className="form-label">{t('feedback.form.message_label')}</label>
               <textarea 
                 className="form-input" 
                 rows={6} 
-                placeholder="Describe tu idea o el problema que has encontrado con el mayor detalle posible..." 
+                placeholder={t('feedback.form.message_placeholder')} 
                 value={form.message} 
                 onChange={e => setForm({...form, message: e.target.value})} 
                 required 
@@ -112,16 +114,16 @@ export default function FeedbackPage() {
             </div>
 
             <button type="submit" className="btn btn-primary w-full py-4 text-lg" style={{ justifyContent: 'center' }} disabled={loading}>
-              {loading ? 'Enviando...' : 'Enviar mensaje al administrador'}
+              {loading ? t('common.sending') : t('feedback.form.submit_btn')}
             </button>
           </form>
         </div>
       )}
 
       <div className="mt-12 p-6 bg-white/5 rounded-2xl border border-white/5">
-        <h3 className="text-sm font-bold uppercase tracking-wider text-muted mb-4">¿Por qué es importante?</h3>
+        <h3 className="text-sm font-bold uppercase tracking-wider text-muted mb-4">{t('feedback.info.title')}</h3>
         <p className="text-sm text-muted leading-relaxed">
-          Calc3D es un proyecto en constante evolución. Tu feedback directo llega a nuestro Panel de Administración, donde revisamos cada propuesta para implementar las mejoras que la comunidad de impresión 3D necesita.
+          {t('feedback.info.desc')}
         </p>
       </div>
     </div>

@@ -1,10 +1,12 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useTranslation } from '@/contexts/I18nContext'
 
 interface Consumable { id: string; name: string; category: string; price: number | null; stock_qty: number | null; unit: string; notes: string | null; created_at: string }
 
 export default function ConsumiblesPage() {
+  const { t } = useTranslation()
   const [items, setItems] = useState<Consumable[]>([])
   const [loading, setLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
@@ -42,6 +44,7 @@ export default function ConsumiblesPage() {
   }
 
   async function handleDelete(id: string) {
+    if (!confirm(t('stats.delete_confirm'))) return
     const supabase = createClient()
     await supabase.from('consumables').delete().eq('id', id)
     load()
@@ -50,26 +53,26 @@ export default function ConsumiblesPage() {
   function resetForm() { setForm({ name: '', category: 'other', price: '', stock_qty: '', unit: 'ud', notes: '' }); setEditId(null) }
 
   const cats: Record<string, { label: string, color: string }> = {
-    glue: { label: 'Adhesivos/Lacas', color: 'badge-blue' },
-    resin: { label: 'Resinas', color: 'badge-purple' },
-    parts: { label: 'Repuestos', color: 'badge-orange' },
-    tools: { label: 'Herramientas', color: 'badge-green' },
-    other: { label: 'Otros', color: '' }
+    glue: { label: t('consumables.categories.glue'), color: 'badge-blue' },
+    resin: { label: t('consumables.categories.resin'), color: 'badge-purple' },
+    parts: { label: t('consumables.categories.parts'), color: 'badge-orange' },
+    tools: { label: t('consumables.categories.tools'), color: 'badge-green' },
+    other: { label: t('consumables.categories.other'), color: '' }
   }
 
   return (
     <div className="animate-fade-in">
       <div className="section-header mb-6">
-        <div><h1 className="page-title">Consumibles</h1><p className="page-subtitle">Gestión de piezas y materiales</p></div>
-        <button className="btn btn-primary" onClick={() => { resetForm(); setShowModal(true) }}>+ Añadir consumible</button>
+        <div><h1 className="page-title">{t('consumables.title')}</h1><p className="page-subtitle">{t('consumables.subtitle')}</p></div>
+        <button className="btn btn-primary" onClick={() => { resetForm(); setShowModal(true) }}>+ {t('consumables.add_btn')}</button>
       </div>
 
       {!loading && items.length === 0 && (
         <div className="empty-state">
-          <div className="empty-state-icon"></div>
-          <h3 style={{ marginBottom: '0.5rem' }}>Inventario vacío</h3>
-          <p style={{ marginBottom: '1.5rem' }}>Añade tus consumibles (boquillas, lacas, resinas...) para llevar el control del stock.</p>
-          <button className="btn btn-primary" onClick={() => setShowModal(true)}>+ Añadir primer consumible</button>
+          <div className="empty-state-icon">🧊</div>
+          <h3 style={{ marginBottom: '0.5rem' }}>{t('consumables.empty.title')}</h3>
+          <p style={{ marginBottom: '1.5rem' }}>{t('consumables.empty.desc')}</p>
+          <button className="btn btn-primary" onClick={() => setShowModal(true)}>+ {t('consumables.add_btn')}</button>
         </div>
       )}
 
@@ -84,12 +87,12 @@ export default function ConsumiblesPage() {
               </div>
               <p className="text-muted text-sm mb-4" style={{ minHeight: '20px' }}>{item.notes}</p>
               <div className="flex justify-between items-center bg-input" style={{ background: 'var(--bg-input)', padding: '0.75rem', borderRadius: 'var(--radius-sm)', marginBottom: '1rem' }}>
-                <div className="flex flex-col"><span className="text-xs text-muted" style={{ textTransform: 'uppercase' }}>Stock</span><span className="font-semibold">{item.stock_qty ?? '—'} {item.unit}</span></div>
-                <div className="flex flex-col" style={{ textAlign: 'right' }}><span className="text-xs text-muted" style={{ textTransform: 'uppercase' }}>Precio unitario</span><span className="font-semibold" style={{ color: 'var(--brand)' }}>{item.price ? `${item.price}€` : '—'}</span></div>
+                <div className="flex flex-col"><span className="text-xs text-muted" style={{ textTransform: 'uppercase' }}>{t('consumables.labels.stock')}</span><span className="font-semibold">{item.stock_qty ?? '—'} {item.unit}</span></div>
+                <div className="flex flex-col" style={{ textAlign: 'right' }}><span className="text-xs text-muted" style={{ textTransform: 'uppercase' }}>{t('consumables.labels.unit_price')}</span><span className="font-semibold" style={{ color: 'var(--brand)' }}>{item.price ? `${item.price}€` : '—'}</span></div>
               </div>
               <div className="flex gap-2">
-                <button className="btn btn-ghost btn-sm" onClick={() => { setForm({ name: item.name, category: item.category, price: String(item.price || ''), stock_qty: String(item.stock_qty || ''), unit: item.unit, notes: item.notes || '' }); setEditId(item.id); setShowModal(true) }} style={{ flex: 1, justifyContent: 'center' }}>Editar</button>
-                <button className="btn btn-danger btn-sm btn-icon" onClick={() => handleDelete(item.id)}>Eliminar</button>
+                <button className="btn btn-ghost btn-sm" onClick={() => { setForm({ name: item.name, category: item.category, price: String(item.price || ''), stock_qty: String(item.stock_qty || ''), unit: item.unit, notes: item.notes || '' }); setEditId(item.id); setShowModal(true) }} style={{ flex: 1, justifyContent: 'center' }}>{t('common.edit')}</button>
+                <button className="btn btn-danger btn-sm btn-icon" onClick={() => handleDelete(item.id)}>{t('common.delete')}</button>
               </div>
             </div>
           )
@@ -100,43 +103,47 @@ export default function ConsumiblesPage() {
         <div className="modal-overlay" onClick={e => e.target === e.currentTarget && (setShowModal(false), resetForm())}>
           <div className="modal">
             <div className="modal-header">
-              <h3>{editId ? 'Editar consumible' : 'Añadir consumible'}</h3>
+              <h3>{editId ? t('consumables.modal.edit_title') : t('consumables.modal.add_title')}</h3>
               <button className="btn btn-ghost btn-icon" onClick={() => { setShowModal(false); resetForm() }}>✕</button>
             </div>
             <form onSubmit={handleSave} className="flex flex-col gap-4">
               <div className="form-group">
-                <label className="form-label">Nombre</label>
-                <input className="form-input" placeholder="Ej: Boquilla latón 0.4, Laca 3DLac..." value={form.name} onChange={e => setForm({...form, name: e.target.value})} required />
+                <label className="form-label">{t('consumables.modal.name_label')}</label>
+                <input className="form-input" placeholder={t('consumables.modal.name_placeholder')} value={form.name} onChange={e => setForm({...form, name: e.target.value})} required />
               </div>
               <div className="form-grid">
                 <div className="form-group">
-                  <label className="form-label">Categoría</label>
+                  <label className="form-label">{t('consumables.modal.category_label')}</label>
                   <select className="form-select" value={form.category} onChange={e => setForm({...form, category: e.target.value})}>
                     {Object.entries(cats).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
                   </select>
                 </div>
                 <div className="form-group">
-                  <label className="form-label">Unidad de medida</label>
+                  <label className="form-label">{t('consumables.modal.unit_label')}</label>
                   <select className="form-select" value={form.unit} onChange={e => setForm({...form, unit: e.target.value})}>
-                    <option value="ud">Unidades (ud)</option><option value="ml">Mililitros (ml)</option><option value="L">Litros (L)</option><option value="g">Gramos (g)</option><option value="kg">Kilos (kg)</option>
+                    <option value="ud">{t('common.units.ud_full')}</option>
+                    <option value="ml">{t('common.units.ml')}</option>
+                    <option value="L">{t('common.units.l')}</option>
+                    <option value="g">{t('common.units.g')}</option>
+                    <option value="kg">{t('common.units.kg')}</option>
                   </select>
                 </div>
                 <div className="form-group">
-                  <label className="form-label">Stock actual</label>
+                  <label className="form-label">{t('consumables.modal.stock_label')}</label>
                   <input type="number" step="0.1" className="form-input" value={form.stock_qty} onChange={e => setForm({...form, stock_qty: e.target.value})} />
                 </div>
                 <div className="form-group">
-                  <label className="form-label">Precio (€)</label>
+                  <label className="form-label">{t('consumables.modal.price_label')}</label>
                   <input type="number" step="0.01" className="form-input" value={form.price} onChange={e => setForm({...form, price: e.target.value})} />
                 </div>
               </div>
               <div className="form-group">
-                <label className="form-label">Notas</label>
-                <textarea className="form-textarea" placeholder="Opcional..." value={form.notes} onChange={e => setForm({...form, notes: e.target.value})} style={{ minHeight: 60 }} />
+                <label className="form-label">{t('printers.modal.notes_label')}</label>
+                <textarea className="form-textarea" placeholder={t('common.optional')} value={form.notes} onChange={e => setForm({...form, notes: e.target.value})} style={{ minHeight: 60 }} />
               </div>
               <div className="flex gap-3 mt-2">
-                <button type="button" className="btn btn-ghost w-full" style={{ justifyContent: 'center' }} onClick={() => { setShowModal(false); resetForm() }}>Cancelar</button>
-                <button type="submit" className="btn btn-primary w-full" style={{ justifyContent: 'center' }} disabled={saving}>{saving ? 'Guardando...' : 'Guardar'}</button>
+                <button type="button" className="btn btn-ghost w-full" style={{ justifyContent: 'center' }} onClick={() => { setShowModal(false); resetForm() }}>{t('common.cancel')}</button>
+                <button type="submit" className="btn btn-primary w-full" style={{ justifyContent: 'center' }} disabled={saving}>{saving ? t('common.saving') : t('common.save')}</button>
               </div>
             </form>
           </div>

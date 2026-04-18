@@ -38,12 +38,12 @@ export default function RegisterPage() {
       <div className="auth-page">
         <div className="auth-card animate-slide-up" style={{ textAlign: 'center' }}>
           <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📩</div>
-          <h2 style={{ marginBottom: '0.5rem' }}>¡Casi listo!</h2>
+          <h2 style={{ marginBottom: '0.5rem' }}>{t('auth.register_success.title')}</h2>
           <div className="alert alert-orange" style={{ margin: '1rem 0', textAlign: 'left', background: 'rgba(249, 115, 22, 0.1)', border: '1px solid rgba(249, 115, 22, 0.3)', padding: '1rem', borderRadius: '8px' }}>
-            <p style={{ fontWeight: 600, color: 'var(--brand)', marginBottom: '0.5rem' }}>⚠️ ¡Por favor, revisa tu correo electrónico!</p>
-            <p className="text-sm">Te hemos enviado un enlace de confirmación. <strong>Debes verificar tu cuenta primero</strong> antes de poder iniciar sesión (revisa la carpeta de Spam/Correo no deseado por si acaso).</p>
+            <p style={{ fontWeight: 600, color: 'var(--brand)', marginBottom: '0.5rem' }}>{t('auth.register_success.verify_email')}</p>
+            <p className="text-sm">{t('auth.register_success.verify_desc')}</p>
           </div>
-          <Link href="/login" className="btn btn-primary w-full" style={{ justifyContent: 'center' }}>Ir a iniciar sesión →</Link>
+          <Link href="/login" className="btn btn-primary w-full" style={{ justifyContent: 'center' }}>{t('auth.register_success.go_login')}</Link>
         </div>
       </div>
     )

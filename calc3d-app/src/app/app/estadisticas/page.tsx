@@ -2,12 +2,14 @@
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { formatCurrency, formatNumber } from '@/lib/formatters'
+import { useTranslation } from '@/contexts/I18nContext'
 
 import Link from 'next/link'
 
 interface CalcRow { id: string; name?: string; total_cost: number; material_cost: number; electricity_cost: number; labor_cost: number; weight_g: number; time_hours: number; created_at: string }
 
 export default function EstadisticasPage() {
+  const { t, language } = useTranslation()
   const [calcs, setCalcs] = useState<CalcRow[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -30,7 +32,7 @@ export default function EstadisticasPage() {
   // Group by month
   const byMonth: Record<string, number> = {}
   calcs.forEach(c => {
-    const month = new Date(c.created_at).toLocaleDateString('es-ES', { month: 'short', year: '2-digit' })
+    const month = new Date(c.created_at).toLocaleDateString(language === 'gl' ? 'gl-ES' : language, { month: 'short', year: '2-digit' })
     byMonth[month] = (byMonth[month] || 0) + c.total_cost
   })
   const monthEntries = Object.entries(byMonth).slice(-6)
@@ -39,17 +41,17 @@ export default function EstadisticasPage() {
   return (
     <div className="animate-fade-in">
       <div className="page-header">
-        <h1 className="page-title">Estadísticas</h1>
-        <p className="page-subtitle">Resumen de tu actividad de impresión</p>
+        <h1 className="page-title">{t('stats.title')}</h1>
+        <p className="page-subtitle">{t('stats.subtitle')}</p>
       </div>
 
-      {loading && <div style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '4rem' }}>Cargando...</div>}
+      {loading && <div style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '4rem' }}>{t('common.loading')}</div>}
 
       {!loading && calcs.length === 0 && (
         <div className="empty-state">
-          <div className="empty-state-icon"></div>
-          <h3 style={{ marginBottom: '0.5rem' }}>Sin datos aún</h3>
-          <p>Usa la calculadora para guardar cálculos y ver aquí tus estadísticas.</p>
+          <div className="empty-state-icon">📊</div>
+          <h3 style={{ marginBottom: '0.5rem' }}>{t('stats.empty.title')}</h3>
+          <p>{t('stats.empty.desc')}</p>
         </div>
       )}
 
@@ -57,11 +59,11 @@ export default function EstadisticasPage() {
         <>
           <div className="stats-grid mb-6">
             {[
-              { label: 'Gasto total', value: formatCurrency(totalCost), color: 'rgba(249,115,22,0.15)', textColor: 'var(--brand)' },
-              { label: 'Cálculos guardados', value: String(calcs.length), color: 'rgba(59,130,246,0.15)', textColor: 'var(--accent-blue)' },
-              { label: 'Material total', value: `${formatNumber(totalWeight, 0)}g`, color: 'rgba(34,197,94,0.15)', textColor: 'var(--accent-green)' },
-              { label: 'Tiempo total', value: `${formatNumber(totalTime, 1)}h`, color: 'rgba(168,85,247,0.15)', textColor: 'var(--accent-purple)' },
-              { label: 'Coste medio', value: formatCurrency(avgCost), color: 'rgba(6,182,212,0.15)', textColor: 'var(--accent-cyan)' },
+              { label: t('stats.labels.total_spend'), value: formatCurrency(totalCost), color: 'rgba(249,115,22,0.15)', textColor: 'var(--brand)' },
+              { label: t('stats.labels.saved_calcs'), value: String(calcs.length), color: 'rgba(59,130,246,0.15)', textColor: 'var(--accent-blue)' },
+              { label: t('stats.labels.total_material'), value: `${formatNumber(totalWeight, 0)}g`, color: 'rgba(34,197,94,0.15)', textColor: 'var(--accent-green)' },
+              { label: t('stats.labels.total_time'), value: `${formatNumber(totalTime, 1)}h`, color: 'rgba(168,85,247,0.15)', textColor: 'var(--accent-purple)' },
+              { label: t('stats.labels.avg_cost'), value: formatCurrency(avgCost), color: 'rgba(6,182,212,0.15)', textColor: 'var(--accent-cyan)' },
             ].map(stat => (
               <div key={stat.label} className="card-stat">
                 <div className="card-stat-icon" style={{ background: stat.color }}>
@@ -76,7 +78,7 @@ export default function EstadisticasPage() {
 
           {monthEntries.length > 0 && (
             <div className="card mb-6">
-              <h3 style={{ marginBottom: '1.5rem' }}>Gasto mensual</h3>
+              <h3 style={{ marginBottom: '1.5rem' }}>{t('stats.charts.monthly_spend')}</h3>
               <div style={{ display: 'flex', alignItems: 'flex-end', gap: '0.75rem', height: 180 }}>
                 {monthEntries.map(([month, val]) => (
                   <div key={month} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem', height: '100%', justifyContent: 'flex-end' }}>
@@ -90,36 +92,36 @@ export default function EstadisticasPage() {
           )}
 
           <div className="card">
-            <h3 style={{ marginBottom: '1rem' }}>Cálculos guardados</h3>
+            <h3 style={{ marginBottom: '1rem' }}>{t('stats.saved_table.title')}</h3>
             <div className="table-wrapper">
               <table className="data-table">
-                <thead><tr><th>Fecha</th><th>Nombre</th><th>Material</th><th>Total</th><th align="right">Acciones</th></tr></thead>
+                <thead><tr><th>{t('stats.saved_table.date')}</th><th>{t('stats.saved_table.name')}</th><th>{t('stats.saved_table.material')}</th><th>Total</th><th align="right">{t('stats.saved_table.actions')}</th></tr></thead>
                 <tbody>
                   {calcs.slice().reverse().map(c => (
                     <tr key={c.id}>
-                      <td>{new Date(c.created_at).toLocaleDateString('es-ES')}</td>
+                      <td>{new Date(c.created_at).toLocaleDateString(language === 'gl' ? 'gl-ES' : language)}</td>
                       <td>
                         <Link href={`/app/presupuesto?id=${c.id}`} style={{ color: 'var(--brand)', textDecoration: 'none', fontWeight: 600 }}>
-                          {c.name || 'Presupuesto'}
+                          {c.name || t('quote.default_calc_name')}
                         </Link>
                       </td>
                       <td>{formatCurrency(c.material_cost || 0)}</td>
                       <td style={{ color: 'var(--text)', fontWeight: 700 }}>{formatCurrency(c.total_cost)}</td>
                       <td align="right" className="flex items-center justify-end gap-2">
                         <Link href={`/app/presupuesto?id=${c.id}`}>
-                          <button className="btn btn-ghost" style={{ padding: '0.25rem 0.5rem', fontSize: '0.8rem' }}>Abrir</button>
+                          <button className="btn btn-ghost" style={{ padding: '0.25rem 0.5rem', fontSize: '0.8rem' }}>{t('common.open')}</button>
                         </Link>
                         <button 
                           className="btn btn-ghost" 
                           style={{ padding: '0.25rem 0.5rem', color: 'var(--text-muted)', fontSize: '0.9rem' }}
                           onClick={async () => {
-                            if (!confirm('¿Seguro que quieres borrar este cálculo?')) return;
+                            if (!confirm(t('stats.delete_confirm'))) return;
                             const supabase = createClient();
                             await supabase.from('calculations').delete().eq('id', c.id);
                             setCalcs(calcs.filter(x => x.id !== c.id));
                           }}
                         >
-                          Eliminar
+                          {t('common.delete')}
                         </button>
                       </td>
                     </tr>

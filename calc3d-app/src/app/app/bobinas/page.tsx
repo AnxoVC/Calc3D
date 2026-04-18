@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { useTranslation } from '@/contexts/I18nContext'
 
 interface Filament { id: string; brand: string; material: string; color_name: string; color_hex: string; verified: boolean }
 interface Spool {
@@ -10,6 +11,7 @@ interface Spool {
 }
 
 export default function BobinasPage() {
+  const { t } = useTranslation()
   const [spools, setSpools] = useState<Spool[]>([])
   const [dbFilaments, setDbFilaments] = useState<Filament[]>([])
   const [loading, setLoading] = useState(true)
@@ -90,13 +92,13 @@ export default function BobinasPage() {
     if (editId) {
       const { error: updateErr } = await supabase.from('spools').update(payload).eq('id', editId)
       if (updateErr) {
-        setError('Error al guardar cambios: ' + updateErr.message)
+        setError(t('spools.modal.error_save') + ' ' + updateErr.message)
         setSaving(false); return
       }
     } else {
       const { error: insertErr } = await supabase.from('spools').insert(payload)
       if (insertErr) {
-        setError('Error al añadir bobina: ' + insertErr.message)
+        setError(t('spools.modal.error_add') + ' ' + insertErr.message)
         setSaving(false); return
       }
       
@@ -107,7 +109,7 @@ export default function BobinasPage() {
           verified: false
         })
         if (contributionErr) {
-          setError('Error al contribuir al catálogo: ' + contributionErr.message)
+          setError(t('spools.modal.error_contrib') + ' ' + contributionErr.message)
           setSaving(false); return
         }
       }
@@ -142,17 +144,17 @@ export default function BobinasPage() {
   return (
     <div className="animate-fade-in">
       <div className="section-header mb-6">
-        <div><h1 className="page-title">Bobinas</h1><p className="page-subtitle">Inventario de filamentos</p></div>
-        <button className="btn btn-primary" onClick={() => { resetForm(); setShowModal(true) }}>+ Añadir bobina</button>
+        <div><h1 className="page-title">{t('spools.title')}</h1><p className="page-subtitle">{t('spools.subtitle')}</p></div>
+        <button className="btn btn-primary" onClick={() => { resetForm(); setShowModal(true) }}>{t('spools.add_btn')}</button>
       </div>
 
-      {loading && <div style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '4rem' }}>Cargando...</div>}
+      {loading && <div style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '4rem' }}>{t('common.loading')}</div>}
       {!loading && spools.length === 0 && (
         <div className="empty-state">
           <div className="empty-state-icon"></div>
-          <h3 style={{ marginBottom: '0.5rem' }}>Sin bobinas</h3>
-          <p style={{ marginBottom: '1.5rem' }}>Añade tus bobinas de filamento para hacer seguimiento del material restante.</p>
-          <button className="btn btn-primary" onClick={() => { resetForm(); setShowModal(true) }}>+ Añadir primera bobina</button>
+          <h3 style={{ marginBottom: '0.5rem' }}>{t('spools.empty.title')}</h3>
+          <p style={{ marginBottom: '1.5rem' }}>{t('spools.empty.desc')}</p>
+          <button className="btn btn-primary" onClick={() => { resetForm(); setShowModal(true) }}>{t('spools.empty.btn')}</button>
         </div>
       )}
 
@@ -172,12 +174,12 @@ export default function BobinasPage() {
                 <div className={`progress-fill ${getPctClass(pct)}`} style={{ width: `${pct}%` }} />
               </div>
               <div className="flex justify-between text-sm" style={{ marginBottom: '0.75rem' }}>
-                <span style={{ fontWeight: 600, color: pct < 20 ? 'var(--accent-red)' : 'var(--text-primary)' }}>{s.remaining_weight_g}g restantes</span>
+                <span style={{ fontWeight: 600, color: pct < 20 ? 'var(--accent-red)' : 'var(--text-primary)' }}>{s.remaining_weight_g}g {t('spools.card.remaining')}</span>
                 <span className="text-muted">{Math.round(pct)}%</span>
               </div>
               <div className="flex gap-2">
-                <button className="btn btn-ghost btn-sm" onClick={() => openEdit(s)} style={{ flex: 1, justifyContent: 'center' }}>Editar</button>
-                <button className="btn btn-danger btn-sm btn-icon" onClick={() => handleDelete(s.id)}>Eliminar</button>
+                <button className="btn btn-ghost btn-sm" onClick={() => openEdit(s)} style={{ flex: 1, justifyContent: 'center' }}>{t('common.edit')}</button>
+                <button className="btn btn-danger btn-sm btn-icon" onClick={() => handleDelete(s.id)}>{t('common.delete')}</button>
               </div>
             </div>
           )
@@ -188,7 +190,7 @@ export default function BobinasPage() {
         <div className="modal-overlay" onClick={e => e.target === e.currentTarget && (setShowModal(false), resetForm())}>
           <div className="modal" style={{ maxWidth: '500px' }}>
             <div className="modal-header">
-              <h3>{editId ? 'Editar bobina' : 'Nueva bobina'}</h3>
+              <h3>{editId ? t('spools.modal.title_edit') : t('spools.modal.title_new')}</h3>
               <button className="btn btn-ghost btn-icon" onClick={() => { setShowModal(false); resetForm() }}>✕</button>
             </div>
             
@@ -197,8 +199,8 @@ export default function BobinasPage() {
             <form onSubmit={handleSave} className="flex flex-col gap-4">
               {!editId && (
                 <div className="flex gap-2 mb-2 p-1 bg-input" style={{ background: 'rgba(255,255,255,0.05)', borderRadius: '8px' }}>
-                  <button type="button" className={`btn btn-sm ${!isManual ? 'btn-primary' : 'btn-ghost'}`} style={{ flex: 1, justifyContent: 'center' }} onClick={() => setIsManual(false)}>Catálogo</button>
-                  <button type="button" className={`btn btn-sm ${isManual ? 'btn-primary' : 'btn-ghost'}`} style={{ flex: 1, justifyContent: 'center' }} onClick={() => setIsManual(true)}>Manual</button>
+                  <button type="button" className={`btn btn-sm ${!isManual ? 'btn-primary' : 'btn-ghost'}`} style={{ flex: 1, justifyContent: 'center' }} onClick={() => setIsManual(false)}>{t('spools.modal.tab_catalog')}</button>
+                  <button type="button" className={`btn btn-sm ${isManual ? 'btn-primary' : 'btn-ghost'}`} style={{ flex: 1, justifyContent: 'center' }} onClick={() => setIsManual(true)}>{t('spools.modal.tab_manual')}</button>
                 </div>
               )}
 
@@ -206,11 +208,11 @@ export default function BobinasPage() {
                 {!isManual && !editId ? (
                   <>
                     <div className="form-group" style={{ gridColumn: '1/-1' }}>
-                      <label className="form-label">Buscar filamento</label>
-                      <input className="form-input" placeholder="eSUN PLA+, Bambu Black..." value={search} onChange={e => setSearch(e.target.value)} />
+                      <label className="form-label">{t('spools.modal.search_label')}</label>
+                      <input className="form-input" placeholder={t('spools.modal.search_placeholder')} value={search} onChange={e => setSearch(e.target.value)} />
                     </div>
                     <div className="form-group" style={{ gridColumn: '1/-1' }}>
-                      <label className="form-label">Seleccionar del catálogo</label>
+                      <label className="form-label">{t('spools.modal.select_label')}</label>
                       <select className="form-select" value={selectedDbId} onChange={e => {
                         const f = dbFilaments.find(x => x.id === e.target.value)
                         if (f) {
@@ -218,7 +220,7 @@ export default function BobinasPage() {
                           setForm({...form, brand: f.brand, material: f.material, color_name: f.color_name, color_hex: f.color_hex})
                         }
                       }} required={!isManual}>
-                        <option value="">— Selecciona —</option>
+                        <option value="">— {t('common.select')} —</option>
                         {filteredDb.map(f => (
                           <option key={f.id} value={f.id}>{f.brand} {f.material} - {f.color_name}</option>
                         ))}
@@ -228,12 +230,12 @@ export default function BobinasPage() {
                 ) : (
                   <>
                     <div className="form-group">
-                      <label className="form-label">Marca</label>
-                      <input className="form-input" placeholder="eSUN, Bambu..." value={form.brand} 
+                      <label className="form-label">{t('spools.modal.brand_label')}</label>
+                      <input className="form-input" placeholder={t('spools.modal.brand_placeholder')} value={form.brand} 
                         onChange={e => { setForm({...form, brand: e.target.value}); checkDuplicates(e.target.value, form.material) }} />
                     </div>
                     <div className="form-group">
-                      <label className="form-label">Material</label>
+                      <label className="form-label">{t('spools.modal.material_label')}</label>
                       <select className="form-select" value={form.material} 
                         onChange={e => { setForm({...form, material: e.target.value}); checkDuplicates(form.brand, e.target.value) }}>
                         {['PLA','PLA+','PETG','ABS','ASA','TPU','Nylon','PC','PA-CF','PLA-CF'].map(m => <option key={m}>{m}</option>)}
@@ -242,7 +244,7 @@ export default function BobinasPage() {
 
                     {duplicates.length > 0 && (
                       <div className="alert alert-warn" style={{ gridColumn: '1/-1', flexDirection: 'column', gap: '0.4rem', fontSize: '0.8rem' }}>
-                        <strong>Ya existe en el catálogo:</strong>
+                        <strong>{t('spools.modal.duplicates_title')}</strong>
                         {duplicates.map(d => (
                           <button key={d.id} type="button" className="btn btn-secondary btn-sm" style={{ justifyContent: 'flex-start' }}
                             onClick={() => { setIsManual(false); setSelectedDbId(d.id); setDuplicates([]); setForm({...form, brand: d.brand, material: d.material, color_name: d.color_name, color_hex: d.color_hex}) }}>
@@ -253,11 +255,11 @@ export default function BobinasPage() {
                     )}
 
                     <div className="form-group">
-                      <label className="form-label">Color</label>
-                      <input className="form-input" placeholder="Blanco, Negro..." value={form.color_name} onChange={e => setForm({...form, color_name: e.target.value})} />
+                      <label className="form-label">{t('spools.modal.color_label')}</label>
+                      <input className="form-input" placeholder={t('spools.modal.color_placeholder')} value={form.color_name} onChange={e => setForm({...form, color_name: e.target.value})} />
                     </div>
                     <div className="form-group">
-                      <label className="form-label">Color (hex)</label>
+                      <label className="form-label">{t('spools.modal.color_hex_label')}</label>
                       <div className="flex gap-2">
                         <input type="color" style={{ width: 42, height: 42, border: 'none', background: 'none', cursor: 'pointer', borderRadius: 8 }} value={form.color_hex} onChange={e => setForm({...form, color_hex: e.target.value})} />
                         <input className="form-input" value={form.color_hex} onChange={e => setForm({...form, color_hex: e.target.value})} />
@@ -267,16 +269,16 @@ export default function BobinasPage() {
                 )}
 
                 <div className="form-group">
-                  <label className="form-label">Peso total (g)</label>
+                  <label className="form-label">{t('spools.modal.weight_total')}</label>
                   <input type="number" className="form-input" value={form.total_weight_g} onChange={e => setForm({...form, total_weight_g: e.target.value})} required />
                 </div>
                 <div className="form-group">
-                  <label className="form-label">Restante (g)</label>
+                  <label className="form-label">{t('spools.modal.weight_remaining')}</label>
                   <input type="number" className="form-input" value={form.remaining_weight_g} onChange={e => setForm({...form, remaining_weight_g: e.target.value})} required />
                 </div>
                 <div className="form-group" style={{ gridColumn: '1/-1' }}>
-                  <label className="form-label">Precio de compra (€)</label>
-                  <input type="number" step="0.01" className="form-input" placeholder="Opcional" value={form.purchase_price} onChange={e => setForm({...form, purchase_price: e.target.value})} />
+                  <label className="form-label">{t('spools.modal.price_label')}</label>
+                  <input type="number" step="0.01" className="form-input" placeholder={t('spools.modal.price_placeholder')} value={form.purchase_price} onChange={e => setForm({...form, purchase_price: e.target.value})} />
                 </div>
 
                 {isManual && duplicates.length === 0 && form.brand.length > 2 && (
@@ -284,8 +286,8 @@ export default function BobinasPage() {
                     <label style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer', padding: '0.75rem', background: 'rgba(249,115,22,0.06)', borderRadius: '8px', border: '1px solid rgba(249,115,22,0.15)' }}>
                       <input type="checkbox" checked={contributeToDb} onChange={e => setContributeToDb(e.target.checked)} />
                       <span style={{ fontSize: '0.875rem' }}>
-                        <strong>Contribuir al catálogo público</strong>
-                        <span className="text-muted" style={{ display: 'block', fontSize: '0.75rem' }}>Otros podrán elegir esta marca/material directamente</span>
+                        <strong>{t('spools.modal.contribute_label')}</strong>
+                        <span className="text-muted" style={{ display: 'block', fontSize: '0.75rem' }}>{t('spools.modal.contribute_desc')}</span>
                       </span>
                     </label>
                   </div>
@@ -293,8 +295,8 @@ export default function BobinasPage() {
               </div>
 
               <div className="flex gap-3">
-                <button type="button" className="btn btn-ghost w-full" style={{ justifyContent: 'center' }} onClick={() => { setShowModal(false); resetForm() }}>Cancelar</button>
-                <button type="submit" className="btn btn-primary w-full" style={{ justifyContent: 'center' }} disabled={saving}>{saving ? (editId ? 'Guardando...' : 'Añadiendo...') : (editId ? 'Guardar Cambios' : 'Añadir Bobina')}</button>
+                <button type="button" className="btn btn-ghost w-full" style={{ justifyContent: 'center' }} onClick={() => { setShowModal(false); resetForm() }}>{t('common.cancel')}</button>
+                <button type="submit" className="btn btn-primary w-full" style={{ justifyContent: 'center' }} disabled={saving}>{saving ? (editId ? t('common.saving') : t('common.adding')) : (editId ? t('common.save') : t('spools.add_btn'))}</button>
               </div>
             </form>
           </div>
@@ -303,4 +305,3 @@ export default function BobinasPage() {
     </div>
   )
 }
-
