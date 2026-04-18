@@ -346,7 +346,7 @@ export default function AdminPage() {
           {openSections.printers && (
             <div className="card p-0 border-t-0 rounded-t-none overflow-hidden animate-slide-down mb-2">
               {pendingPrinters.length === 0 ? (
-                <div className="p-10 text-center text-muted">Limpio.</div>
+                <div className="p-10 text-center text-muted">{t('common.clean')}</div>
               ) : (
                 <table className="w-full text-left text-sm">
                   <thead className="bg-white/5 text-muted uppercase text-xs">
@@ -362,7 +362,7 @@ export default function AdminPage() {
                         <td className="p-4">{p.brand} {p.model}</td>
                         <td className="p-4">{p.type}</td>
                         <td className="p-4 text-right">
-                          <button className="btn btn-primary btn-sm" onClick={() => handleVerify('printer', p.id)}>OK</button>
+                          <button className="btn btn-primary btn-sm" onClick={() => handleVerify('printer', p.id)}>{t('common.ok')}</button>
                         </td>
                       </tr>
                     ))}
@@ -389,7 +389,7 @@ export default function AdminPage() {
           {openSections.filaments && (
             <div className="card p-0 border-t-0 rounded-t-none overflow-hidden animate-slide-down mb-2">
               {pendingFilaments.length === 0 ? (
-                <div className="p-10 text-center text-muted">Limpio.</div>
+                <div className="p-10 text-center text-muted">{t('common.clean')}</div>
               ) : (
                 <table className="w-full text-left text-sm">
                   <thead className="bg-white/5 text-muted uppercase text-xs">
@@ -405,7 +405,7 @@ export default function AdminPage() {
                         <td className="p-4">{f.brand} {f.material}</td>
                         <td className="p-4">{f.color_name}</td>
                         <td className="p-4 text-right">
-                          <button className="btn btn-primary btn-sm" onClick={() => handleVerify('filament', f.id)}>OK</button>
+                          <button className="btn btn-primary btn-sm" onClick={() => handleVerify('filament', f.id)}>{t('common.ok')}</button>
                         </td>
                       </tr>
                     ))}

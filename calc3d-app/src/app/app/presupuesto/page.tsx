@@ -5,9 +5,10 @@ import { calculate, type CalculationResult } from '@/lib/calculations'
 import jsPDF from 'jspdf'
 import { formatCurrency, formatNumber } from '@/lib/formatters'
 import { useTranslation } from '@/contexts/I18nContext'
+import { translations, type Language } from '@/locales'
 
 export default function PresupuestoPage() {
-  const { t } = useTranslation()
+  const { t, language } = useTranslation()
   const [form, setForm] = useState({
     clientName: '',
     kwhPrice: '0.15', amortization: '0',
@@ -18,6 +19,29 @@ export default function PresupuestoPage() {
   const [result, setResult] = useState<CalculationResult | null>(null)
   const [saved, setSaved] = useState(false)
   const [saving, setSaving] = useState(false)
+  const [pdfLanguage, setPdfLanguage] = useState<Language>('es')
+
+  useEffect(() => {
+    if (language) setPdfLanguage(language)
+  }, [language])
+
+  const tp = (keyPath: string, lang: Language) => {
+    const keys = keyPath.split('.')
+    let current: any = translations[lang]
+    for (const key of keys) {
+      if (current && current[key] !== undefined) {
+        current = current[key]
+      } else {
+        // Fallback to Spanish
+        let fallback: any = translations['es']
+        for (const fkey of keys) {
+          fallback = fallback ? fallback[fkey] : undefined
+        }
+        return fallback || keyPath
+      }
+    }
+    return current
+  }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [myPrinters, setMyPrinters] = useState<any[]>([])
@@ -186,15 +210,15 @@ export default function PresupuestoPage() {
     // Cabecera
     pdf.setFontSize(22)
     pdf.setFont('helvetica', 'bold')
-    pdf.text(t('quote.pdf.header_title'), 20, 30)
+    pdf.text(tp('quote.pdf.header_title', pdfLanguage), 20, 30)
 
     pdf.setFontSize(11)
     pdf.setFont('helvetica', 'normal')
     pdf.setTextColor(100, 100, 100)
-    pdf.text(`${t('quote.pdf.date_label')}: ${new Date().toLocaleDateString()}`, 20, 40)
+    pdf.text(`${tp('quote.pdf.date_label', pdfLanguage)}: ${new Date().toLocaleDateString()}`, 20, 40)
     if (form.clientName) {
       pdf.setTextColor(0, 0, 0)
-      pdf.text(`${t('quote.pdf.client_label')}:`, 20, 48)
+      pdf.text(`${tp('quote.pdf.client_label', pdfLanguage)}:`, 20, 48)
       pdf.setFont('helvetica', 'bold')
       pdf.text(form.clientName, 38, 48)
     }
@@ -207,7 +231,7 @@ export default function PresupuestoPage() {
     pdf.setTextColor(0, 0, 0)
     pdf.setFontSize(14)
     pdf.setFont('helvetica', 'bold')
-    pdf.text(t('quote.pdf.specifications_title'), 20, 65)
+    pdf.text(tp('quote.pdf.specifications_title', pdfLanguage), 20, 65)
 
     pdf.setFontSize(11)
     pdf.setFont('helvetica', 'normal')
@@ -215,19 +239,19 @@ export default function PresupuestoPage() {
     let filString = ''
     mats.forEach((m, idx) => {
       const s = mySpools.find(x => x.id === m.spoolId)
-      const name = s ? `${s.brand || ''} ${s.material || ''} ${s.color_name || ''}`.trim() : `${t('quote.pdf.material_fallback')} ${idx + 1}`
+      const name = s ? `${s.brand || ''} ${s.material || ''} ${s.color_name || ''}`.trim() : `${tp('quote.pdf.material_fallback', pdfLanguage)} ${idx + 1}`
       filString += `${idx > 0 ? ' + ' : ''}${name} (${formatNumber(Number(m.weight) || 0, 0)}g)`
     })
 
     let prnString = ''
     prns.forEach((pState, idx) => {
       const p = myPrinters.find(x => x.id === pState.printerId)
-      const name = p ? (p.nickname || (p.printers ? p.printers.model : `${t('quote.pdf.printer_fallback')} ${idx + 1}`)) : `${t('quote.pdf.printer_fallback')} ${idx + 1}`
+      const name = p ? (p.nickname || (p.printers ? p.printers.model : `${tp('quote.pdf.printer_fallback', pdfLanguage)} ${idx + 1}`)) : `${tp('quote.pdf.printer_fallback', pdfLanguage)} ${idx + 1}`
       prnString += `${idx > 0 ? ' + ' : ''}${name} (${pState.timeH}h ${pState.timeM}m)`
     })
 
-    pdf.text(`${t('quote.pdf.materials_label')}: ${filString}`, 20, 75)
-    pdf.text(`${t('quote.pdf.printers_label')}: ${prnString}`, 20, 82)
+    pdf.text(`${tp('quote.pdf.materials_label', pdfLanguage)}: ${filString}`, 20, 75)
+    pdf.text(`${tp('quote.pdf.printers_label', pdfLanguage)}: ${prnString}`, 20, 82)
     
     // Línea separadora
     pdf.setDrawColor(200, 200, 200)
@@ -243,14 +267,14 @@ export default function PresupuestoPage() {
     pdf.setFontSize(12)
     pdf.setFont('helvetica', 'normal')
     let y = 110
-    pdf.text(`${t('quote.results.material')}:`, 20, y); pdf.text(`${formatCurrency(result.materialCost)}`, 170, y, { align: 'right' }); y += 10;
-    pdf.text(`${t('quote.results.energy')}:`, 20, y); pdf.text(`${formatCurrency(result.electricityCost)}`, 170, y, { align: 'right' }); y += 10;
+    pdf.text(`${tp('quote.results.material', pdfLanguage)}:`, 20, y); pdf.text(`${formatCurrency(result.materialCost)}`, 170, y, { align: 'right' }); y += 10;
+    pdf.text(`${tp('quote.results.energy', pdfLanguage)}:`, 20, y); pdf.text(`${formatCurrency(result.electricityCost)}`, 170, y, { align: 'right' }); y += 10;
 
     if (result.amortizationCost > 0) {
-      pdf.text(`${t('quote.results.amortization')}:`, 20, y); pdf.text(`${formatCurrency(result.amortizationCost)}`, 170, y, { align: 'right' }); y += 10;
+      pdf.text(`${tp('quote.results.amortization', pdfLanguage)}:`, 20, y); pdf.text(`${formatCurrency(result.amortizationCost)}`, 170, y, { align: 'right' }); y += 10;
     }
     if (result.laborCost > 0) {
-      pdf.text(`${t('quote.results.labor')}:`, 20, y); pdf.text(`${formatCurrency(result.laborCost)}`, 170, y, { align: 'right' }); y += 10;
+      pdf.text(`${tp('quote.results.labor', pdfLanguage)}:`, 20, y); pdf.text(`${formatCurrency(result.laborCost)}`, 170, y, { align: 'right' }); y += 10;
     }
 
 
@@ -259,16 +283,14 @@ export default function PresupuestoPage() {
     pdf.setFontSize(16)
     pdf.setFont('helvetica', 'bold')
     pdf.setTextColor(249, 115, 22) // Naranja
-    pdf.text(`${t('quote.pdf.final_price')}:`, 20, y); pdf.text(`${formatCurrency(result.total)}`, 170, y, { align: 'right' });
+    pdf.text(`${tp('quote.pdf.final_price', pdfLanguage)}:`, 20, y); pdf.text(`${formatCurrency(result.total)}`, 170, y, { align: 'right' });
 
-    // Pie de página
-    pdf.setFontSize(10)
-    pdf.setTextColor(150, 150, 150)
-    pdf.setFont('helvetica', 'normal')
-    pdf.text(t('quote.pdf.footer'), 20, 280)
+    const pieText = tp('quote.pdf.footer', pdfLanguage)
+    pdf.text(pieText, 20, 280)
 
+    const filenamePrefix = tp('quote.pdf.filename', pdfLanguage) || 'presupuesto'
     const safeClientName = form.clientName ? form.clientName.replace(/[^a-zA-Z0-9]/g, '_') : '3d'
-    pdf.save(`presupuesto_${safeClientName}.pdf`)
+    pdf.save(`${filenamePrefix}_${safeClientName}.pdf`)
   }
 
   return (
@@ -431,9 +453,27 @@ export default function PresupuestoPage() {
                 {result.margin > 0 && <div className="breakdown-item"><span className="breakdown-label">{t('quote.results.margin')} ({form.marginPercent}%)</span><span className="breakdown-value">+{formatCurrency(result.margin)}</span></div>}
                 <div className="breakdown-item breakdown-total"><span className="breakdown-label" style={{ fontWeight: 700 }}>{t('quote.results.final_price')}</span><span className="breakdown-value" style={{ color: 'var(--brand)', fontSize: '1.1rem' }}>{formatCurrency(result.total)}</span></div>
               </div>
-              <div style={{ marginTop: '1.5rem', display: 'flex', gap: '0.75rem' }} data-html2canvas-ignore="true">
-                <button className="btn btn-primary" style={{ flex: 1, justifyContent: 'center' }} onClick={handleDownloadPDF}>{t('quote.results.download_pdf')}</button>
-                {saved && <div className="alert alert-success" style={{ flex: 1, padding: '0.5rem', textAlign: 'center', margin: 0 }}>{t('common.saved')}</div>}
+              <div style={{ marginTop: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }} data-html2canvas-ignore="true">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.5rem', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', border: '1px solid var(--border)' }}>
+                  <span style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>{t('quote.results.download_pdf_in')}</span>
+                  <div style={{ display: 'flex', gap: '0.4rem', flex: 1 }}>
+                    {(['es', 'en', 'gl', 'pt'] as Language[]).map(lang => (
+                      <button
+                        key={lang}
+                        type="button"
+                        className={`btn btn-xs ${pdfLanguage === lang ? 'btn-primary' : 'btn-ghost'}`}
+                        style={{ padding: '2px 8px', textTransform: 'uppercase', minWidth: '32px' }}
+                        onClick={() => setPdfLanguage(lang)}
+                      >
+                        {lang}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div style={{ display: 'flex', gap: '0.75rem' }}>
+                  <button className="btn btn-primary" style={{ flex: 1, justifyContent: 'center' }} onClick={handleDownloadPDF}>{t('quote.results.download_pdf')}</button>
+                  {saved && <div className="alert alert-success" style={{ flex: 1, padding: '0.5rem', textAlign: 'center', margin: 0 }}>{t('common.saved')}</div>}
+                </div>
               </div>
             </div>
           ) : (

@@ -54,15 +54,15 @@ export default function ImpresorasPage() {
   function validateWattage(val: string) {
     const n = Number(val)
     if (!val || isNaN(n)) { setWattageError(t('printers.modal.save_error')); return false }
-    if (n < 50) { setWattageError('⚠️ Consumo muy bajo, ¿seguro? Mínimo típico: 50W'); return false }
-    if (n > 5000) { setWattageError('⚠️ Consumo muy alto, ¿seguro? Máximo típico: 5000W'); return false }
+    if (n < 50) { setWattageError(t('printers.validation.low')); return false }
+    if (n > 5000) { setWattageError(t('printers.validation.high')); return false }
     setWattageError(''); return true
   }
 
   function validateEditWattage(val: string) {
     const n = Number(val)
     if (!val || isNaN(n) || n <= 0) { setEditError(t('common.error')); return false }
-    if (n > 5000) { setEditError('Max 5000W'); return false }
+    if (n > 5000) { setEditError(t('printers.validation.max')); return false }
     setEditError(''); return true
   }
 
@@ -297,10 +297,10 @@ export default function ImpresorasPage() {
                     <div className="form-group">
                       <label className="form-label">{t('printers.modal.type_label')}</label>
                       <select className="form-select" value={manualType} onChange={e => setManualType(e.target.value)}>
-                        <option value="FDM">FDM</option>
-                        <option value="Resina">Resina (MSLA)</option>
-                        <option value="SLA">SLA</option>
-                        <option value="SLS">SLS</option>
+                        <option value="FDM">{t('printers.types.fdm')}</option>
+                        <option value="Resina">{t('printers.types.resin')}</option>
+                        <option value="SLA">{t('printers.types.sla')}</option>
+                        <option value="SLS">{t('printers.types.sls')}</option>
                       </select>
                     </div>
                   </div>

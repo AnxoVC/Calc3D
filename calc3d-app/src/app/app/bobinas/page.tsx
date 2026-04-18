@@ -25,7 +25,7 @@ export default function BobinasPage() {
   const [contributeToDb, setContributeToDb] = useState(false)
 
   const [form, setForm] = useState({ 
-    brand: '', material: 'PLA', color_name: 'Blanco', 
+    brand: '', material: 'PLA', color_name: t('spools.modal.default_color'), 
     color_hex: '#ffffff', total_weight_g: '1000', 
     remaining_weight_g: '1000', purchase_price: '' 
   })
@@ -125,7 +125,7 @@ export default function BobinasPage() {
   }
 
   function resetForm() {
-    setForm({ brand: '', material: 'PLA', color_name: 'Blanco', color_hex: '#ffffff', total_weight_g: '1000', remaining_weight_g: '1000', purchase_price: '' })
+    setForm({ brand: '', material: 'PLA', color_name: t('spools.modal.default_color'), color_hex: '#ffffff', total_weight_g: '1000', remaining_weight_g: '1000', purchase_price: '' })
     setEditId(null)
   }
 

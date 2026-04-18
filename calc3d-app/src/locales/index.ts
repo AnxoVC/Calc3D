@@ -159,7 +159,10 @@ export const translations = {
         ml: 'ml',
         l: 'L',
         ud: 'ud',
-        ud_full: 'Unidades (ud)'
+        ud_full: 'Unidades (ud)',
+        total: 'TOTAL',
+        clean: 'Limpio.',
+        ok: 'Aceptar'
       }
     },
     printers: {
@@ -199,6 +202,17 @@ export const translations = {
         save_error: 'Error al guardar en tus impresoras:',
         contrib_error: 'Error al contribuir a la base de datos:',
         notes_label: 'Notas'
+      },
+      validation: {
+        low: '⚠️ Consumo muy bajo, ¿seguro? Mínimo típico: 50W',
+        high: '⚠️ Consumo muy alto, ¿seguro? Máximo típico: 5000W',
+        max: 'Máx 5000W'
+      },
+      types: {
+        fdm: 'FDM',
+        resin: 'Resina (MSLA)',
+        sla: 'SLA',
+        sls: 'SLS'
       }
     },
     spools: {
@@ -656,7 +670,10 @@ export const translations = {
         ml: 'ml',
         l: 'L',
         ud: 'ud',
-        ud_full: 'Units (ud)'
+        ud_full: 'Units (ud)',
+        total: 'TOTAL',
+        clean: 'Clear.',
+        ok: 'OK'
       }
     },
     printers: {
@@ -696,6 +713,17 @@ export const translations = {
         save_error: 'Error saving to your printers:',
         contrib_error: 'Error contributing to the database:',
         notes_label: 'Notes'
+      },
+      validation: {
+        low: '⚠️ Very low consumption, sure? Typical minimum: 50W',
+        high: '⚠️ Very high consumption, sure? Typical maximum: 5000W',
+        max: 'Max 5000W'
+      },
+      types: {
+        fdm: 'FDM',
+        resin: 'Resin (MSLA)',
+        sla: 'SLA',
+        sls: 'SLS'
       }
     },
     spools: {
@@ -713,6 +741,7 @@ export const translations = {
       modal: {
         title_new: 'New spool',
         title_edit: 'Edit spool',
+        default_color: 'White',
         tab_catalog: 'Catalog',
         tab_manual: 'Manual',
         search_label: 'Search filament',
@@ -938,9 +967,11 @@ export const translations = {
         margin: 'Profit',
         final_price: 'FINAL TOTAL',
         download_pdf: 'Download PDF Quote',
+        download_pdf_in: 'Download PDF in:',
         empty_desc: 'Fill the data on the left to generate a detailed quote.'
       },
       pdf: {
+        filename: 'quote',
         header_title: '3D PRINTING QUOTE',
         date_label: 'Date',
         client_label: 'Client',
@@ -1153,7 +1184,7 @@ export const translations = {
         ml: 'ml',
         l: 'L',
         ud: 'ud',
-        ud_full: 'Unidades (ud)'
+        ud_full: 'Unidades (ud)', total: 'TOTAL', clean: 'Limpo.', ok: 'Aceitar'
       }
     },
     printers: {
@@ -1193,6 +1224,17 @@ export const translations = {
         save_error: 'Erro ao gardar nas túas impresoras:',
         contrib_error: 'Erro ao contribuír á base de datos:',
         notes_label: 'Notas'
+      },
+      validation: {
+        low: '⚠️ Consumo moi baixo, ¿seguro? Mínimo típico: 50W',
+        high: '⚠️ Consumo moi alto, ¿seguro? Máximo típico: 5000W',
+        max: 'Máx 5000W'
+      },
+      types: {
+        fdm: 'FDM',
+        resin: 'Resina (MSLA)',
+        sla: 'SLA',
+        sls: 'SLS'
       }
     },
     spools: {
@@ -1435,9 +1477,11 @@ export const translations = {
         margin: 'Beneficio',
         final_price: 'TOTAL FINAL',
         download_pdf: 'Descargar Orzamento en PDF',
+        download_pdf_in: 'Descargar PDF en:',
         empty_desc: 'Enche os datos da esquerda para xerar o orzamento detallado.'
       },
       pdf: {
+        filename: 'orzamento',
         header_title: 'ORZAMENTO DE IMPRESIÓN 3D',
         date_label: 'Data',
         client_label: 'Cliente',
@@ -1650,7 +1694,7 @@ export const translations = {
         ml: 'ml',
         l: 'L',
         ud: 'ud',
-        ud_full: 'Unidades (ud)'
+        ud_full: 'Unidades (ud)', total: 'TOTAL', clean: 'Limpo.', ok: 'Aceitar'
       }
     },
     printers: {
@@ -1690,6 +1734,17 @@ export const translations = {
         save_error: 'Erro ao salvar nas suas impressoras:',
         contrib_error: 'Erro ao contribuir para a base de datos:',
         notes_label: 'Notas'
+      },
+      validation: {
+        low: '⚠️ Consumo muito baixo, certo? Mínimo típico: 50W',
+        high: '⚠️ Consumo muito alto, certo? Máximo típico: 5000W',
+        max: 'Máx 5000W'
+      },
+      types: {
+        fdm: 'FDM',
+        resin: 'Resina (MSLA)',
+        sla: 'SLA',
+        sls: 'SLS'
       }
     },
     spools: {
@@ -1932,9 +1987,11 @@ export const translations = {
         margin: 'Lucro',
         final_price: 'TOTAL FINAL',
         download_pdf: 'Descarregar Orçamento em PDF',
+        download_pdf_in: 'Descarregar PDF em:',
         empty_desc: 'Preencha os dados à esquerda para gerar o orçamento detalhado.'
       },
       pdf: {
+        filename: 'orcamento',
         header_title: 'ORÇAMENTO DE IMPRESSÃO 3D',
         date_label: 'Data',
         client_label: 'Cliente',
