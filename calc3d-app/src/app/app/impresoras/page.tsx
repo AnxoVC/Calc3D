@@ -306,7 +306,7 @@ export default function ImpresorasPage() {
                       <input type="checkbox" checked={contributeToDb} onChange={e => setContributeToDb(e.target.checked)} />
                       <span style={{ fontSize: '0.875rem' }}>
                         <strong>Añadir a la base de datos pública</strong>
-                        <span className="text-muted" style={{ display: 'block', fontSize: '0.75rem' }}>Se añadirá como "no verificada" hasta revisión</span>
+                        <span className="text-muted" style={{ display: 'block', fontSize: '0.75rem' }}>Se añadirá como &quot;no verificada&quot; hasta revisión</span>
                       </span>
                     </label>
                   )}

@@ -26,7 +26,9 @@ export default function ForumFeed() {
     ])
 
     const combined: ForumItem[] = [
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ...(annData.data || []).map((a: any) => ({ ...a, type: 'announcement' as const })),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ...(feedData.data || []).map((f: any) => ({ ...f, type: 'suggestion' as const }))
     ].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
 
@@ -34,7 +36,10 @@ export default function ForumFeed() {
     setLoading(false)
   }
 
-  useEffect(() => { loadForum() }, [])
+  useEffect(() => { 
+    loadForum() 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   if (loading) return <div className="text-center p-12 text-muted">Cargando muro de la comunidad...</div>
   

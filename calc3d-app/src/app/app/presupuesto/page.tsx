@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { calculate, type CalculationResult } from '@/lib/calculations'
 import jsPDF from 'jspdf'
-import html2canvas from 'html2canvas'
 import { formatCurrency, formatNumber } from '@/lib/formatters'
 
 export default function PresupuestoPage() {
@@ -12,16 +11,16 @@ export default function PresupuestoPage() {
     kwhPrice: '0.15', amortization: '0',
     laborPerHour: '10', laborH: '0', laborM: '30', marginPercent: '20'
   })
-  const [mats, setMats] = useState([{ id: Date.now(), spoolId: '', weight: '100', price: '20' }])
-  const [prns, setPrns] = useState([{ id: Date.now(), printerId: '', timeH: '3', timeM: '0', wattage: '250' }])
+  const [mats, setMats] = useState(() => [{ id: Date.now(), spoolId: '', weight: '100', price: '20' }])
+  const [prns, setPrns] = useState(() => [{ id: Date.now(), printerId: '', timeH: '3', timeM: '0', wattage: '250' }])
   const [result, setResult] = useState<CalculationResult | null>(null)
   const [saved, setSaved] = useState(false)
   const [saving, setSaving] = useState(false)
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [myPrinters, setMyPrinters] = useState<any[]>([])
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [mySpools, setMySpools] = useState<any[]>([])
-  const [selectedPrinter, setSelectedPrinter] = useState('')
-  const [selectedPrinter2, setSelectedPrinter2] = useState('')
 
   useEffect(() => {
     async function loadData() {

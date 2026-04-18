@@ -9,7 +9,7 @@ export default function ThemeToggle() {
     // Check initial
     const saved = localStorage.getItem('mycalc3d-theme')
     if (saved) {
-      setTheme(saved)
+      setTimeout(() => setTheme(saved), 0)
       document.documentElement.setAttribute('data-theme', saved)
     }
   }, [])

@@ -109,7 +109,10 @@ export default function AdminPage() {
     setLoading(false)
   }
 
-  useEffect(() => { checkAuth() }, [])
+  useEffect(() => { 
+    checkAuth() 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const toggleSection = (id: string) => {
     setOpenSections(prev => ({ ...prev, [id]: !prev[id] }))
@@ -309,7 +312,7 @@ export default function AdminPage() {
                         <span className="text-xs text-muted">{new Date(item.created_at).toLocaleDateString()}</span>
                       </div>
                       <h4 className="font-bold mb-1">{item.subject}</h4>
-                      <p className="text-sm text-muted mb-4 italic">"{item.message}"</p>
+                      <p className="text-sm text-muted mb-4 italic">&quot;{item.message}&quot;</p>
                       <div className="flex gap-2 justify-end">
                         <button className={`btn btn-sm ${item.is_public ? 'btn-primary' : 'btn-ghost'}`} onClick={() => togglePublic(item.id, !!item.is_public)}>
                           {item.is_public ? 'Público ✓' : 'Hacer Público'}

@@ -21,7 +21,10 @@ export default function ConsumiblesPage() {
     setLoading(false)
   }
 
-  useEffect(() => { load() }, [])
+  useEffect(() => { 
+    load() 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   async function handleSave(e: React.FormEvent) {
     e.preventDefault()

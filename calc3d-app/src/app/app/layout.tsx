@@ -45,7 +45,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
   // Close menu on navigation
   useEffect(() => {
-    setIsMenuOpen(false)
+    const t = setTimeout(() => setIsMenuOpen(false), 0)
+    return () => clearTimeout(t)
   }, [pathname])
 
   const isAdmin = userEmail === 'vigoanxo000@gmail.com'

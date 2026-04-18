@@ -43,7 +43,10 @@ export default function BobinasPage() {
     setLoading(false)
   }
 
-  useEffect(() => { load() }, [])
+  useEffect(() => { 
+    load() 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   function checkDuplicates(brand: string, material: string) {
     if (!brand || brand.length < 2) { setDuplicates([]); return }

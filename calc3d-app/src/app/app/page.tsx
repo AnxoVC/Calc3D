@@ -1,7 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import Link from 'next/link'
 import { formatCurrency } from '@/lib/formatters'
 
 interface PrintEntry {
@@ -32,7 +31,10 @@ export default function DiarioPage() {
     setLoading(false)
   }
 
-  useEffect(() => { load() }, [])
+  useEffect(() => { 
+    load() 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   async function handleAdd(e: React.FormEvent) {
     e.preventDefault()
