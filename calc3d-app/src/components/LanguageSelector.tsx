@@ -7,7 +7,7 @@ import { type Language } from '@/locales'
 const LANGS: { code: Language; label: string; flag: string }[] = [
   { code: 'es', label: 'Español', flag: '🇪🇸' },
   { code: 'en', label: 'English', flag: '🇺🇸' },
-  { code: 'gl', label: 'Galego', flag: '⬜🟦' }, // Galician flag representation
+  { code: 'gl', label: 'Galego', flag: 'GL' }, // Galician flag representation
   { code: 'pt', label: 'Português', flag: '🇵🇹' }
 ]
 
@@ -43,7 +43,7 @@ export default function LanguageSelector() {
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <span style={{ fontSize: '1.1rem' }}>{currentLang.flag}</span>
+          <span style={{ fontSize: currentLang.code === 'gl' ? '0.75rem' : '1.1rem', fontWeight: currentLang.code === 'gl' ? 800 : 400 }}>{currentLang.flag}</span>
           <span style={{ fontSize: '0.8125rem', fontWeight: 600, textTransform: 'uppercase' }}>{currentLang.code}</span>
         </div>
         <svg 
@@ -95,7 +95,7 @@ export default function LanguageSelector() {
               }}
               className="lang-item"
             >
-              <span style={{ fontSize: '1.2rem' }}>{lang.flag}</span>
+              <span style={{ fontSize: lang.code === 'gl' ? '0.8rem' : '1.2rem', fontWeight: lang.code === 'gl' ? 800 : 400, width: '20px', textAlign: 'center' }}>{lang.flag}</span>
               <span>{lang.label}</span>
             </button>
           ))}

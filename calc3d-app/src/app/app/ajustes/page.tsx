@@ -85,30 +85,6 @@ export default function AjustesPage() {
         </div>
 
         <div style={{ height: '1px', background: 'var(--border)', margin: '2rem 0' }} />
-
-        <h4 style={{ marginBottom: '0.5rem', fontWeight: 600 }}>{t('settings.language.title')}</h4>
-        <p className="text-sm text-muted mb-4">{t('settings.language.desc')}</p>
-        
-        <div className="flex gap-2 mb-6" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
-          {[
-            { code: 'es', label: 'Español', flag: '🇪🇸' },
-            { code: 'en', label: 'English', flag: '🇺🇸' },
-            { code: 'gl', label: 'Galego', flag: '⬜🟦' },
-            { code: 'pt', label: 'Português', flag: '🇵🇹' }
-          ].map((l) => (
-            <button 
-              key={l.code}
-              onClick={() => setLanguage(l.code as Language)}
-              className={`btn ${language === l.code ? 'btn-primary' : 'btn-outline'}`}
-              style={{ justifyContent: 'center', padding: '0.75rem' }}
-            >
-              <span style={{ marginRight: '0.5rem' }}>{l.flag}</span>
-              {l.label}
-            </button>
-          ))}
-        </div>
-
-        <div style={{ height: '1px', background: 'var(--border)', margin: '2rem 0' }} />
         
         <h4 style={{ marginBottom: '0.5rem', fontWeight: 600 }}>{t('settings.password.title')}</h4>
         <p className="text-sm text-muted mb-4">{t('settings.password.desc')}</p>
@@ -134,6 +110,30 @@ export default function AjustesPage() {
         >
           {changingPassword ? t('settings.password.updating') : t('settings.password.update')}
         </button>
+
+        <div style={{ height: '1px', background: 'var(--border)', margin: '2rem 0' }} />
+
+        <h4 style={{ marginBottom: '0.5rem', fontWeight: 600 }}>{t('settings.language.title')}</h4>
+        <p className="text-sm text-muted mb-4">{t('settings.language.desc')}</p>
+        
+        <div className="flex gap-2 mb-6" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
+          {[
+            { code: 'es', label: 'Español', flag: '🇪🇸' },
+            { code: 'en', label: 'English', flag: '🇺🇸' },
+            { code: 'gl', label: 'Galego', flag: 'GL' },
+            { code: 'pt', label: 'Português', flag: '🇵🇹' }
+          ].map((l) => (
+            <button 
+              key={l.code}
+              onClick={() => setLanguage(l.code as Language)}
+              className={`btn ${language === l.code ? 'btn-primary' : 'btn-outline'}`}
+              style={{ justifyContent: 'center', padding: '0.75rem' }}
+            >
+              <span style={{ marginRight: '0.5rem', fontSize: l.code === 'gl' ? '0.7rem' : '1.1rem', fontWeight: 800 }}>{l.flag}</span>
+              {l.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       <form className="card mb-10" onSubmit={handleSave}>
