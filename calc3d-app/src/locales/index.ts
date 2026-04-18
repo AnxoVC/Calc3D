@@ -455,9 +455,11 @@ export const translations = {
         margin: 'Beneficio',
         final_price: 'TOTAL FINAL',
         download_pdf: 'Descargar Presupuesto en PDF',
+        download_pdf_in: 'Descargar PDF en:',
         empty_desc: 'Rellena los datos de la izquierda para generar el presupuesto detallado.'
       },
       pdf: {
+        filename: 'presupuesto',
         header_title: 'PRESUPUESTO DE IMPRESIÓN 3D',
         date_label: 'Fecha',
         client_label: 'Cliente',

@@ -454,15 +454,15 @@ export default function PresupuestoPage() {
                 <div className="breakdown-item breakdown-total"><span className="breakdown-label" style={{ fontWeight: 700 }}>{t('quote.results.final_price')}</span><span className="breakdown-value" style={{ color: 'var(--brand)', fontSize: '1.1rem' }}>{formatCurrency(result.total)}</span></div>
               </div>
               <div style={{ marginTop: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }} data-html2canvas-ignore="true">
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.5rem', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', border: '1px solid var(--border)' }}>
-                  <span style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>{t('quote.results.download_pdf_in')}</span>
-                  <div style={{ display: 'flex', gap: '0.4rem', flex: 1 }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', padding: '0.75rem', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px solid var(--border)' }}>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600, letterSpacing: '0.05em' }}>{t('quote.results.download_pdf_in')}</span>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.4rem' }}>
                     {(['es', 'en', 'gl', 'pt'] as Language[]).map(lang => (
                       <button
                         key={lang}
                         type="button"
                         className={`btn btn-xs ${pdfLanguage === lang ? 'btn-primary' : 'btn-ghost'}`}
-                        style={{ padding: '2px 8px', textTransform: 'uppercase', minWidth: '32px' }}
+                        style={{ padding: '4px 0', textTransform: 'uppercase', fontSize: '0.7rem', fontWeight: 700 }}
                         onClick={() => setPdfLanguage(lang)}
                       >
                         {lang}
