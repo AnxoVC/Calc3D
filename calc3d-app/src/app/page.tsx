@@ -6,7 +6,7 @@ import LanguageSelector from '@/components/LanguageSelector'
 import { useTranslation } from '@/contexts/I18nContext'
 
 export default function LandingPage() {
-  const { t } = useTranslation()
+  const { t, language } = useTranslation()
 
   return (
     <>

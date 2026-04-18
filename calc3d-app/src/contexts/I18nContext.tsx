@@ -53,14 +53,9 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
     return current
   }
 
-  // Prevent hydration mismatch by only rendering once mounted
-  if (!mounted) {
-    return <>{children}</>
-  }
-
   return (
     <I18nContext.Provider value={{ language, setLanguage, t }}>
-      {children}
+      {mounted ? children : <div style={{ visibility: 'hidden' }}>{children}</div>}
     </I18nContext.Provider>
   )
 }
