@@ -1,0 +1,12 @@
+{
+  "name": "mycalc3d-scripts",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Scripts de automatización para MyCalc3D",
+  "scripts": {
+    "sync-printers": "node sync-printers.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.103.0"
+  }
+}

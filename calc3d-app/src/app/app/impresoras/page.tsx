@@ -19,6 +19,11 @@ export default function ImpresorasPage() {
   const [manualWattage, setManualWattage] = useState('300')
   const [error, setError] = useState('')
 
+  // Estado para edición inline de consumo
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [editWattage, setEditWattage] = useState('')
+  const [editError, setEditError] = useState('')
+
   async function load() {
     const supabase = createClient()
     const { data: { user } } = await supabase.auth.getUser()
@@ -50,6 +55,36 @@ export default function ImpresorasPage() {
     if (n < 50) { setWattageError('⚠️ Consumo muy bajo, ¿seguro? Mínimo típico: 50W'); return false }
     if (n > 5000) { setWattageError('⚠️ Consumo muy alto, ¿seguro? Máximo típico: 5000W'); return false }
     setWattageError(''); return true
+  }
+
+  function validateEditWattage(val: string) {
+    const n = Number(val)
+    if (!val || isNaN(n) || n <= 0) { setEditError('Introduce un número válido'); return false }
+    if (n > 5000) { setEditError('Máximo 5000W'); return false }
+    setEditError(''); return true
+  }
+
+  function startEdit(up: UserPrinter) {
+    const currentW = up.custom_wattage_w || up.printers?.wattage_w || 0
+    setEditingId(up.id)
+    setEditWattage(String(currentW))
+    setEditError('')
+  }
+
+  async function saveEdit(id: string) {
+    if (!validateEditWattage(editWattage)) return
+    const supabase = createClient()
+    await supabase.from('user_printers').update({ custom_wattage_w: Number(editWattage) }).eq('id', id)
+    setEditingId(null)
+    setEditWattage('')
+    setEditError('')
+    load()
+  }
+
+  function cancelEdit() {
+    setEditingId(null)
+    setEditWattage('')
+    setEditError('')
   }
 
   async function handleAdd(e: React.FormEvent) {
@@ -132,19 +167,54 @@ export default function ImpresorasPage() {
       <div className="cards-grid">
         {myPrinters.map(up => {
           const p = up.printers
+          const isEditing = editingId === up.id
+          const currentW = up.custom_wattage_w || p?.wattage_w || 0
+          const defaultW = p?.wattage_w || 0
+          const isCustom = up.custom_wattage_w !== null && up.custom_wattage_w !== defaultW
+
           return (
             <div key={up.id} className="card">
               <div className="flex items-center gap-3 mb-3">
-                <div style={{ width: 48, height: 48, background: 'rgba(249,115,22,0.12)', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem' }}></div>
+                <div style={{ width: 48, height: 48, background: 'rgba(249,115,22,0.12)', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem' }}>🖨️</div>
                 <div>
                   <div style={{ fontWeight: 700 }}>{up.nickname || (p ? `${p.brand} ${p.model}` : 'Impresora personalizada')}</div>
                   {p && <div className="text-muted text-sm">{p.brand} {p.model}</div>}
                 </div>
               </div>
-              <div className="flex gap-3 text-sm text-muted" style={{ marginBottom: '1rem' }}>
-                <span>Consumo: {up.custom_wattage_w || p?.wattage_w || '—'}W</span>
-                <span className={`badge ${p?.type === 'FDM' ? 'badge-orange' : p?.type === 'SLA' ? 'badge-blue' : 'badge-purple'}`}>{p?.type || 'FDM'}</span>
-              </div>
+
+              {/* Consumo - modo visualización o edición */}
+              {isEditing ? (
+                <div style={{ marginBottom: '1rem', padding: '0.75rem', background: 'rgba(249,115,22,0.06)', borderRadius: '8px', border: '1px solid rgba(249,115,22,0.15)' }}>
+                  <label className="form-label" style={{ fontSize: '0.75rem', marginBottom: '0.5rem' }}>Consumo (W)</label>
+                  <div className="flex gap-2" style={{ alignItems: 'center' }}>
+                    <input
+                      type="number"
+                      className="form-input"
+                      value={editWattage}
+                      onChange={e => { setEditWattage(e.target.value); validateEditWattage(e.target.value) }}
+                      onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); saveEdit(up.id) } if (e.key === 'Escape') cancelEdit() }}
+                      style={{ flex: 1, padding: '0.4rem 0.6rem', fontSize: '0.875rem' }}
+                      autoFocus
+                      min={1}
+                      max={5000}
+                    />
+                    <button type="button" className="btn btn-primary btn-sm" onClick={() => saveEdit(up.id)} title="Guardar" style={{ padding: '0.4rem 0.6rem', minWidth: 'auto' }}>✓</button>
+                    <button type="button" className="btn btn-ghost btn-sm" onClick={cancelEdit} title="Cancelar" style={{ padding: '0.4rem 0.6rem', minWidth: 'auto' }}>✕</button>
+                  </div>
+                  {editError && <p style={{ color: 'var(--accent-red)', fontSize: '0.7rem', marginTop: '0.25rem' }}>{editError}</p>}
+                  {defaultW > 0 && <p className="text-muted" style={{ fontSize: '0.7rem', marginTop: '0.25rem' }}>Valor por defecto: {defaultW}W</p>}
+                </div>
+              ) : (
+                <div className="flex gap-3 text-sm text-muted" style={{ marginBottom: '1rem', alignItems: 'center' }}>
+                  <span style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.35rem' }} onClick={() => startEdit(up)} title="Clic para editar consumo">
+                    ⚡ {currentW}W
+                    {isCustom && <span style={{ fontSize: '0.65rem', background: 'rgba(249,115,22,0.15)', color: 'var(--accent-orange)', padding: '0.1rem 0.35rem', borderRadius: '4px' }}>personalizado</span>}
+                    <span style={{ fontSize: '0.75rem', opacity: 0.5 }}>✏️</span>
+                  </span>
+                  <span className={`badge ${p?.type === 'FDM' ? 'badge-orange' : p?.type === 'SLA' ? 'badge-blue' : 'badge-purple'}`}>{p?.type || 'FDM'}</span>
+                </div>
+              )}
+
               <button className="btn btn-danger btn-sm w-full" style={{ justifyContent: 'center' }} onClick={() => handleDelete(up.id)}>Eliminar</button>
             </div>
           )
@@ -254,3 +324,4 @@ export default function ImpresorasPage() {
     </div>
   )
 }
+

@@ -158,53 +158,53 @@ CREATE POLICY "consumables_own" ON consumables USING (auth.uid() = user_id) WITH
 -- SEED DATA - Printers
 -- =============================================
 INSERT INTO printers (brand, model, wattage_w, build_volume, type, verified) VALUES
--- Bambu Lab
-('Bambu Lab', 'X1 Carbon', 1000, '256×256×256mm', 'FDM', true),
-('Bambu Lab', 'X1E', 1000, '256×256×256mm', 'FDM', true),
-('Bambu Lab', 'P1S', 350, '256×256×256mm', 'FDM', true),
-('Bambu Lab', 'P1P', 300, '256×256×256mm', 'FDM', true),
-('Bambu Lab', 'A1 Mini', 200, '180×180×180mm', 'FDM', true),
-('Bambu Lab', 'A1', 300, '256×256×256mm', 'FDM', true),
--- Prusa
-('Prusa', 'MK4', 220, '250×210×220mm', 'FDM', true),
-('Prusa', 'MK3S+', 200, '250×210×210mm', 'FDM', true),
-('Prusa', 'XL', 600, '360×360×360mm', 'FDM', true),
-('Prusa', 'MINI+', 120, '180×180×180mm', 'FDM', true),
-('Prusa', 'SL1S Speed', 150, '127×80×150mm', 'SLA', true),
--- Creality
-('Creality', 'Ender 3 V3', 350, '220×220×250mm', 'FDM', true),
-('Creality', 'Ender 3 V3 SE', 270, '220×220×250mm', 'FDM', true),
-('Creality', 'K1', 350, '220×220×250mm', 'FDM', true),
-('Creality', 'K1 Max', 450, '300×300×300mm', 'FDM', true),
-('Creality', 'K2 Plus', 600, '350×350×350mm', 'FDM', true),
-('Creality', 'CR-10 Smart Pro', 500, '300×300×400mm', 'FDM', true),
--- Artillery
-('Artillery', 'Sidewinder X1', 300, '300×300×400mm', 'FDM', true),
-('Artillery', 'Sidewinder X2', 300, '300×300×400mm', 'FDM', true),
-('Artillery', 'Sidewinder X3 Pro', 300, '240×240×260mm', 'FDM', true),
-('Artillery', 'Sidewinder X3 Plus', 300, '300×300×400mm', 'FDM', true),
-('Artillery', 'Genius', 300, '220×220×250mm', 'FDM', true),
-('Artillery', 'Genius Pro', 300, '220×220×250mm', 'FDM', true),
-('Artillery', 'Hornet', 200, '220×220×250mm', 'FDM', true),
--- Elegoo
-('Elegoo', 'Neptune 4 Pro', 350, '235×235×265mm', 'FDM', true),
-('Elegoo', 'Neptune 4 Max', 500, '420×420×480mm', 'FDM', true),
-('Elegoo', 'Saturn 4 Ultra', 250, '218×123×260mm', 'MSLA', true),
-('Elegoo', 'Mars 5 Ultra', 100, '143×89×165mm', 'MSLA', true),
--- Anycubic
-('Anycubic', 'Kobra 3', 350, '250×250×260mm', 'FDM', true),
-('Anycubic', 'Kobra 3 Max', 600, '400×400×450mm', 'FDM', true),
-('Anycubic', 'Photon Mono M7 Pro', 100, '200×124×235mm', 'MSLA', true),
--- Voron
-('Voron', 'Trident 250', 800, '250×250×250mm', 'FDM', true),
-('Voron', 'Trident 300', 900, '300×300×300mm', 'FDM', true),
-('Voron', 'V2.4 350', 1200, '350×350×350mm', 'FDM', true),
--- Flashforge
-('Flashforge', 'Adventurer 5M Pro', 400, '220×220×220mm', 'FDM', true),
-('Flashforge', 'Creator 4', 1000, '400×350×500mm', 'FDM', true),
--- Qidi
-('Qidi', 'X-Max 3', 600, '320×320×340mm', 'FDM', true),
-('Qidi', 'Q1 Pro', 350, '245×245×245mm', 'FDM', true);
+-- Bambu Lab (fuente: bambulab.com - specs oficiales)
+('Bambu Lab', 'X1 Carbon', 1000, '256×256×256mm', 'FDM', true),    -- Max 1000W (pico calentamiento), ~80-150W imprimiendo
+('Bambu Lab', 'X1E', 1000, '256×256×256mm', 'FDM', true),           -- Mismo chasis que X1C
+('Bambu Lab', 'P1S', 1000, '256×256×256mm', 'FDM', true),           -- Max ~1000W (pico), ~60-150W imprimiendo
+('Bambu Lab', 'P1P', 1000, '256×256×256mm', 'FDM', true),           -- Max ~1000W (pico), ~60-150W imprimiendo
+('Bambu Lab', 'A1 Mini', 150, '180×180×180mm', 'FDM', true),        -- Max ~120-150W (pico), ~50-60W imprimiendo
+('Bambu Lab', 'A1', 1100, '256×256×256mm', 'FDM', true),            -- Max ~1100W (pico), ~70-130W imprimiendo
+-- Prusa (fuente: prusa3d.com - specs oficiales)
+('Prusa', 'MK4', 250, '250×210×220mm', 'FDM', true),               -- PSU 250W, ~80-160W imprimiendo
+('Prusa', 'MK3S+', 240, '250×210×210mm', 'FDM', true),             -- PSU 240W, ~80W PLA / ~120W ABS
+('Prusa', 'XL', 720, '360×360×360mm', 'FDM', true),                -- 3x240W PSU, ~450-600W imprimiendo
+('Prusa', 'MINI+', 150, '180×180×180mm', 'FDM', true),             -- PSU 150W, ~45-75W imprimiendo
+('Prusa', 'SL1S Speed', 100, '127×80×150mm', 'SLA', true),         -- ~100W (±5W) según specs oficiales
+-- Creality (fuente: creality.com - specs oficiales)
+('Creality', 'Ender 3 V3', 350, '220×220×250mm', 'FDM', true),     -- PSU 350W, ~100-120W imprimiendo
+('Creality', 'Ender 3 V3 SE', 350, '220×220×250mm', 'FDM', true),  -- PSU 350W, ~100-120W imprimiendo
+('Creality', 'K1', 350, '220×220×250mm', 'FDM', true),             -- PSU 350W, ~200-250W imprimiendo
+('Creality', 'K1 Max', 1000, '300×300×300mm', 'FDM', true),        -- PSU 1000W, ~250-300W imprimiendo
+('Creality', 'K2 Plus', 900, '350×350×350mm', 'FDM', true),        -- Pico ~900-1200W, calefactor AC
+('Creality', 'CR-10 Smart Pro', 350, '300×300×400mm', 'FDM', true), -- PSU 350W, ~75-150W imprimiendo
+-- Artillery (fuente: specs oficiales / 3djake.com)
+('Artillery', 'Sidewinder X1', 650, '300×300×400mm', 'FDM', true),  -- Max 600-650W (cama AC)
+('Artillery', 'Sidewinder X2', 700, '300×300×400mm', 'FDM', true),  -- Max 700W (cama AC)
+('Artillery', 'Sidewinder X3 Pro', 300, '240×240×260mm', 'FDM', true), -- PSU 300W interno
+('Artillery', 'Sidewinder X3 Plus', 350, '300×300×400mm', 'FDM', true), -- PSU ~350W
+('Artillery', 'Genius', 400, '220×220×250mm', 'FDM', true),        -- Max 400W (pico calentamiento)
+('Artillery', 'Genius Pro', 500, '220×220×250mm', 'FDM', true),    -- Max 500W (pico calentamiento)
+('Artillery', 'Hornet', 240, '220×220×250mm', 'FDM', true),        -- PSU ~240W
+-- Elegoo (fuente: elegoo.com - specs oficiales)
+('Elegoo', 'Neptune 4 Pro', 400, '235×235×265mm', 'FDM', true),    -- PSU 400W, ~40-200W imprimiendo
+('Elegoo', 'Neptune 4 Max', 450, '420×420×480mm', 'FDM', true),    -- Pico >400W, ~158W imprimiendo
+('Elegoo', 'Saturn 4 Ultra', 144, '218×123×260mm', 'MSLA', true),  -- Max 144W (24V 6A)
+('Elegoo', 'Mars 5 Ultra', 72, '143×89×165mm', 'MSLA', true),      -- Max 72W (24V 3A)
+-- Anycubic (fuente: anycubic.com - specs oficiales)
+('Anycubic', 'Kobra 3', 200, '250×250×260mm', 'FDM', true),        -- Max ~200W imprimiendo
+('Anycubic', 'Kobra 3 Max', 300, '400×400×450mm', 'FDM', true),    -- Max 300W según specs
+('Anycubic', 'Photon Mono M7 Pro', 240, '200×124×235mm', 'MSLA', true), -- PSU 240W
+-- Voron (fuente: comunidad Voron / reddit - DIY, varía según build)
+('Voron', 'Trident 250', 600, '250×250×250mm', 'FDM', true),       -- Pico ~500-600W, ~200-300W imprimiendo
+('Voron', 'Trident 300', 750, '300×300×300mm', 'FDM', true),       -- Pico ~750W, ~250-350W imprimiendo
+('Voron', 'V2.4 350', 1000, '350×350×350mm', 'FDM', true),         -- Pico ~1000W+, ~300-450W imprimiendo
+-- Flashforge (fuente: flashforge.com - specs oficiales)
+('Flashforge', 'Adventurer 5M Pro', 350, '220×220×220mm', 'FDM', true), -- Max 320-350W
+('Flashforge', 'Creator 4', 2320, '400×350×500mm', 'FDM', true),   -- Max 2320W (industrial, doble extrusor+cámara)
+-- Qidi (fuente: 3dprintbeginner.com reviews / specs oficiales)
+('Qidi', 'X-Max 3', 900, '320×320×340mm', 'FDM', true),            -- Max ~900W (con calefactor cámara 300W)
+('Qidi', 'Q1 Pro', 650, '245×245×245mm', 'FDM', true);             -- 350W electrónica + 300W calefactor cámara
 
 -- =============================================
 -- SEED DATA - Filaments

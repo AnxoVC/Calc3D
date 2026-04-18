@@ -1,0 +1,60 @@
+# =============================================
+# MyCalc3D - Sincronización diaria de impresoras 3D
+# =============================================
+# Este workflow se ejecuta todos los días a las 4:00 AM (hora española)
+# para buscar impresoras 3D nuevas en las webs de los fabricantes
+# y añadirlas automáticamente a la base de datos de Supabase.
+#
+# Las impresoras nuevas se insertan como "no verificadas" (verified=false)
+# hasta que un administrador las revise manualmente.
+# =============================================
+
+name: '🖨️ Sync Printers Database'
+
+on:
+  schedule:
+    # Todos los días a las 4:00 AM hora española (2:00 UTC en verano, 3:00 UTC en invierno)
+    - cron: '0 2 * * *'
+  
+  # También permitir ejecución manual desde la UI de GitHub
+  workflow_dispatch:
+
+# Permisos mínimos necesarios
+permissions:
+  contents: read
+
+jobs:
+  sync-printers:
+    name: Buscar y sincronizar impresoras nuevas
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: 📥 Checkout del repositorio
+        uses: actions/checkout@v4
+
+      - name: 🟢 Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 📦 Instalar dependencias del script
+        working-directory: scripts
+        run: npm install
+
+      - name: 🔍 Ejecutar sincronización de impresoras
+        working-directory: scripts
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: node sync-printers.js
+
+      - name: 📊 Resumen del workflow
+        if: always()
+        run: |
+          echo "## 🖨️ Sincronización de Impresoras" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Fecha:** $(date -u '+%Y-%m-%d %H:%M UTC')" >> $GITHUB_STEP_SUMMARY
+          echo "- **Estado:** ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Las impresoras nuevas se insertan como *no verificadas* hasta revisión del admin." >> $GITHUB_STEP_SUMMARY
