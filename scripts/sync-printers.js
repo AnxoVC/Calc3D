@@ -611,6 +611,7 @@ async function main() {
   // 4. Insertar nuevas impresoras
   let inserted = 0
   let errors = 0
+  let supabaseUnavailable = false
 
   for (const printer of newPrinters) {
     console.log(`   📥 Insertando: ${printer.brand} ${printer.model} (${printer.wattage_w || '?'}W, ${printer.type})`)
@@ -627,6 +628,20 @@ async function main() {
     if (error) {
       console.error(`   ❌ Error insertando ${printer.brand} ${printer.model}: ${error.message}`)
       errors++
+
+      // Detectar si Supabase no está disponible (proyecto pausado, error de red, etc.)
+      const isUnavailable = error.status === 503 || error.status === 0 ||
+        error.message?.includes('paused') ||
+        error.message?.includes('fetch') ||
+        error.message?.includes('ECONNREFUSED') ||
+        error.message?.includes('Failed to fetch')
+
+      if (isUnavailable) {
+        console.warn('⚠️  Supabase no está disponible (proyecto posiblemente pausado).')
+        console.warn('   Por favor, reactívalo en supabase.com/dashboard')
+        supabaseUnavailable = true
+        break // No tiene sentido seguir intentando insertar
+      }
     } else {
       inserted++
     }
@@ -643,7 +658,13 @@ async function main() {
   console.log(`   ⏭️  Ya existían: ${allFound.length - newPrinters.length}`)
   console.log('═══════════════════════════════════════════')
 
-  // Salir con código de error si hubo fallos
+  // Si Supabase no estaba disponible, salir limpiamente (exit 0) para no generar emails de error
+  if (supabaseUnavailable) {
+    console.warn('⚠️  Workflow finalizado sin insertar: Supabase no disponible.')
+    process.exit(0)
+  }
+
+  // Salir con código de error solo si hubo fallos reales de inserción
   if (errors > 0 && inserted === 0) {
     process.exit(1)
   }
