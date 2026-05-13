@@ -519,15 +519,29 @@ async function scrapeArtillery() {
 // ─────────────────────────────────────────────
 
 async function getExistingPrinters() {
-  const { data, error } = await supabase
-    .from('printers')
-    .select('brand, model')
+  try {
+    const { data, error } = await supabase
+      .from('printers')
+      .select('brand, model')
 
-  if (error) {
-    console.error('❌ Error cargando impresoras existentes:', error.message)
-    return []
+    if (error) {
+      // Si el proyecto está pausado o hay error de conexión, salimos limpiamente
+      if (error.message?.includes('paused') || error.code === '503' || error.status === 503) {
+        console.warn('⚠️  El proyecto de Supabase está pausado. Por favor, reactívalo en supabase.com/dashboard')
+        console.warn('   Saliendo sin error para evitar notificaciones falsas.')
+        process.exit(0)
+      }
+      console.error('❌ Error cargando impresoras existentes:', error.message)
+      return []
+    }
+    return data || []
+  } catch (err) {
+    // Error de red o de conexión (proyecto pausado, URL incorrecta, etc.)
+    console.warn('⚠️  No se pudo conectar a Supabase:', err.message)
+    console.warn('   Posible causa: proyecto pausado, credenciales incorrectas, o sin conexión.')
+    console.warn('   Saliendo sin error para evitar notificaciones falsas.')
+    process.exit(0)
   }
-  return data || []
 }
 
 function normalizeName(str) {
@@ -637,6 +651,20 @@ async function main() {
 
 // Ejecutar
 main().catch(err => {
+  // Si es un error de conexión/red, salir limpiamente (exit 0)
+  const isNetworkError = err.message?.includes('fetch') ||
+    err.message?.includes('ECONNREFUSED') ||
+    err.message?.includes('ENOTFOUND') ||
+    err.message?.includes('paused') ||
+    err.code === 'ECONNREFUSED' ||
+    err.code === 'ENOTFOUND'
+
+  if (isNetworkError) {
+    console.warn('⚠️  Error de red/conexión:', err.message)
+    console.warn('   Saliendo limpiamente para evitar notificaciones falsas.')
+    process.exit(0)
+  }
+
   console.error('❌ Error fatal:', err)
   process.exit(1)
 })
